@@ -49,21 +49,8 @@ namespace Avalonia.Win32
         private WindowImpl _parent;
         private readonly List<WindowImpl> _disabledBy = new List<WindowImpl>();
 
-#if USE_MANAGED_DRAG
-        private readonly ManagedWindowResizeDragHelper _managedDrag;
-#endif
-
         public WindowImpl()
         {
-#if USE_MANAGED_DRAG
-            _managedDrag = new ManagedWindowResizeDragHelper(this, capture =>
-            {
-                if (capture)
-                    UnmanagedMethods.SetCapture(Handle.Handle);
-                else
-                    UnmanagedMethods.ReleaseCapture();
-            });
-#endif
             CreateWindow();
             _framebuffer = new FramebufferManager(_hwnd);
             if (Win32GlManager.EglFeature != null)
@@ -92,6 +79,8 @@ namespace Avalonia.Win32
         public Action<PixelPoint> PositionChanged { get; set; }
 
         public Action<WindowState> WindowStateChanged { get; set; }
+
+        public Func<Point, WindowRegion> ClassifyWindowRegion { get; set; }
 
         public Thickness BorderThickness
         {
@@ -126,6 +115,29 @@ namespace Avalonia.Win32
             {
                 UnmanagedMethods.RECT rect;
                 UnmanagedMethods.GetClientRect(_hwnd, out rect);
+
+                if (!_decorated)
+                {
+                    WINDOWPLACEMENT placement = default;
+                    GetWindowPlacement(_hwnd, ref placement);
+
+                    // For historical reasons, Windows will position a maximized decorated window slightly beyond
+                    // the edges of the screen. We adjust the client size by this amount to prevent cutting off
+                    // window content.
+                    if (placement.ShowCmd == ShowWindowCommand.ShowMaximized)
+                    {
+                        MONITORINFO monitorInfo = MONITORINFO.Create();
+                        POINT point = new POINT() { X = 0, Y = 0 };
+
+                        GetMonitorInfo(MonitorFromWindow(_hwnd, MONITOR.MONITOR_DEFAULTTONEAREST), ref monitorInfo);
+                        ClientToScreen(_hwnd, ref point);
+
+                        return new Size(
+                            rect.right - (monitorInfo.rcWork.left - point.X) * 2,
+                            rect.bottom - (monitorInfo.rcWork.top - point.Y) * 2) / Scaling;
+                    }
+                }
+
                 return new Size(rect.right, rect.bottom) / Scaling;
             }
         }
@@ -332,36 +344,19 @@ namespace Avalonia.Win32
             ShowWindow(_showWindowState);
         }
 
-        public void BeginMoveDrag(PointerPressedEventArgs e)
+        private static readonly Dictionary<WindowRegion, HitTestValues> HitTestValueMap = new Dictionary<WindowRegion, HitTestValues>
         {
-            _mouseDevice.Capture(null);
-            UnmanagedMethods.DefWindowProc(_hwnd, (int)UnmanagedMethods.WindowsMessage.WM_NCLBUTTONDOWN,
-                new IntPtr((int)UnmanagedMethods.HitTestValues.HTCAPTION), IntPtr.Zero);
-            e.Pointer.Capture(null);
-        }
-
-        static readonly Dictionary<WindowEdge, UnmanagedMethods.HitTestValues> EdgeDic = new Dictionary<WindowEdge, UnmanagedMethods.HitTestValues>
-        {
-            {WindowEdge.East, UnmanagedMethods.HitTestValues.HTRIGHT},
-            {WindowEdge.North, UnmanagedMethods.HitTestValues.HTTOP },
-            {WindowEdge.NorthEast, UnmanagedMethods.HitTestValues.HTTOPRIGHT },
-            {WindowEdge.NorthWest, UnmanagedMethods.HitTestValues.HTTOPLEFT },
-            {WindowEdge.South, UnmanagedMethods.HitTestValues.HTBOTTOM },
-            {WindowEdge.SouthEast, UnmanagedMethods.HitTestValues.HTBOTTOMRIGHT },
-            {WindowEdge.SouthWest, UnmanagedMethods.HitTestValues.HTBOTTOMLEFT },
-            {WindowEdge.West, UnmanagedMethods.HitTestValues.HTLEFT}
+            { WindowRegion.RightBorder, HitTestValues.HTRIGHT },
+            { WindowRegion.TopBorder, HitTestValues.HTTOP },
+            { WindowRegion.TopRightCorner, HitTestValues.HTTOPRIGHT },
+            { WindowRegion.TopLeftCorner, HitTestValues.HTTOPLEFT },
+            { WindowRegion.BottomBorder, HitTestValues.HTBOTTOM },
+            { WindowRegion.BottomRightCorner, HitTestValues.HTBOTTOMRIGHT },
+            { WindowRegion.BottomLeftCorner, HitTestValues.HTBOTTOMLEFT },
+            { WindowRegion.LeftBorder, HitTestValues.HTLEFT },
+            { WindowRegion.TitleBar, HitTestValues.HTCAPTION },
+            { WindowRegion.ClientArea, HitTestValues.HTCLIENT }
         };
-
-        public void BeginResizeDrag(WindowEdge edge, PointerPressedEventArgs e)
-        {
-#if USE_MANAGED_DRAG
-            _managedDrag.BeginResizeDrag(edge, ScreenToClient(MouseDevice.Position));
-#else
-            _mouseDevice.Capture(null);
-            UnmanagedMethods.DefWindowProc(_hwnd, (int)UnmanagedMethods.WindowsMessage.WM_NCLBUTTONDOWN,
-                new IntPtr((int)EdgeDic[edge]), IntPtr.Zero);
-#endif
-        }
 
         public PixelPoint Position
         {
@@ -638,6 +633,7 @@ namespace Avalonia.Win32
                                 : RawPointerEventType.MiddleButtonDown,
                         PointToClient(PointFromLParam(lParam)), GetMouseModifiers(wParam));
                     break;
+
                 case WindowsMessage.WM_TOUCH:
                     var touchInputCount = wParam.ToInt32();
 
@@ -662,19 +658,25 @@ namespace Avalonia.Win32
                         CloseTouchInputHandle(lParam);
                         return IntPtr.Zero;
                     }
-                    
-                    break;
-                case WindowsMessage.WM_NCPAINT:
-                    if (!_decorated)
-                    {
-                        return IntPtr.Zero;
-                    }
                     break;
 
                 case WindowsMessage.WM_NCACTIVATE:
                     if (!_decorated)
                     {
                         return new IntPtr(1);
+                    }
+                    break;
+
+                case WindowsMessage.WM_NCHITTEST:
+                    var classifyWindowRegion = ClassifyWindowRegion;
+                    if (classifyWindowRegion != null)
+                    {
+                        long value = lParam.ToInt64();
+                        int x = (short)(value & 0xffff);
+                        int y = (short)(value >> 16);
+                        var point = ScreenToClient(new Point(x, y));
+                        var windowRegion = classifyWindowRegion(new Point(point.X / _scaling, point.Y / _scaling));
+                        return new IntPtr((int)HitTestValueMap[windowRegion]);
                     }
                     break;
 
@@ -699,7 +701,20 @@ namespace Avalonia.Win32
                     {
                         // Do nothing here, just block until the pending frame render is completed on the render thread
                     }
+
                     var size = (UnmanagedMethods.SizeCommand)wParam;
+
+                    var windowState = size == SizeCommand.Maximized ? WindowState.Maximized
+                        : (size == SizeCommand.Minimized ? WindowState.Minimized : WindowState.Normal);
+
+                    // If a custom ClassifyWindowRegion method is provided, the window can potentially be resized while it
+                    // is still maximized. In this case, the window doesn't immediately lose its maximized state. When this
+                    // happens, let's just restore the window from the maximized state.
+                    if (windowState == WindowState.Maximized && _lastWindowState == WindowState.Maximized)
+                    {
+                        UnmanagedMethods.ShowWindow(_hwnd, ShowWindowCommand.Restore);
+                        break;
+                    }
 
                     if (Resized != null &&
                         (size == UnmanagedMethods.SizeCommand.Restored ||
@@ -708,9 +723,6 @@ namespace Avalonia.Win32
                         var clientSize = new Size(ToInt32(lParam) & 0xffff, ToInt32(lParam) >> 16);
                         Resized(clientSize / Scaling);
                     }
-
-                    var windowState = size == SizeCommand.Maximized ? WindowState.Maximized
-                        : (size == SizeCommand.Minimized ? WindowState.Minimized : WindowState.Normal);
 
                     if (windowState != _lastWindowState)
                     {
@@ -725,7 +737,6 @@ namespace Avalonia.Win32
                     return IntPtr.Zero;
 
                 case UnmanagedMethods.WindowsMessage.WM_GETMINMAXINFO:
-
                     MINMAXINFO mmi = Marshal.PtrToStructure<UnmanagedMethods.MINMAXINFO>(lParam);
 
                     if (_minSize.Width > 0)
@@ -746,13 +757,26 @@ namespace Avalonia.Win32
                 case UnmanagedMethods.WindowsMessage.WM_DISPLAYCHANGE:
                     (Screen as ScreenImpl)?.InvalidateScreensCache();
                     return IntPtr.Zero;
+
+                case UnmanagedMethods.WindowsMessage.WM_DWMCOMPOSITIONCHANGED:
+                {
+                    var margins = new MARGINS();
+
+                    if (!_decorated)
+                    {
+                        margins = new MARGINS()
+                        {
+                            topHeight = 1,
+                            leftWidth = 1,
+                            rightWidth = 1,
+                            bottomHeight = 1
+                        };
+                    }
+
+                    DwmExtendFrameIntoClientArea(_hwnd, ref margins);
+                    return IntPtr.Zero;
+                }
             }
-
-#if USE_MANAGED_DRAG
-
-            if (_managedDrag.PreprocessInputEvent(ref e))
-                return UnmanagedMethods.DefWindowProc(hWnd, msg, wParam, lParam);
-#endif
 
             if (e != null && Input != null)
             {
@@ -906,8 +930,6 @@ namespace Avalonia.Win32
 
                 if (GetMonitorInfo(monitor, ref monitorInfo))
                 {
-                    RECT rcMonitorArea = monitorInfo.rcMonitor;
-
                     var x = monitorInfo.rcWork.left;
                     var y = monitorInfo.rcWork.top;
                     var cx = Math.Abs(monitorInfo.rcWork.right - x);
@@ -968,26 +990,15 @@ namespace Avalonia.Win32
         {
             var oldDecorated = _decorated;
 
-            var oldThickness = BorderThickness;
-
             change();
 
             var style = (WindowStyles)GetWindowLong(_hwnd, (int)WindowLongParam.GWL_STYLE);
 
-            const WindowStyles controlledFlags = WindowStyles.WS_OVERLAPPEDWINDOW;
-
-            style = style | controlledFlags ^ controlledFlags;
-
             style |= WindowStyles.WS_OVERLAPPEDWINDOW;
-
-            if (!_decorated)
-            {
-                style ^= (WindowStyles.WS_CAPTION | WindowStyles.WS_SYSMENU);
-            }
 
             if (!_resizable)
             {
-                style ^= (WindowStyles.WS_SIZEFRAME);
+                style &= ~(WindowStyles.WS_SIZEFRAME | WindowStyles.WS_MAXIMIZEBOX);
             }
 
             GetClientRect(_hwnd, out var oldClientRect);
@@ -995,17 +1006,32 @@ namespace Avalonia.Win32
             ClientToScreen(_hwnd, ref oldClientRectOrigin);
             oldClientRect.Offset(oldClientRectOrigin);
             
-            
             SetWindowLong(_hwnd, (int)WindowLongParam.GWL_STYLE, (uint)style);
 
-            UnmanagedMethods.GetWindowRect(_hwnd, out var windowRect);
             bool frameUpdated = false;
             if (oldDecorated != _decorated)
             {
                 var newRect = oldClientRect;
+                var margins = new MARGINS();
+
                 if (_decorated)
-                    AdjustWindowRectEx(ref newRect, (uint)style, false,
-                        GetWindowLong(_hwnd, (int)WindowLongParam.GWL_EXSTYLE));
+                {
+                    AdjustWindowRectEx(
+                        ref newRect, (uint)style, false, GetWindowLong(_hwnd, (int)WindowLongParam.GWL_EXSTYLE));
+                }
+                else
+                {
+                    margins = new MARGINS()
+                    {
+                        topHeight = 1,
+                        leftWidth = 1,
+                        rightWidth = 1,
+                        bottomHeight = 1
+                    };
+                }
+
+                DwmExtendFrameIntoClientArea(_hwnd, ref margins);
+
                 SetWindowPos(_hwnd, IntPtr.Zero, newRect.left, newRect.top, newRect.Width, newRect.Height,
                     SetWindowPosFlags.SWP_NOZORDER | SetWindowPosFlags.SWP_NOACTIVATE | SetWindowPosFlags.SWP_FRAMECHANGED);
                 frameUpdated = true;

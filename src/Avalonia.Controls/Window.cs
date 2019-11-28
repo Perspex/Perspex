@@ -259,17 +259,6 @@ namespace Avalonia.Controls
         }
         
         /// <summary>
-        /// Starts moving a window with left button being held. Should be called from left mouse button press event handler
-        /// </summary>
-        public void BeginMoveDrag(PointerPressedEventArgs e) => PlatformImpl?.BeginMoveDrag(e);
-
-        /// <summary>
-        /// Starts resizing a window. This function is used if an application has window resizing controls. 
-        /// Should be called from left mouse button press event handler
-        /// </summary>
-        public void BeginResizeDrag(WindowEdge edge, PointerPressedEventArgs e) => PlatformImpl?.BeginResizeDrag(edge, e);
-        
-        /// <summary>
         /// Carries out the arrange pass of the window.
         /// </summary>
         /// <param name="finalSize">The final window size.</param>

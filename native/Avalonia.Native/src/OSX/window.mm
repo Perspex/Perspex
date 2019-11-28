@@ -272,11 +272,6 @@ public:
         }
     }
     
-    virtual HRESULT BeginResizeDrag (AvnWindowEdge edge) override
-    {
-        return S_OK;
-    }
-    
     virtual HRESULT GetPosition (AvnPoint* ret) override
     {
         @autoreleasepool
@@ -852,30 +847,47 @@ NSArray* AllLoopModes = [NSArray arrayWithObjects: NSDefaultRunLoopMode, NSEvent
     auto avnPoint = [self toAvnPoint:localPoint];
     auto point = [self translateLocalPoint:avnPoint];
     AvnVector delta;
+    uint clickCount = 0;
     
-    if(type == Wheel)
+    switch (type)
     {
-        auto speed = 5;
-        
-        if([event hasPreciseScrollingDeltas])
+        case Wheel:
         {
-            speed = 50;
+            auto speed = 5;
+            
+            if([event hasPreciseScrollingDeltas])
+            {
+                speed = 50;
+            }
+            
+            delta.X = [event scrollingDeltaX] / speed;
+            delta.Y = [event scrollingDeltaY] / speed;
+            
+            if(delta.X == 0 && delta.Y == 0)
+            {
+                return;
+            }
+            break;
         }
         
-        delta.X = [event scrollingDeltaX] / speed;
-        delta.Y = [event scrollingDeltaY] / speed;
-        
-        if(delta.X == 0 && delta.Y == 0)
-        {
-            return;
-        }
+        case LeftButtonDown:
+        case LeftButtonUp:
+        case MiddleButtonDown:
+        case MiddleButtonUp:
+        case RightButtonDown:
+        case RightButtonUp:
+            clickCount = (uint)[event clickCount];
+            break;
+            
+        default:
+            break;
     }
     
     auto timestamp = [event timestamp] * 1000;
     auto modifiers = [self getModifiers:[event modifierFlags]];
     
     [self becomeFirstResponder];
-    _parent->BaseEvents->RawMouseEvent(type, timestamp, modifiers, point, delta);
+    _parent->BaseEvents->RawMouseEvent(type, timestamp, modifiers, point, delta, clickCount);
     [super mouseMoved:event];
 }
 

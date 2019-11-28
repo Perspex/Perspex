@@ -1120,7 +1120,17 @@ namespace Avalonia.Win32.Interop
         [DllImport("ole32.dll", CharSet = CharSet.Auto, ExactSpelling = true, PreserveSig = false)]
         internal static extern void DoDragDrop(IOleDataObject dataObject, IDropSource dropSource, int allowedEffects, out int finalEffect);
 
+        [DllImport("dwmapi.dll", PreserveSig = true)]
+        public static extern HRESULT DwmExtendFrameIntoClientArea(IntPtr hwnd, ref MARGINS margins);
 
+        [StructLayout(LayoutKind.Sequential)]
+        public struct MARGINS
+        {
+            public int leftWidth;
+            public int rightWidth;
+            public int topHeight;
+            public int bottomHeight;
+        }
 
         public enum MONITOR
         {

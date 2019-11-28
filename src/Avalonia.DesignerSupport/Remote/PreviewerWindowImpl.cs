@@ -28,14 +28,6 @@ namespace Avalonia.DesignerSupport.Remote
         {
         }
 
-        public void BeginMoveDrag(PointerPressedEventArgs e)
-        {
-        }
-
-        public void BeginResizeDrag(WindowEdge edge, PointerPressedEventArgs e)
-        {
-        }
-
         public PixelPoint Position { get; set; }
         public Action<PixelPoint> PositionChanged { get; set; }
         public Action Deactivated { get; set; }
@@ -44,6 +36,7 @@ namespace Avalonia.DesignerSupport.Remote
         public IPlatformHandle Handle { get; }
         public WindowState WindowState { get; set; }
         public Action<WindowState> WindowStateChanged { get; set; }
+        public Func<Point, WindowRegion> ClassifyWindowRegion { get; set; }
         public Size MaxClientSize { get; } = new Size(4096, 4096);
         public event Action LostFocus
         {

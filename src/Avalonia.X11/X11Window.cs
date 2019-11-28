@@ -44,6 +44,7 @@ namespace Avalonia.X11
         private HashSet<X11Window> _transientChildren = new HashSet<X11Window>();
         private X11Window _transientParent;
         private double? _scalingOverride;
+        private bool _isMoveResize;
         public object SyncRoot { get; } = new object();
 
         class InputEventContainer
@@ -298,6 +299,7 @@ namespace Avalonia.X11
         public Action<WindowState> WindowStateChanged { get; set; }
         public Action Closed { get; set; }
         public Action<PixelPoint> PositionChanged { get; set; }
+        public Func<Point, WindowRegion> ClassifyWindowRegion { get; set; }
 
         public IRenderer CreateRenderer(IRenderRoot root) =>
             new DeferredRenderer(root, AvaloniaLocator.Current.GetService<IRenderLoop>());
@@ -633,8 +635,12 @@ namespace Avalonia.X11
                     while (_inputQueue.Count > 0)
                     {
                         Dispatcher.UIThread.RunJobs(DispatcherPriority.Input + 1);
-                        var ev = _inputQueue.Dequeue();
-                        Input?.Invoke(ev.Event);
+                        InputEventContainer ev = _inputQueue.Dequeue();
+
+                        if (!(ev.Event is RawPointerEventArgs e) || !HandleMoveResize(e))
+                        {
+                            Input?.Invoke(ev.Event);
+                        }
                     }
                 }, DispatcherPriority.Input);
             }
@@ -884,44 +890,62 @@ namespace Avalonia.X11
 
         }
 
-        void BeginMoveResize(NetWmMoveResize side, PointerPressedEventArgs e)
+        void BeginMoveResize(NetWmMoveResize side)
         {
             var pos = GetCursorPos(_x11);
             XUngrabPointer(_x11.Display, new IntPtr(0));
             SendNetWMMessage (_x11.Atoms._NET_WM_MOVERESIZE, (IntPtr) pos.x, (IntPtr) pos.y,
                 (IntPtr) side,
                 (IntPtr) 1, (IntPtr)1); // left button
-                
-            e.Pointer.Capture(null);
         }
 
-        public void BeginMoveDrag(PointerPressedEventArgs e)
+        private bool HandleMoveResize(RawPointerEventArgs e)
         {
-            BeginMoveResize(NetWmMoveResize._NET_WM_MOVERESIZE_MOVE, e);
+            var classifyWindowRegion = ClassifyWindowRegion;
+
+            if (classifyWindowRegion == null)
+            {
+                return false;
+            }
+
+            if (e.Type == RawPointerEventType.LeaveWindow)
+            {
+                return true;
+            }
+
+            WindowRegion windowRegion = classifyWindowRegion(e.Position);
+
+            if (_isMoveResize && (e.Type != RawPointerEventType.LeftButtonDown || windowRegion == WindowRegion.ClientArea))
+            {
+                _isMoveResize = false;
+                BeginMoveResize(NetWmMoveResize._NET_WM_MOVERESIZE_CANCEL);
+                return true;
+            }
+
+            if (e.Type == RawPointerEventType.LeftButtonDown &&
+                WindowRegionMap.TryGetValue(windowRegion, out NetWmMoveResize msg))
+            {
+                _isMoveResize = true;
+                BeginMoveResize(msg);
+                return true;
+            }
+
+            return _isMoveResize;
         }
 
-        public void BeginResizeDrag(WindowEdge edge, PointerPressedEventArgs e)
+        private static readonly IDictionary<WindowRegion, NetWmMoveResize> WindowRegionMap = new Dictionary<WindowRegion, NetWmMoveResize>()
         {
-            var side = NetWmMoveResize._NET_WM_MOVERESIZE_CANCEL;
-            if (edge == WindowEdge.East)
-                side = NetWmMoveResize._NET_WM_MOVERESIZE_SIZE_RIGHT;
-            if (edge == WindowEdge.North)
-                side = NetWmMoveResize._NET_WM_MOVERESIZE_SIZE_TOP;
-            if (edge == WindowEdge.South)
-                side = NetWmMoveResize._NET_WM_MOVERESIZE_SIZE_BOTTOM;
-            if (edge == WindowEdge.West)
-                side = NetWmMoveResize._NET_WM_MOVERESIZE_SIZE_LEFT;
-            if (edge == WindowEdge.NorthEast)
-                side = NetWmMoveResize._NET_WM_MOVERESIZE_SIZE_TOPRIGHT;
-            if (edge == WindowEdge.NorthWest)
-                side = NetWmMoveResize._NET_WM_MOVERESIZE_SIZE_TOPLEFT;
-            if (edge == WindowEdge.SouthEast)
-                side = NetWmMoveResize._NET_WM_MOVERESIZE_SIZE_BOTTOMRIGHT;
-            if (edge == WindowEdge.SouthWest)
-                side = NetWmMoveResize._NET_WM_MOVERESIZE_SIZE_BOTTOMLEFT;
-            BeginMoveResize(side, e);
-        }
-        
+            { WindowRegion.TopLeftCorner, NetWmMoveResize._NET_WM_MOVERESIZE_SIZE_TOPLEFT },
+            { WindowRegion.TopBorder, NetWmMoveResize._NET_WM_MOVERESIZE_SIZE_TOP },
+            { WindowRegion.TopRightCorner, NetWmMoveResize._NET_WM_MOVERESIZE_SIZE_TOPRIGHT },
+            { WindowRegion.LeftBorder, NetWmMoveResize._NET_WM_MOVERESIZE_SIZE_LEFT },
+            { WindowRegion.RightBorder, NetWmMoveResize._NET_WM_MOVERESIZE_SIZE_RIGHT },
+            { WindowRegion.BottomLeftCorner, NetWmMoveResize._NET_WM_MOVERESIZE_SIZE_BOTTOMLEFT },
+            { WindowRegion.BottomBorder, NetWmMoveResize._NET_WM_MOVERESIZE_SIZE_BOTTOM },
+            { WindowRegion.BottomRightCorner, NetWmMoveResize._NET_WM_MOVERESIZE_SIZE_BOTTOMRIGHT },
+            { WindowRegion.TitleBar, NetWmMoveResize._NET_WM_MOVERESIZE_MOVE },
+        };
+
         public void SetTitle(string title)
         {
             var data = Encoding.UTF8.GetBytes(title);

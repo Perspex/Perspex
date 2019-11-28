@@ -200,7 +200,6 @@ AVNCOM(IAvnWindowBase, 02) : IUnknown
     virtual HRESULT Resize(double width, double height) = 0;
     virtual HRESULT Invalidate (AvnRect rect) = 0;
     virtual HRESULT BeginMoveDrag () = 0;
-    virtual HRESULT BeginResizeDrag (AvnWindowEdge edge) = 0;
     virtual HRESULT GetPosition (AvnPoint*ret) = 0;
     virtual HRESULT SetPosition (AvnPoint point) = 0;
     virtual HRESULT PointToClient (AvnPoint point, AvnPoint*ret) = 0;
@@ -244,7 +243,8 @@ AVNCOM(IAvnWindowBaseEvents, 05) : IUnknown
                                 unsigned int timeStamp,
                                 AvnInputModifiers modifiers,
                                 AvnPoint point,
-                                AvnVector delta) = 0;
+                                AvnVector delta,
+                                unsigned int clickCount) = 0;
     virtual bool RawKeyEvent (AvnRawKeyEventType type, unsigned int timeStamp, AvnInputModifiers modifiers, unsigned int key) = 0;
     virtual bool RawTextInputEvent (unsigned int timeStamp, const char* text) = 0;
     virtual void ScalingChanged(double scaling) = 0;

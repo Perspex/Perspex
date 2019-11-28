@@ -36,6 +36,7 @@ namespace Avalonia.DesignerSupport.Remote
         public Action<PixelPoint> PositionChanged { get; set; }
         public WindowState WindowState { get; set; }
         public Action<WindowState> WindowStateChanged { get; set; }
+        public Func<Point, WindowRegion> ClassifyWindowRegion { get; set; }
 
         public WindowStub(IWindowImpl parent = null)
         {
@@ -72,14 +73,6 @@ namespace Avalonia.DesignerSupport.Remote
         }
 
         public void Hide()
-        {
-        }
-
-        public void BeginMoveDrag(PointerPressedEventArgs e)
-        {
-        }
-
-        public void BeginResizeDrag(WindowEdge edge, PointerPressedEventArgs e)
         {
         }
 

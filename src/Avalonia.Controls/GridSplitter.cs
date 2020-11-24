@@ -276,8 +276,8 @@ namespace Avalonia.Controls
 
                 // Get count of rows/columns in the resize direction.
                 int count = _resizeData.ResizeDirection == GridResizeDirection.Columns ?
-                    _resizeData.Grid.ColumnDefinitions.Count :
-                    _resizeData.Grid.RowDefinitions.Count;
+                    _resizeData.Grid.ColumnDefinitions?.Count ?? 0  :
+                    _resizeData.Grid.RowDefinitions?.Count ?? 0;
 
                 if (index1 >= 0 && index2 < count)
                 {

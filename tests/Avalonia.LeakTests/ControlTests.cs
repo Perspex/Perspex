@@ -421,7 +421,7 @@ namespace Avalonia.LeakTests
                     Assert.Equal(0, memory.GetObjects(where => where.Type.Is<Canvas>()).ObjectsCount));
             }
         }
-
+  
         [Fact]
         public void Attached_ContextMenu_Is_Freed()
         {
@@ -512,7 +512,7 @@ namespace Avalonia.LeakTests
                     Assert.Equal(initialMenuItemCount, memory.GetObjects(where => where.Type.Is<MenuItem>()).ObjectsCount));
             }
         }
-
+      
         [Fact]
         public void Path_Is_Freed()
         {

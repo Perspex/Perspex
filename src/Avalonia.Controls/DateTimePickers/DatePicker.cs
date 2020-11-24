@@ -331,7 +331,11 @@ namespace Avalonia.Controls
             };
 
             columns.Sort((x, y) => x.Item2 - y.Item2);
-            _container.ColumnDefinitions.Clear();
+
+            if (_container.ColumnDefinitions is null)
+                _container.ColumnDefinitions = new ColumnDefinitions();
+            else
+                _container.ColumnDefinitions.Clear();
 
             var columnIndex = 0;
 

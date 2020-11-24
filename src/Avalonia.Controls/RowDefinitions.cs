@@ -31,5 +31,13 @@ namespace Avalonia.Controls
         /// <param name="s">The row definitions string.</param>
         /// <returns>The <see cref="RowDefinitions"/>.</returns>
         public static RowDefinitions Parse(string s) => new RowDefinitions(s);
+
+        public override void UpdateParentGrid()
+        {
+            if (Parent is null) return;
+            Parent.RowIsEmpty = this.Count == 0;
+            Parent.RowOrColumnDefChanged = true;
+            Parent.Invalidate();
+        }
     }
 }

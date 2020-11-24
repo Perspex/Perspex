@@ -13,7 +13,6 @@ namespace Avalonia.Controls
             CollectionChanged += OnCollectionChanged;
         }
 
-        internal bool IsDirty = true;
         private Grid _parent;
 
         internal Grid Parent
@@ -35,6 +34,8 @@ namespace Avalonia.Controls
 
         internal void OnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
+            UpdateParentGrid();
+
             foreach (var nI in this.Select((d, i) => (d, i)))
                 nI.d._parentIndex = nI.i;
 
@@ -49,9 +50,12 @@ namespace Avalonia.Controls
                             ?? Enumerable.Empty<DefinitionBase>())
             {
                 oD.OnExitParentTree();
-            }
+            }            
+        }
 
-            IsDirty = true;
+
+        public virtual void UpdateParentGrid()
+        {
         }
     }
 }

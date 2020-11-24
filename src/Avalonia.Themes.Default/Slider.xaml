@@ -6,9 +6,11 @@
       <ControlTemplate>
         <Grid Name="grid">
           <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto" MinHeight="20"/>
-            <RowDefinition Height="Auto"/>
+            <RowDefinitions>
+              <RowDefinition Height="Auto"/>
+              <RowDefinition Height="Auto" MinHeight="20"/>
+              <RowDefinition Height="Auto"/>
+            </RowDefinitions>
           </Grid.RowDefinitions>
           <Border Name="TrackBackground" Grid.Row="1" Height="4" Margin="6,0" VerticalAlignment="Center"/>
           <Track Name="PART_Track" Grid.Row="1" Orientation="Horizontal">
@@ -41,9 +43,11 @@
       <ControlTemplate>
         <Grid>
           <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition Width="Auto" MinWidth="26"/>
-            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinitions>
+              <ColumnDefinition Width="Auto"/>
+              <ColumnDefinition Width="Auto" MinWidth="26"/>
+              <ColumnDefinition Width="Auto"/>
+            </ColumnDefinitions>
           </Grid.ColumnDefinitions>
           <Border Name="TrackBackground" Grid.Column="1" Width="4" Margin="0,6" HorizontalAlignment="Center"/>
           <Track Name="PART_Track" Grid.Column="1" Orientation="Vertical">

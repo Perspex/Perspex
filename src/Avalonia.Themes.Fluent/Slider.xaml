@@ -55,9 +55,11 @@
                 </Grid.Styles>
                 <Grid x:Name="HorizontalTemplate" ColumnDefinitions="Auto,Auto,*" MinHeight="{DynamicResource SliderHorizontalHeight}">
                   <Grid.RowDefinitions>
-                    <RowDefinition Height="{DynamicResource SliderPreContentMargin}" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="{DynamicResource SliderPostContentMargin}" />
+                    <RowDefinitions>
+                      <RowDefinition Height="{DynamicResource SliderPreContentMargin}" />
+                      <RowDefinition Height="Auto" />
+                      <RowDefinition Height="{DynamicResource SliderPostContentMargin}" />
+                    </RowDefinitions>
                   </Grid.RowDefinitions>
                   <TickBar Name="TopTickBar" Placement="Top" Height="{DynamicResource SliderOutsideTickBarThemeHeight}" VerticalAlignment="Bottom" Margin="0,0,0,4" Grid.ColumnSpan="3" />
                   <!-- <TickBar Name="HorizontalInlineTickBar" Placement="Top" Fill="{DynamicResource SliderInlineTickBarFill}" Height="{DynamicResource SliderTrackThemeHeight}" Grid.Row="1" Grid.ColumnSpan="3" /> -->
@@ -117,9 +119,11 @@
                 </Grid.Styles>
                 <Grid x:Name="VerticalTemplate" RowDefinitions="*,Auto,Auto" MinWidth="{DynamicResource SliderVerticalWidth}">
                   <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="{DynamicResource SliderPreContentMargin}" />
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="{DynamicResource SliderPostContentMargin}" />
+                    <ColumnDefinitions>
+                      <ColumnDefinition Width="{DynamicResource SliderPreContentMargin}" />
+                      <ColumnDefinition Width="Auto" />
+                      <ColumnDefinition Width="{DynamicResource SliderPostContentMargin}" />
+                    </ColumnDefinitions>
                   </Grid.ColumnDefinitions>
                   <TickBar Name="LeftTickBar" Placement="Left" Width="{DynamicResource SliderOutsideTickBarThemeHeight}" HorizontalAlignment="Right" Margin="0,0,4,0" Grid.RowSpan="3" />
                   <!-- <TickBar Name="VerticalInlineTickBar" Placement="Inline" Fill="{DynamicResource SliderInlineTickBarFill}" Width="{DynamicResource SliderTrackThemeHeight}" Grid.Column="1" Grid.RowSpan="3" /> -->

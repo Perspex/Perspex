@@ -83,44 +83,10 @@
               </Button>
             </Grid>
             <Border Name="BackgroundLayer" Background="{TemplateBinding BorderBrush}" Grid.Row="1" />
-            <Grid Name="MonthView" Grid.Row="1" IsVisible="False" MinHeight="290" >
-              <Grid.RowDefinitions>
-                <!--This should always be the week day names??-->
-                <RowDefinition Height="38" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-              </Grid.RowDefinitions>
-              <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="Auto" />
-              </Grid.ColumnDefinitions>
-            </Grid>
-            <Grid Name="YearView" MinHeight="290"
-                    Grid.Row="1" IsVisible="False">
-              <Grid.RowDefinitions>
-                <RowDefinition Height="*" />
-                <RowDefinition Height="*" />
-                <RowDefinition Height="*" />
-              </Grid.RowDefinitions>
-              <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="*" />
-              </Grid.ColumnDefinitions>
-            </Grid>
-
+            <Grid Name="MonthView" Grid.Row="1" IsVisible="False" MinHeight="290" RowDefinitions="38,Auto,Auto,Auto,Auto,Auto,Auto" ColumnDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto" />
+            <Grid Name="YearView" MinHeight="290" RowDefinitions="*,*,*" ColumnDefinitions="*,*,*,*"
+                    Grid.Row="1" IsVisible="False" />
           </Grid>
-
         </Border>
       </ControlTemplate>
     </Setter>

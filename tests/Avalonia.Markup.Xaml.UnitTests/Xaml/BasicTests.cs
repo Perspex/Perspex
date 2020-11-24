@@ -216,16 +216,20 @@ namespace Avalonia.Markup.Xaml.UnitTests.Xaml
             var xaml = @"
 <Grid xmlns='https://github.com/avaloniaui'>
     <Grid.ColumnDefinitions>
-        <ColumnDefinition Width='100' />
-        <ColumnDefinition Width='Auto' />
-        <ColumnDefinition Width='*' />
-        <ColumnDefinition Width='100*' />
+        <ColumnDefinitions>
+            <ColumnDefinition Width='100' />
+            <ColumnDefinition Width='Auto' />
+            <ColumnDefinition Width='*' />
+            <ColumnDefinition Width='100*' />
+        </ColumnDefinitions>
     </Grid.ColumnDefinitions>
     <Grid.RowDefinitions>
-        <RowDefinition Height='100' />
-        <RowDefinition Height='Auto' />
-        <RowDefinition Height='*' />
-        <RowDefinition Height='100*' />
+        <RowDefinitions>
+            <RowDefinition Height='100' />
+            <RowDefinition Height='Auto' />
+            <RowDefinition Height='*' />
+            <RowDefinition Height='100*' />
+        </RowDefinitions>
     </Grid.RowDefinitions>
 </Grid>";
 

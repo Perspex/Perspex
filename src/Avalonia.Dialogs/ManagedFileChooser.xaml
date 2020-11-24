@@ -89,15 +89,17 @@
         <DockPanel Grid.IsSharedSizeScope="True">
             <Grid DockPanel.Dock="Top" Margin="15 5 0 0" HorizontalAlignment="Stretch">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="20" SharedSizeGroup="Icon" />
-                    <ColumnDefinition Width="16" SharedSizeGroup="Splitter"  />
-                    <ColumnDefinition Width="400" SharedSizeGroup="Name" />
-                    <ColumnDefinition Width="16" SharedSizeGroup="Splitter" />
-                    <ColumnDefinition Width="200" SharedSizeGroup="Modified" />
-                    <ColumnDefinition Width="16" SharedSizeGroup="Splitter" />
-                    <ColumnDefinition Width="150" SharedSizeGroup="Type" />
-                    <ColumnDefinition Width="16" SharedSizeGroup="Splitter" />
-                    <ColumnDefinition Width="200" SharedSizeGroup="Size" />
+                    <ColumnDefinitions>
+                        <ColumnDefinition Width="20" SharedSizeGroup="Icon" />
+                        <ColumnDefinition Width="16" SharedSizeGroup="Splitter"  />
+                        <ColumnDefinition Width="400" SharedSizeGroup="Name" />
+                        <ColumnDefinition Width="16" SharedSizeGroup="Splitter" />
+                        <ColumnDefinition Width="200" SharedSizeGroup="Modified" />
+                        <ColumnDefinition Width="16" SharedSizeGroup="Splitter" />
+                        <ColumnDefinition Width="150" SharedSizeGroup="Type" />
+                        <ColumnDefinition Width="16" SharedSizeGroup="Splitter" />
+                        <ColumnDefinition Width="200" SharedSizeGroup="Size" />
+                    </ColumnDefinitions>
                 </Grid.ColumnDefinitions>
                 <GridSplitter Grid.Column="1" />
                 <TextBlock Grid.Column="2" Text="Name" />

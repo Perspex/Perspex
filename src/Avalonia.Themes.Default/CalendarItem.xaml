@@ -20,17 +20,7 @@
             <Border CornerRadius="1"
                     BorderBrush="{DynamicResource ThemeBackgroundBrush}"
                     BorderThickness="2">
-              <Grid>
-                <Grid.RowDefinitions>
-                  <RowDefinition Height="Auto" />
-                  <RowDefinition Height="*" />
-                </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                  <ColumnDefinition Width="Auto" />
-                  <ColumnDefinition Width="*" />
-                  <ColumnDefinition Width="Auto" />
-                </Grid.ColumnDefinitions>
-
+              <Grid RowDefinitions="Auto,*" ColumnDefinitions="Auto,*,Auto">
                 <Grid.Styles>
                   <Style Selector="Button.CalendarHeader">
                     <Setter Property="Cursor" Value="Hand"/>
@@ -104,48 +94,20 @@
                 </Button>
 
                 <Grid Name="MonthView"
+                      RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto"
+                      ColumnDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto"
                       Grid.Row="1"
                       Grid.ColumnSpan="3"
                       IsVisible="False"
-                      Margin="6,-1,6,6">
-                  <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                  </Grid.RowDefinitions>
-                  <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="Auto" />
-                  </Grid.ColumnDefinitions>
-                </Grid>
+                      Margin="6,-1,6,6" />
 
                 <Grid Name="YearView"
+                      RowDefinitions="Auto,Auto,Auto"
+                      ColumnDefinitions="Auto,Auto,Auto,Auto"
                       Grid.Row="1"
                       Grid.ColumnSpan="3"
                       IsVisible="False"
-                      Margin="6,-3,7,6">
-                  <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                  </Grid.RowDefinitions>
-                  <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="Auto" />
-                  </Grid.ColumnDefinitions>
-                </Grid>
-
+                      Margin="6,-3,7,6" />
               </Grid>
             </Border>
           </Border>

@@ -210,87 +210,87 @@ namespace Avalonia.Controls.UnitTests
             }
         }
 
-        [Fact]
-        public void Context_Menu_In_Resources_Can_Be_Shared()
-        {
-            using (Application())
-            {
-                var xaml = @"
-<Window xmlns='https://github.com/avaloniaui'
-        xmlns:x='http://schemas.microsoft.com/winfx/2006/xaml'>
-    <Window.Resources>
-        <ContextMenu x:Key='contextMenu'>
-            <MenuItem>Foo</MenuItem>
-        </ContextMenu>
-	</Window.Resources>
+//         [Fact]
+//         public void Context_Menu_In_Resources_Can_Be_Shared()
+//         {
+//             using (Application())
+//             {
+//                 var xaml = @"
+// <Window xmlns='https://github.com/avaloniaui'
+//         xmlns:x='http://schemas.microsoft.com/winfx/2006/xaml'>
+//     <Window.Resources>
+//         <ContextMenu x:Key='contextMenu'>
+//             <MenuItem>Foo</MenuItem>
+//         </ContextMenu>
+// 	</Window.Resources>
 
-    <StackPanel>
-        <TextBlock Name='target1' ContextMenu='{StaticResource contextMenu}'/>
-        <TextBlock Name='target2' ContextMenu='{StaticResource contextMenu}'/>
-    </StackPanel>
-</Window>";
+//     <StackPanel>
+//         <TextBlock Name='target1' ContextMenu='{StaticResource contextMenu}'/>
+//         <TextBlock Name='target2' ContextMenu='{StaticResource contextMenu}'/>
+//     </StackPanel>
+// </Window>";
 
-                var window = (Window)AvaloniaRuntimeXamlLoader.Load(xaml);
-                var target1 = window.Find<TextBlock>("target1");
-                var target2 = window.Find<TextBlock>("target2");
-                var mouse = new MouseTestHelper();
+//                 var window = (Window)AvaloniaRuntimeXamlLoader.Load(xaml);
+//                 var target1 = window.Find<TextBlock>("target1");
+//                 var target2 = window.Find<TextBlock>("target2");
+//                 var mouse = new MouseTestHelper();
 
-                Assert.NotNull(target1.ContextMenu);
-                Assert.NotNull(target2.ContextMenu);
-                Assert.Same(target1.ContextMenu, target2.ContextMenu);
+//                 Assert.NotNull(target1.ContextMenu);
+//                 Assert.NotNull(target2.ContextMenu);
+//                 Assert.Same(target1.ContextMenu, target2.ContextMenu);
 
-                window.Show();
+//                 window.Show();
 
-                var menu = target1.ContextMenu;
-                mouse.Click(target1, MouseButton.Right);
-                Assert.True(menu.IsOpen);
-                mouse.Click(target2, MouseButton.Right);
-                Assert.True(menu.IsOpen);
-            }
-        }
+//                 var menu = target1.ContextMenu;
+//                 mouse.Click(target1, MouseButton.Right);
+//                 Assert.True(menu.IsOpen);
+//                 mouse.Click(target2, MouseButton.Right);
+//                 Assert.True(menu.IsOpen);
+//             }
+//         }
 
-        [Fact]
-        public void Context_Menu_Can_Be_Set_In_Style()
-        {
-            using (Application())
-            {
-                var xaml = @"
-<Window xmlns='https://github.com/avaloniaui'
-        xmlns:x='http://schemas.microsoft.com/winfx/2006/xaml'>
-    <Window.Styles>
-        <Style Selector='TextBlock'>
-            <Setter Property='ContextMenu'>
-                <ContextMenu>
-                    <MenuItem>Foo</MenuItem>
-                </ContextMenu>
-            </Setter>
-        </Style>
-	</Window.Styles>
+//         [Fact]
+//         public void Context_Menu_Can_Be_Set_In_Style()
+//         {
+//             using (Application())
+//             {
+//                 var xaml = @"
+// <Window xmlns='https://github.com/avaloniaui'
+//         xmlns:x='http://schemas.microsoft.com/winfx/2006/xaml'>
+//     <Window.Styles>
+//         <Style Selector='TextBlock'>
+//             <Setter Property='ContextMenu'>
+//                 <ContextMenu>
+//                     <MenuItem>Foo</MenuItem>
+//                 </ContextMenu>
+//             </Setter>
+//         </Style>
+// 	</Window.Styles>
 
-    <StackPanel>
-        <TextBlock Name='target1'/>
-        <TextBlock Name='target2'/>
-    </StackPanel>
-</Window>";
+//     <StackPanel>
+//         <TextBlock Name='target1'/>
+//         <TextBlock Name='target2'/>
+//     </StackPanel>
+// </Window>";
 
-                var window = (Window)AvaloniaRuntimeXamlLoader.Load(xaml);
-                var target1 = window.Find<TextBlock>("target1");
-                var target2 = window.Find<TextBlock>("target2");
-                var mouse = new MouseTestHelper();
+//                 var window = (Window)AvaloniaRuntimeXamlLoader.Load(xaml);
+//                 var target1 = window.Find<TextBlock>("target1");
+//                 var target2 = window.Find<TextBlock>("target2");
+//                 var mouse = new MouseTestHelper();
 
-                Assert.NotNull(target1.ContextMenu);
-                Assert.NotNull(target2.ContextMenu);
-                Assert.Same(target1.ContextMenu, target2.ContextMenu);
+//                 Assert.NotNull(target1.ContextMenu);
+//                 Assert.NotNull(target2.ContextMenu);
+//                 Assert.Same(target1.ContextMenu, target2.ContextMenu);
 
-                window.Show();
+//                 window.Show();
 
-                var menu = target1.ContextMenu;
-                mouse.Click(target1, MouseButton.Right);
-                Assert.True(menu.IsOpen);
-                mouse.Click(target2, MouseButton.Right);
-                Assert.True(menu.IsOpen);
-            }
-        }
+//                 var menu = target1.ContextMenu;
+//                 mouse.Click(target1, MouseButton.Right);
+//                 Assert.True(menu.IsOpen);
+//                 mouse.Click(target2, MouseButton.Right);
+//                 Assert.True(menu.IsOpen);
+//             }
+//         }
 
         [Fact(Skip = "The only reason this test was 'passing' before was that the author forgot to call Window.ApplyTemplate()")]
         public void Cancelling_Closing_Leaves_ContextMenuOpen()

@@ -18,63 +18,63 @@ namespace Avalonia.Controls
         /// Defines the <see cref="Date"/> Property
         /// </summary>
         public static readonly DirectProperty<DatePickerPresenter, DateTimeOffset> DateProperty =
-            AvaloniaProperty.RegisterDirect<DatePickerPresenter, DateTimeOffset>(nameof(Date), 
+            AvaloniaProperty.RegisterDirect<DatePickerPresenter, DateTimeOffset>(nameof(Date),
                 x => x.Date, (x, v) => x.Date = v);
 
         /// <summary>
         /// Defines the <see cref="DayFormat"/> Property
         /// </summary>
         public static readonly DirectProperty<DatePickerPresenter, string> DayFormatProperty =
-            DatePicker.DayFormatProperty.AddOwner<DatePickerPresenter>(x => 
+            DatePicker.DayFormatProperty.AddOwner<DatePickerPresenter>(x =>
             x.DayFormat, (x, v) => x.DayFormat = v);
 
         /// <summary>
         /// Defines the <see cref="DayVisible"/> Property
         /// </summary>
         public static readonly DirectProperty<DatePickerPresenter, bool> DayVisibleProperty =
-            DatePicker.DayVisibleProperty.AddOwner<DatePickerPresenter>(x => 
+            DatePicker.DayVisibleProperty.AddOwner<DatePickerPresenter>(x =>
             x.DayVisible, (x, v) => x.DayVisible = v);
 
         /// <summary>
         /// Defines the <see cref="MaxYear"/> Property
         /// </summary>
         public static readonly DirectProperty<DatePickerPresenter, DateTimeOffset> MaxYearProperty =
-            DatePicker.MaxYearProperty.AddOwner<DatePickerPresenter>(x => 
+            DatePicker.MaxYearProperty.AddOwner<DatePickerPresenter>(x =>
             x.MaxYear, (x, v) => x.MaxYear = v);
 
         /// <summary>
         /// Defines the <see cref="MinYear"/> Property
         /// </summary>
         public static readonly DirectProperty<DatePickerPresenter, DateTimeOffset> MinYearProperty =
-            DatePicker.MinYearProperty.AddOwner<DatePickerPresenter>(x => 
+            DatePicker.MinYearProperty.AddOwner<DatePickerPresenter>(x =>
             x.MinYear, (x, v) => x.MinYear = v);
 
         /// <summary>
         /// Defines the <see cref="MonthFormat"/> Property
         /// </summary>
         public static readonly DirectProperty<DatePickerPresenter, string> MonthFormatProperty =
-            DatePicker.MonthFormatProperty.AddOwner<DatePickerPresenter>(x => 
+            DatePicker.MonthFormatProperty.AddOwner<DatePickerPresenter>(x =>
             x.MonthFormat, (x, v) => x.MonthFormat = v);
 
         /// <summary>
         /// Defines the <see cref="MonthVisible"/> Property
         /// </summary>
         public static readonly DirectProperty<DatePickerPresenter, bool> MonthVisibleProperty =
-            DatePicker.MonthVisibleProperty.AddOwner<DatePickerPresenter>(x => 
+            DatePicker.MonthVisibleProperty.AddOwner<DatePickerPresenter>(x =>
             x.MonthVisible, (x, v) => x.MonthVisible = v);
 
         /// <summary>
         /// Defines the <see cref="YearFormat"/> Property
         /// </summary>
         public static readonly DirectProperty<DatePickerPresenter, string> YearFormatProperty =
-            DatePicker.YearFormatProperty.AddOwner<DatePickerPresenter>(x => 
+            DatePicker.YearFormatProperty.AddOwner<DatePickerPresenter>(x =>
             x.YearFormat, (x, v) => x.YearFormat = v);
 
         /// <summary>
         /// Defines the <see cref="YearVisible"/> Property
         /// </summary>
         public static readonly DirectProperty<DatePickerPresenter, bool> YearVisibleProperty =
-            DatePicker.YearVisibleProperty.AddOwner<DatePickerPresenter>(x => 
+            DatePicker.YearVisibleProperty.AddOwner<DatePickerPresenter>(x =>
             x.YearVisible, (x, v) => x.YearVisible = v);
 
         // Template Items
@@ -360,13 +360,13 @@ namespace Avalonia.Controls
                 _monthSelector.SelectedValue = dt.Month;
                 _monthSelector.FormatDate = dt.Date;
             }
-               
+
             if (YearVisible)
             {
                 _yearSelector.SelectedValue = dt.Year;
                 _yearSelector.FormatDate = dt.Date;
             }
-                
+
             _suppressUpdateSelection = false;
 
             SetInitialFocus();
@@ -383,7 +383,11 @@ namespace Avalonia.Controls
             };
 
             columns.Sort((x, y) => x.Item2 - y.Item2);
-            _pickerContainer.ColumnDefinitions.Clear();
+            
+            if (_pickerContainer.ColumnDefinitions is null)
+                _pickerContainer.ColumnDefinitions = new ColumnDefinitions();
+            else
+                _pickerContainer.ColumnDefinitions.Clear();
 
             var columnIndex = 0;
 

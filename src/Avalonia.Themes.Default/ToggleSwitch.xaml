@@ -95,15 +95,19 @@
             VerticalAlignment="Top">
 
             <Grid.RowDefinitions>
-              <RowDefinition Height="{DynamicResource ToggleSwitchPreContentMargin}" />
-              <RowDefinition Height="Auto" />
-              <RowDefinition Height="{DynamicResource ToggleSwitchPostContentMargin}" />
+              <RowDefinitions>
+                <RowDefinition Height="{DynamicResource ToggleSwitchPreContentMargin}" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="{DynamicResource ToggleSwitchPostContentMargin}" />
+              </RowDefinitions>
             </Grid.RowDefinitions>
 
             <Grid.ColumnDefinitions>
-              <ColumnDefinition Width="Auto" />
-              <ColumnDefinition Width="12" MaxWidth="12" />
-              <ColumnDefinition Width="Auto" />
+              <ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="12" MaxWidth="12" />
+                <ColumnDefinition Width="Auto" />
+              </ColumnDefinitions>
             </Grid.ColumnDefinitions>
 
             <Grid x:Name="SwitchAreaGrid"

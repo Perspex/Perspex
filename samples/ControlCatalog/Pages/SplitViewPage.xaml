@@ -56,13 +56,7 @@
                       CompactPaneLength="{Binding Value, ElementName=CompactPaneLengthSlider}"
                       DisplayMode="{Binding CurrentDisplayMode}">
           <SplitView.Pane>
-            <Grid>
-              <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="*" />
-                <RowDefinition Height="Auto" />
-              </Grid.RowDefinitions>
+            <Grid RowDefinitions="Auto,Auto,*,Auto">
               <TextBlock Text="PANE CONTENT" FontWeight="Bold" Name="PaneHeader" Margin="5,12,0,0" />
               <ComboBox Width="150" Grid.Row="1">
                 <ComboBoxItem Content="Item1"/>

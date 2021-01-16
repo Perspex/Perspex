@@ -230,6 +230,7 @@ namespace Avalonia.Controls.Remote.Server
                             InputRoot,
                             key.IsDown ? RawKeyEventType.KeyDown : RawKeyEventType.KeyUp,
                             (Key)key.Key,
+                            key.MappedKey,
                             GetAvaloniaRawInputModifiers(key.Modifiers)));
                     }, DispatcherPriority.Input);
                 }

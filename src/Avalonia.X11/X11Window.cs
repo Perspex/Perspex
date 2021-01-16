@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using System.Linq;
@@ -520,25 +521,27 @@ namespace Avalonia.X11
                     && key > X11Key.Num_Lock && key <= X11Key.KP_9)
                     key = (X11Key)XKeycodeToKeysym(_x11.Display, ev.KeyEvent.keycode, index ? 0 : 1).ToInt32();
                 
-                
+                var len = Xutf8LookupString(_xic, ref ev, buffer, 40, out _, out _);
+                string mappedKey = null;
+                if (len != 0)
+                {
+                    mappedKey = Encoding.UTF8.GetString(buffer, len);
+                    if (mappedKey.Length == 1)
+                    {
+                        if (mappedKey[0] < ' ' || mappedKey[0] == 0x7f) //Control codes or DEL
+                            mappedKey = null;
+                    }
+                }
+
                 ScheduleInput(new RawKeyEventArgs(_keyboard, (ulong)ev.KeyEvent.time.ToInt64(), _inputRoot,
                     ev.type == XEventName.KeyPress ? RawKeyEventType.KeyDown : RawKeyEventType.KeyUp,
-                    X11KeyTransform.ConvertKey(key), TranslateModifiers(ev.KeyEvent.state)), ref ev);
+                    X11KeyTransform.ConvertKey(key), mappedKey,
+                    TranslateModifiers(ev.KeyEvent.state)), ref ev);
 
-                if (ev.type == XEventName.KeyPress)
+                if (ev.type == XEventName.KeyPress && mappedKey != null)
                 {
-                    var len = Xutf8LookupString(_xic, ref ev, buffer, 40, out _, out _);
-                    if (len != 0)
-                    {
-                        var text = Encoding.UTF8.GetString(buffer, len);
-                        if (text.Length == 1)
-                        {
-                            if (text[0] < ' ' || text[0] == 0x7f) //Control codes or DEL
-                                return;
-                        }
-                        ScheduleInput(new RawTextInputEventArgs(_keyboard, (ulong)ev.KeyEvent.time.ToInt64(), _inputRoot, text),
-                            ref ev);
-                    }
+                    ScheduleInput(new RawTextInputEventArgs(_keyboard, (ulong)ev.KeyEvent.time.ToInt64(), _inputRoot, mappedKey),
+                        ref ev);
                 }
             }
         }

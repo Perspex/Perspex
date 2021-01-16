@@ -19,7 +19,7 @@ namespace Avalonia.Input.UnitTests
                     0,
                     root.Object,
                     RawKeyEventType.KeyDown,
-                    Key.A,
+                    Key.A, "a",
                     RawInputModifiers.None));
 
             root.Verify(x => x.RaiseEvent(It.IsAny<KeyEventArgs>()));
@@ -43,7 +43,7 @@ namespace Avalonia.Input.UnitTests
                     0,
                     root,
                     RawKeyEventType.KeyDown,
-                    Key.A,
+                    Key.A, "a",
                     RawInputModifiers.None));
 
             focused.Verify(x => x.RaiseEvent(It.IsAny<KeyEventArgs>()));

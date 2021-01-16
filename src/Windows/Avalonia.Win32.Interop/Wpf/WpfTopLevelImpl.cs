@@ -214,12 +214,12 @@ namespace Avalonia.Win32.Interop.Wpf
 
         protected override void OnKeyDown(KeyEventArgs e)
             => _ttl.Input?.Invoke(new RawKeyEventArgs(_keyboard, (uint) e.Timestamp, _inputRoot, RawKeyEventType.KeyDown,
-                (Key) e.Key,
+                (Key) e.Key, null, // TODO mapped key, should be WindowsKeyboardDevice.Instance.StringFromVirtualKey(vk)
                 GetModifiers(null)));
 
         protected override void OnKeyUp(KeyEventArgs e)
             => _ttl.Input?.Invoke(new RawKeyEventArgs(_keyboard, (uint)e.Timestamp, _inputRoot, RawKeyEventType.KeyUp,
-                (Key)e.Key,
+                (Key) e.Key, null, // TODO mapped key
                 GetModifiers(null)));
 
         protected override void OnTextInput(TextCompositionEventArgs e) 

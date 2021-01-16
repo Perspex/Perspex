@@ -248,14 +248,14 @@ namespace Avalonia.Headless
 
         public AcrylicPlatformCompensationLevels AcrylicCompensationLevels => new AcrylicPlatformCompensationLevels(1, 1, 1);
 
-        void IHeadlessWindow.KeyPress(Key key, RawInputModifiers modifiers)
+        void IHeadlessWindow.KeyPress(Key key, string mappedKey, RawInputModifiers modifiers)
         {
-            Input?.Invoke(new RawKeyEventArgs(_keyboard, Timestamp, InputRoot, RawKeyEventType.KeyDown, key, modifiers));
+            Input?.Invoke(new RawKeyEventArgs(_keyboard, Timestamp, InputRoot, RawKeyEventType.KeyDown, key, mappedKey, modifiers));
         }
 
-        void IHeadlessWindow.KeyRelease(Key key, RawInputModifiers modifiers)
+        void IHeadlessWindow.KeyRelease(Key key, string mappedKey, RawInputModifiers modifiers)
         {
-            Input?.Invoke(new RawKeyEventArgs(_keyboard, Timestamp, InputRoot, RawKeyEventType.KeyUp, key, modifiers));
+            Input?.Invoke(new RawKeyEventArgs(_keyboard, Timestamp, InputRoot, RawKeyEventType.KeyUp, key, mappedKey, modifiers));
         }
 
         void IHeadlessWindow.MouseDown(Point point, int button, RawInputModifiers modifiers)

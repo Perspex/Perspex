@@ -436,5 +436,6 @@ namespace Avalonia.Win32.Input
 
             return result;
         }
+
     }
 }

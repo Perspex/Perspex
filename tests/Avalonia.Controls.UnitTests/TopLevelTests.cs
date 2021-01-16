@@ -207,7 +207,8 @@ namespace Avalonia.Controls.UnitTests
                     0,
                     target,
                     RawKeyEventType.KeyDown,
-                    Key.A, RawInputModifiers.None);
+                    Key.A, "a",
+                    RawInputModifiers.None);
                 impl.Object.Input(input);
 
                 inputManagerMock.Verify(x => x.ProcessInput(input));

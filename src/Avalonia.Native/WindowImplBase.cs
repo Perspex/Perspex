@@ -270,7 +270,9 @@ namespace Avalonia.Native
             
             Dispatcher.UIThread.RunJobs(DispatcherPriority.Input + 1);
 
-            var args = new RawKeyEventArgs(_keyboard, timeStamp, _inputRoot, (RawKeyEventType)type, (Key)key, (RawInputModifiers)modifiers);
+            var args = new RawKeyEventArgs(_keyboard, timeStamp, _inputRoot, (RawKeyEventType)type, 
+                (Key)key, null, // TODO mapped key
+                (RawInputModifiers)modifiers);
 
             Input?.Invoke(args);
 

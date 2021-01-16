@@ -108,13 +108,14 @@ namespace Avalonia.Win32
                 case WindowsMessage.WM_KEYDOWN:
                 case WindowsMessage.WM_SYSKEYDOWN:
                     {
-                        e = new RawKeyEventArgs(
-                            WindowsKeyboardDevice.Instance,
-                            timestamp,
-                            _owner,
-                            RawKeyEventType.KeyDown,
-                            KeyInterop.KeyFromVirtualKey(ToInt32(wParam), ToInt32(lParam)),
-                            WindowsKeyboardDevice.Instance.Modifiers);
+                    e = new RawKeyEventArgs(
+                        WindowsKeyboardDevice.Instance,
+                        timestamp,
+                        _owner,
+                        RawKeyEventType.KeyDown,
+                        KeyInterop.KeyFromVirtualKey(ToInt32(wParam), ToInt32(lParam)),
+                        WindowsKeyboardDevice.Instance.StringFromVirtualKey((uint)ToInt32(wParam)),
+                        WindowsKeyboardDevice.Instance.Modifiers); 
                         break;
                     }
 
@@ -133,6 +134,7 @@ namespace Avalonia.Win32
                             _owner,
                             RawKeyEventType.KeyUp,
                             KeyInterop.KeyFromVirtualKey(ToInt32(wParam), ToInt32(lParam)),
+                            WindowsKeyboardDevice.Instance.StringFromVirtualKey((uint)ToInt32(wParam)),
                             WindowsKeyboardDevice.Instance.Modifiers);
                         break;
                     }

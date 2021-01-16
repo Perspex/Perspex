@@ -73,6 +73,7 @@ namespace Avalonia.Remote.Protocol.Input
     {
         public bool IsDown { get; set; }
         public Key Key { get; set; }
+        public string MappedKey { get; set; }
     }
 
     [AvaloniaRemoteMessageGuid("C174102E-7405-4594-916F-B10B8248A17D")]

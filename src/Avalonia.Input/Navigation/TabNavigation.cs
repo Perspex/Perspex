@@ -112,7 +112,10 @@ namespace Avalonia.Input.Navigation
 
                 if (customNext.handled)
                 {
-                    yield return customNext.next!;
+                    if (customNext.next is object)
+                    {
+                        yield return customNext.next!;
+                    }
                 }
                 else
                 {

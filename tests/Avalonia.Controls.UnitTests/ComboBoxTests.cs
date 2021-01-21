@@ -99,7 +99,7 @@ namespace Avalonia.Controls.UnitTests
                             Child = new ItemsPresenter
                             {
                                 Name = "PART_ItemsPresenter",
-                                [!ItemsPresenter.ItemsProperty] = parent[!ComboBox.ItemsProperty],
+                                [!ItemsPresenter.ItemsViewProperty] = parent[!ComboBox.ItemsViewProperty],
                             }.RegisterInNameScope(scope)
                         }.RegisterInNameScope(scope)
                     }

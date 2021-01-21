@@ -296,7 +296,7 @@ namespace Avalonia.LeakTests
 
                     // Do a layout and make sure that TreeViewItems get realized.
                     window.LayoutManager.ExecuteInitialLayoutPass();
-                    Assert.Single(target.ItemContainerGenerator.Containers);
+                    Assert.Single(target.Presenter.RealizedElements);
 
                     // Clear the content and ensure the TreeView is removed.
                     window.Content = null;

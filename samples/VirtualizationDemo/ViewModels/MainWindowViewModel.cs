@@ -21,7 +21,6 @@ namespace VirtualizationDemo.ViewModels
         private ScrollBarVisibility _horizontalScrollBarVisibility = ScrollBarVisibility.Auto;
         private ScrollBarVisibility _verticalScrollBarVisibility = ScrollBarVisibility.Auto;
         private Orientation _orientation = Orientation.Vertical;
-        private ItemVirtualizationMode _virtualizationMode = ItemVirtualizationMode.Simple;
 
         public MainWindowViewModel()
         {
@@ -80,15 +79,6 @@ namespace VirtualizationDemo.ViewModels
 
         public IEnumerable<ScrollBarVisibility> ScrollBarVisibilities =>
             Enum.GetValues(typeof(ScrollBarVisibility)).Cast<ScrollBarVisibility>();
-
-        public ItemVirtualizationMode VirtualizationMode
-        {
-            get { return _virtualizationMode; }
-            set { this.RaiseAndSetIfChanged(ref _virtualizationMode, value); }
-        }
-
-        public IEnumerable<ItemVirtualizationMode> VirtualizationModes => 
-            Enum.GetValues(typeof(ItemVirtualizationMode)).Cast<ItemVirtualizationMode>();
 
         public MiniCommand AddItemCommand { get; private set; }
         public MiniCommand RecreateCommand { get; private set; }

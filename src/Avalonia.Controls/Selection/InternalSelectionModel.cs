@@ -48,7 +48,7 @@ namespace Avalonia.Controls.Selection
                 {
                     UnsubscribeFromSelectedItems();
                     _writableSelectedItems = value;
-                    SyncFromSelectedItems();
+                    SyncFromSelectedItems(_writableSelectedItems);
                     SubscribeToSelectedItems();
                     
                     if (ItemsView is null)
@@ -92,11 +92,7 @@ namespace Avalonia.Controls.Selection
             }
             else
             {
-                foreach (var i in oldSelection)
-                {
-                    var index = ItemsView!.IndexOf(i);
-                    Select(index);
-                }
+                SyncFromSelectedItems(oldSelection);
             }
         }
 
@@ -121,9 +117,9 @@ namespace Avalonia.Controls.Selection
             }
         }
 
-        private void SyncFromSelectedItems()
+        private void SyncFromSelectedItems(IList? selectedItems)
         {
-            if (Source is null || _writableSelectedItems is null)
+            if (Source is null || selectedItems is null)
             {
                 return;
             }
@@ -135,7 +131,7 @@ namespace Avalonia.Controls.Selection
                 using (BatchUpdate())
                 {
                     Clear();
-                    Add(_writableSelectedItems);
+                    Add(selectedItems);
                 }
             }
             finally
@@ -191,7 +187,7 @@ namespace Avalonia.Controls.Selection
             }
         }
 
-        private void OnSourceReset(object sender, EventArgs e) => SyncFromSelectedItems();
+        private void OnSourceReset(object sender, EventArgs e) => SyncFromSelectedItems(_writableSelectedItems);
 
         private void OnSelectedItemsCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {

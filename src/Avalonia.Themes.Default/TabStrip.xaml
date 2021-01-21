@@ -3,15 +3,9 @@
     <Setter Property="Template">
       <ControlTemplate>
         <ItemsPresenter Name="PART_ItemsPresenter"
-                        Items="{TemplateBinding Items}"
-                        ItemsPanel="{TemplateBinding ItemsPanel}"
-                        ItemTemplate="{TemplateBinding ItemTemplate}"/>
+                        ItemsView="{TemplateBinding ItemsView}"
+                        Layout="{TemplateBinding Layout}"/>
       </ControlTemplate>
-    </Setter>
-    <Setter Property="ItemsPanel">
-      <ItemsPanelTemplate>
-        <WrapPanel />
-      </ItemsPanelTemplate>
     </Setter>
   </Style>
   <Style Selector="TabStrip > TabStripItem">

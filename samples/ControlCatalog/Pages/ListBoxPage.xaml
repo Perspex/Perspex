@@ -1,6 +1,8 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             x:Class="ControlCatalog.Pages.ListBoxPage">
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             x:Class="ControlCatalog.Pages.ListBoxPage"
+             d:DesignWidth="800" d:DesignHeight="600">
   <DockPanel>
     <StackPanel DockPanel.Dock="Top" Margin="4">
       <TextBlock Classes="h1">ListBox</TextBlock>
@@ -12,12 +14,20 @@
       <CheckBox IsChecked="{Binding AlwaysSelected}">AlwaysSelected</CheckBox>
       <CheckBox IsChecked="{Binding AutoScrollToSelectedItem}">AutoScrollToSelectedItem</CheckBox>
     </StackPanel>
-    <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" Margin="4">
+    <StackPanel DockPanel.Dock="Bottom">
+      <TextBlock x:Name="realizedCount">Initializing...</TextBlock>
+    </StackPanel>  
+    <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" Margin="4" Spacing="4">
       <Button Command="{Binding AddItemCommand}">Add</Button>
       <Button Command="{Binding RemoveItemCommand}">Remove</Button>
       <Button Command="{Binding SelectRandomItemCommand}">Select Random Item</Button>
+      <ComboBox SelectedIndex="{Binding ItemType}">
+        <ComboBoxItem>From DataTemplate</ComboBoxItem>
+        <ComboBoxItem>Inline ListBoxItems</ComboBoxItem>
+      </ComboBox>
     </StackPanel>
-    <ListBox Items="{Binding Items}"
+    <ListBox x:Name="listBox"
+             Items="{Binding Items}"
              Selection="{Binding Selection}"
              AutoScrollToSelectedItem="{Binding AutoScrollToSelectedItem}"
              SelectionMode="{Binding SelectionMode^}"/>

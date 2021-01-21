@@ -236,6 +236,15 @@ namespace Avalonia.Layout
             // for the last condition it is zeros so adding it will make no difference
             // this way is faster than an if condition in every loop for checking the last item
             totalMeasure.U = parentMeasure.U;
+
+            // Propagating an infinite size causes a crash. This can happen if the parent is scrollable and infinite in the opposite
+            // axis to the panel. Clearing to zero prevents the crash.
+            // This is likely an incorrect use of the control by the developer, however we need stability here so setting a default that wont crash.
+            if (double.IsInfinity(totalMeasure.U))
+            {
+                totalMeasure.U = 0.0;
+            }
+
             totalMeasure.V = state.GetHeight();
 
             totalMeasure.U = Math.Ceiling(totalMeasure.U);

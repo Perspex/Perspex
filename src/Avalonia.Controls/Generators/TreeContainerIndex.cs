@@ -69,25 +69,6 @@ namespace Avalonia.Controls.Generators
         }
 
         /// <summary>
-        /// Removes a set of containers from the index.
-        /// </summary>
-        /// <param name="startingIndex">The index of the first item.</param>
-        /// <param name="containers">The item containers.</param>
-        public void Remove(int startingIndex, IEnumerable<ItemContainerInfo> containers)
-        {
-            foreach (var container in containers)
-            {
-                var item = _containerToItem[container.ContainerControl];
-                _containerToItem.Remove(container.ContainerControl);
-                _itemToContainer.Remove(item);
-            }
-
-            Dematerialized?.Invoke(
-                this,
-                new ItemContainerEventArgs(startingIndex, containers.ToList()));
-        }
-
-        /// <summary>
         /// Gets the container for an item.
         /// </summary>
         /// <param name="item">The item.</param>

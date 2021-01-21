@@ -106,7 +106,7 @@ namespace Avalonia.Controls.UnitTests.Primitives
             return new ItemsPresenter
             {
                 Name = "itemsPresenter",
-                [!ItemsPresenter.ItemsProperty] = parent[!ItemsControl.ItemsProperty],
+                [!ItemsPresenter.ItemsViewProperty] = parent[!ItemsControl.ItemsViewProperty],
             }.RegisterInNameScope(scope);
         }
     }

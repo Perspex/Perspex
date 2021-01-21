@@ -146,7 +146,7 @@ namespace Avalonia.Controls
         {
             var visibleWindow = _visibleWindow;
 
-            if (_makeAnchorElement != null)
+            if (_makeAnchorElement != null && _isAnchorOutsideRealizedRange)
             {
                 // The anchor is not necessarily laid out yet. Its position should default
                 // to zero and the layout origin is expected to change once layout is done.

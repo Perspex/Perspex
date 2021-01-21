@@ -1,4 +1,7 @@
+using Avalonia.LogicalTree;
 using Avalonia.Styling;
+
+#nullable enable
 
 namespace Avalonia.Controls.Presenters
 {
@@ -13,8 +16,13 @@ namespace Avalonia.Controls.Presenters
     /// parent control's template is instantiated so they register themselves using this 
     /// interface.
     /// </remarks>
-    public interface IItemsPresenterHost : ITemplatedControl
+    public interface IItemsPresenterHost : ITemplatedControl, ILogical
     {
+        /// <summary>
+        /// Gets the element factory for the items presenter.
+        /// </summary>
+        IElementFactory ElementFactory { get; }
+
         /// <summary>
         /// Registers an <see cref="IItemsPresenter"/> with a host control.
         /// </summary>

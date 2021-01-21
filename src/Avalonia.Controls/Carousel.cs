@@ -1,8 +1,6 @@
 using Avalonia.Animation;
 using Avalonia.Controls.Primitives;
-using Avalonia.Controls.Templates;
 using Avalonia.Controls.Utils;
-using Avalonia.Input;
 
 namespace Avalonia.Controls
 {
@@ -24,19 +22,11 @@ namespace Avalonia.Controls
             AvaloniaProperty.Register<Carousel, IPageTransition>(nameof(PageTransition));
 
         /// <summary>
-        /// The default value of <see cref="ItemsControl.ItemsPanelProperty"/> for 
-        /// <see cref="Carousel"/>.
-        /// </summary>
-        private static readonly ITemplate<IPanel> PanelTemplate =
-            new FuncTemplate<IPanel>(() => new Panel());
-
-        /// <summary>
         /// Initializes static members of the <see cref="Carousel"/> class.
         /// </summary>
         static Carousel()
         {
             SelectionModeProperty.OverrideDefaultValue<Carousel>(SelectionMode.AlwaysSelected);
-            ItemsPanelProperty.OverrideDefaultValue<Carousel>(PanelTemplate);
         }
         
         /// <summary>

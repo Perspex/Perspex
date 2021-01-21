@@ -1,5 +1,7 @@
 using System.Collections.Generic;
+using System.Reflection;
 using Avalonia.Controls.Shapes;
+using Avalonia.Data;
 using Avalonia.Markup.Xaml.Converters;
 using Xunit;
 
@@ -7,6 +9,12 @@ namespace Avalonia.Markup.Xaml.UnitTests.Converters
 {
     public class PointsListTypeConverterTests
     {
+        public PointsListTypeConverterTests()
+        {
+            // Ensure needed assemblies are loaded.
+            Assembly.Load(typeof(RelativeSource).Assembly.GetName());
+        }
+
         [Theory]
         [InlineData("1,2 3,4")]
         [InlineData("1 2 3 4")]

@@ -58,7 +58,6 @@
               <ListBox Name="PART_SelectingItemsControl"
                        BorderThickness="0"
                        Background="Transparent"
-                       ItemTemplate="{TemplateBinding ItemTemplate}"
                        Margin="{DynamicResource AutoCompleteListPadding}" />
             </Border>
           </Popup>

@@ -26,7 +26,6 @@
                        BorderThickness="0"
                        Background="{TemplateBinding Background}"
                        Foreground="{TemplateBinding Foreground}"
-                       ItemTemplate="{TemplateBinding ItemTemplate}"
                        ScrollViewer.HorizontalScrollBarVisibility="Auto"
                        ScrollViewer.VerticalScrollBarVisibility="Auto" />
             </Border>

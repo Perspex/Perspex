@@ -1,11 +1,18 @@
+using System;
+using System.Collections;
+using System.Collections.ObjectModel;
 using System.Linq;
-using Moq;
-using Avalonia.Controls.Generators;
+using System.Runtime.CompilerServices;
+using System.Threading;
+using System.Threading.Tasks;
+using Avalonia.Animation;
 using Avalonia.Controls.Presenters;
 using Avalonia.Controls.Templates;
+using Avalonia.UnitTests;
+using Moq;
 using Xunit;
-using System.Collections.ObjectModel;
-using System.Collections;
+
+#nullable enable
 
 namespace Avalonia.Controls.UnitTests.Presenters
 {
@@ -23,708 +30,482 @@ namespace Avalonia.Controls.UnitTests.Presenters
         }
 
         [Fact]
-        public void ApplyTemplate_Should_Create_Panel()
+        public void ItemTemplate_Should_Be_Picked_Up_From_TemplatedControl()
         {
-            var target = new CarouselPresenter
-            {
-                ItemsPanel = new FuncTemplate<IPanel>(() => new Panel()),
-            };
-
-            target.ApplyTemplate();
-
-            Assert.IsType<Panel>(target.Panel);
-        }
-
-        [Fact]
-        public void ItemContainerGenerator_Should_Be_Picked_Up_From_TemplatedControl()
-        {
-            var parent = new TestItemsControl();
+            var parent = new Carousel();
             var target = new CarouselPresenter
             {
                 [StyledElement.TemplatedParentProperty] = parent,
             };
 
-            Assert.IsType<ItemContainerGenerator<TestItem>>(target.ItemContainerGenerator);
+            Assert.NotNull(parent.ItemContainerGenerator);
+            Assert.Same(parent.ItemContainerGenerator, target.ElementFactory);
         }
 
-        public class Virtualized
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public void Should_Initially_Materialize_Selected_Container(bool isVirtualized)
         {
-            [Fact]
-            public void Should_Initially_Materialize_Selected_Container()
+            using var app = Start();
+
+            var (target, _) = CreateTarget(isVirtualized);
+
+            AssertState(target);
+        }
+
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public void Changing_SelectedIndex_Should_Show_Page(bool isVirtualized)
+        {
+            using var app = Start();
+
+            var (target, root) = CreateTarget(isVirtualized);
+
+            AssertState(target);
+
+            target.SelectedIndex = 1;
+
+            Assert.False(target.IsMeasureValid);
+            root.LayoutManager.ExecuteLayoutPass();
+
+            AssertState(target);
+        }
+
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public void Should_Handle_Inserting_Item_At_SelectedIndex(bool isVirtualized)
+        {
+            using var app = Start();
+
+            var items = new ObservableCollection<string> { "foo", "bar" };
+            var (target, root) = CreateTarget(isVirtualized, items: items, selectedIndex: 1);
+
+            items.Insert(1, "baz");
+
+            Assert.Equal(2, target.SelectedIndex);
+            Assert.Equal(isVirtualized, target.IsMeasureValid);
+            root.LayoutManager.ExecuteLayoutPass();
+
+            AssertState(target);
+        }
+
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public void Should_Handle_Inserting_Item_Before_SelectedIndex(bool isVirtualized)
+        {
+            using var app = Start();
+
+            var items = new ObservableCollection<string> { "foo", "bar" };
+            var (target, root) = CreateTarget(isVirtualized, items: items, selectedIndex: 1);
+
+            items.Insert(0, "baz");
+
+            Assert.Equal(2, target.SelectedIndex);
+            Assert.Equal(isVirtualized, target.IsMeasureValid);
+            root.LayoutManager.ExecuteLayoutPass();
+
+            AssertState(target);
+        }
+
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public void Should_Handle_Inserting_Item_After_SelectedIndex(bool isVirtualized)
+        {
+            using var app = Start();
+
+            var items = new ObservableCollection<string> { "foo", "bar" };
+            var (target, root) = CreateTarget(isVirtualized, items: items);
+
+            items.Insert(1, "baz");
+
+            Assert.Equal(0, target.SelectedIndex);
+            Assert.Equal(isVirtualized, target.IsMeasureValid);
+            root.LayoutManager.ExecuteLayoutPass();
+
+            AssertState(target);
+        }
+
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public void Should_Handle_Removing_Selected_Item(bool isVirtualized)
+        {
+            using var app = Start();
+
+            var items = new ObservableCollection<string> { "foo", "bar" };
+            var (target, root) = CreateTarget(isVirtualized, items: items, selectedIndex: 0);
+
+            items.RemoveAt(0);
+
+            Assert.False(target.IsMeasureValid);
+            root.LayoutManager.ExecuteLayoutPass();
+
+            Assert.Equal(0, target.SelectedIndex);
+            AssertState(target);
+        }
+
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public void Should_Handle_Removing_Selected_Item_At_End(bool isVirtualized)
+        {
+            using var app = Start();
+
+            var items = new ObservableCollection<string> { "foo", "bar" };
+            var (target, root) = CreateTarget(isVirtualized, items: items, selectedIndex: 1);
+
+            items.RemoveAt(1);
+
+            Assert.False(target.IsMeasureValid);
+            root.LayoutManager.ExecuteLayoutPass();
+
+            Assert.Equal(0, target.SelectedIndex);
+            AssertState(target);
+        }
+
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public void Should_Handle_Removing_Item_After_SelectedIndex(bool isVirtualized)
+        {
+            using var app = Start();
+
+            var items = new ObservableCollection<string> { "foo", "bar" };
+            var (target, root) = CreateTarget(isVirtualized, items: items, selectedIndex: 0);
+
+            items.RemoveAt(1);
+
+            root.LayoutManager.ExecuteLayoutPass();
+
+            AssertState(target);
+        }
+
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public void Should_Handle_Replacing_Selected_Item(bool isVirtualized)
+        {
+            using var app = Start();
+
+            var items = new ObservableCollection<string> { "foo", "bar" };
+            var (target, root) = CreateTarget(isVirtualized, items: items, selectedIndex: 1);
+
+            items[1] = "baz";
+
+            Assert.False(target.IsMeasureValid);
+            root.LayoutManager.ExecuteLayoutPass();
+
+            Assert.Equal(0, target.SelectedIndex);
+            AssertState(target);
+        }
+
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public void Should_Handle_Resetting_Items(bool isVirtualized)
+        {
+            using var app = Start();
+
+            var items = new ObservableCollection<string> { "foo", "bar" };
+            var (target, root) = CreateTarget(isVirtualized, items: items);
+
+            items.Clear();
+            Assert.False(target.IsMeasureValid);
+
+            AssertState(target);
+        }
+
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public void Should_Handle_Reassigning_Items(bool isVirtualized)
+        {
+            using var app = Start();
+            var (target, root) = CreateTarget(isVirtualized);
+            var owner = (Carousel)target.TemplatedParent!;
+
+            AssertState(target);
+
+            owner.Items = new[] { "new", "items" };
+            Assert.False(target.IsMeasureValid);
+            root.LayoutManager.ExecuteLayoutPass();
+
+            AssertState(target);
+        }
+
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public void Should_Handle_Replacing_Non_SelectedItem(bool isVirtualized)
+        {
+            using var app = Start();
+
+            var items = new ObservableCollection<string> { "foo", "bar" };
+            var (target, root) = CreateTarget(isVirtualized, items: items, selectedIndex: 1);
+
+            items[0] = "baz";
+
+            Assert.Equal(1, target.SelectedIndex);
+            Assert.Equal(isVirtualized, target.IsMeasureValid);
+            root.LayoutManager.ExecuteLayoutPass();
+
+            AssertState(target);
+        }
+
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public void Should_Handle_Moving_SelectedItem(bool isVirtualized)
+        {
+            using var app = Start();
+
+            var items = new ObservableCollection<string> { "foo", "bar" };
+            var (target, root) = CreateTarget(isVirtualized, items: items, selectedIndex: 1);
+
+            items.Move(1, 0);
+
+            Assert.False(target.IsMeasureValid);
+            root.LayoutManager.ExecuteLayoutPass();
+
+            Assert.Equal(1, target.SelectedIndex);
+            AssertState(target);
+        }
+
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public void Switching_IsVirtualized_Should_Reset_Containers(bool isVirtualized)
+        {
+            using var app = Start();
+            var (target, root) = CreateTarget(isVirtualized);
+
+            target.IsVirtualized = !target.IsVirtualized;
+
+            Assert.False(target.IsMeasureValid);
+            Assert.Empty(target.Children);
+            root.LayoutManager.ExecuteLayoutPass();
+
+            AssertState(target);
+        }
+
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public void Moving_SelectedIndex_Forwards_Initiates_Transition(bool isVirtualized)
+        {
+            using var app = Start();
+            var transition = new Mock<IPageTransition>();
+            var (target, root) = CreateTarget(isVirtualized, transition: transition.Object);
+
+            transition.Verify(x =>
+                x.Start(It.IsAny<Visual>(), It.IsAny<Visual>(), It.IsAny<bool>()),
+                Times.Never);
+
+            target.SelectedIndex = 1;
+            root.LayoutManager.ExecuteLayoutPass();
+
+            transition.Verify(x =>
+                x.Start(
+                    It.Is<Visual>(x => IsContainer(x, "foo")),
+                    It.Is<Visual>(x => IsContainer(x, "bar")), 
+                    true),
+                Times.Once);
+        }
+
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public void Moving_SelectedIndex_Backwards_Initiates_Transition(bool isVirtualized)
+        {
+            using var app = Start();
+            var transition = new Mock<IPageTransition>();
+            var (target, root) = CreateTarget(
+                isVirtualized,
+                selectedIndex: 1,
+                transition: transition.Object);
+
+            transition.Verify(x =>
+                x.Start(It.IsAny<Visual>(), It.IsAny<Visual>(), It.IsAny<bool>()),
+                Times.Never);
+
+            target.SelectedIndex = 0;
+            root.LayoutManager.ExecuteLayoutPass();
+
+            transition.Verify(x =>
+                x.Start(
+                    It.Is<Visual>(x => IsContainer(x, "bar")),
+                     It.Is<Visual>(x => IsContainer(x, "foo")),
+                    false),
+                Times.Once);
+        }
+
+        [Fact]
+        public void Completing_Transition_Removes_Control_When_Virtualized()
+        {
+            using var app = Start();
+            using var sync = UnitTestSynchronizationContext.Begin();
+            var transition = new Mock<IPageTransition>();
+            var (target, root) = CreateTarget(true, transition: transition.Object);
+            var tcs = new TaskCompletionSource<object?>();
+
+            transition.Setup(x => x.Start(It.IsAny<Visual>(), It.IsAny<Visual>(), It.IsAny<bool>()))
+                .Returns(tcs.Task);
+
+            target.SelectedIndex = 1;
+            root.LayoutManager.ExecuteLayoutPass();
+
+            tcs.SetResult(null);
+            sync.ExecutePostedCallbacks();
+
+            AssertState(target);
+        }
+
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public void Changing_SelectedIndex_During_A_Transition_Queues_New_Transition(bool isVirtualized)
+        {
+            using var app = Start();
+            using var sync = UnitTestSynchronizationContext.Begin();
+            var transition = new Mock<IPageTransition>();
+            var items = new[] { "foo", "bar", "baz" };
+            var (target, root) = CreateTarget(isVirtualized, items: items, transition: transition.Object);
+            var tcs = new TaskCompletionSource<object?>();
+
+            transition.Setup(x => x.Start(It.IsAny<Visual>(), It.IsAny<Visual>(), It.IsAny<bool>()))
+                .Returns(tcs.Task);
+
+            target.SelectedIndex = 1;
+            root.LayoutManager.ExecuteLayoutPass();
+
+            target.SelectedIndex = 2;
+            root.LayoutManager.ExecuteLayoutPass();
+
+            transition.Verify(x =>
+                x.Start(
+                    It.Is<Visual>(x => IsContainer(x, "foo")),
+                    It.Is<Visual>(x => IsContainer(x, "bar")),
+                    true),
+                Times.Once);
+
+            tcs.SetResult(null);
+            sync.ExecutePostedCallbacks();
+
+            tcs = new TaskCompletionSource<object?>();
+            transition.Setup(x => x.Start(It.IsAny<Visual>(), It.IsAny<Visual>(), It.IsAny<bool>()))
+                .Returns(tcs.Task);
+
+            root.LayoutManager.ExecuteLayoutPass();
+
+            transition.Verify(x =>
+                x.Start(
+                    It.Is<Visual>(x => IsContainer(x, "bar")),
+                    It.Is<Visual>(x => IsContainer(x, "baz")),
+                    true),
+                Times.Once);
+            tcs.SetResult(null);
+            sync.ExecutePostedCallbacks();
+
+            AssertState(target);
+        }
+
+        private static (CarouselPresenter, TestRoot) CreateTarget(
+            bool isVirtualized,
+            IEnumerable? items = null,
+            int? selectedIndex = null,
+            IPageTransition? transition = null)
+        {
+            RuntimeHelpers.RunClassConstructor(typeof(CarouselPresenter).TypeHandle);
+
+            var carousel = new Carousel
             {
-                var target = new CarouselPresenter
-                {
-                    Items = new[] { "foo", "bar" },
-                    SelectedIndex = 0,
-                    IsVirtualized = true,
-                };
+                Items = items ?? new[] { "foo", "bar" },
+                SelectedIndex = selectedIndex ?? 0,
+                IsVirtualized = isVirtualized,
+                PageTransition = transition,
+                Template = new FuncControlTemplate<Carousel>((c, ns) =>
+                    new CarouselPresenter
+                    {
+                        Name = "PART_ItemsPresenter",
+                        [!ItemsPresenter.ItemsViewProperty] = c[!ItemsControl.ItemsViewProperty],
+                        [!CarouselPresenter.IsVirtualizedProperty] = c[!Carousel.IsVirtualizedProperty],
+                        [!CarouselPresenter.PageTransitionProperty] = c[!Carousel.PageTransitionProperty],
+                        [!CarouselPresenter.SelectedIndexProperty] = c[!Carousel.SelectedIndexProperty],
+                    }),
+            };
 
-                target.ApplyTemplate();
+            var root = new TestRoot(carousel);
+            root.LayoutManager.ExecuteInitialLayoutPass();
 
-                AssertSingle(target);
-            }
+            return ((CarouselPresenter)carousel.Presenter!, root);
+        }
 
-            [Fact]
-            public void Should_Initially_Materialize_Nothing_If_No_Selected_Container()
+        private static void AssertState(CarouselPresenter target)
+        {
+            if (target.IsVirtualized)
+                AssertVirtualizedState(target);
+            else
+                AssertNonVirtualizedState(target);
+        }
+
+        private static void AssertVirtualizedState(CarouselPresenter target)
+        {
+            var items = (ItemsSourceView)target.ItemsView!;
+
+            if (items.Count > 0)
             {
-                var target = new CarouselPresenter
-                {
-                    Items = new[] { "foo", "bar" },
-                    IsVirtualized = true,
-                };
-
-                target.ApplyTemplate();
-
-                Assert.Empty(target.Panel.Children);
-                Assert.Empty(target.ItemContainerGenerator.Containers);
-            }
-
-            [Fact]
-            public void Switching_To_Virtualized_Should_Reset_Containers()
-            {
-                var target = new CarouselPresenter
-                {
-                    Items = new[] { "foo", "bar" },
-                    SelectedIndex = 0,
-                    IsVirtualized = false,
-                };
-
-                target.ApplyTemplate();
-                target.IsVirtualized = true;
-
-                AssertSingle(target);
-            }
-
-            [Fact]
-            public void Changing_SelectedIndex_Should_Show_Page()
-            {
-                var target = new CarouselPresenter
-                {
-                    Items = new[] { "foo", "bar" },
-                    SelectedIndex = 0,
-                    IsVirtualized = true,
-                };
-
-                target.ApplyTemplate();
-                AssertSingle(target);
-
-                target.SelectedIndex = 1;
-                AssertSingle(target);
-            }
-
-            [Fact]
-            public void Should_Remove_NonCurrent_Page()
-            {
-                var target = new CarouselPresenter
-                {
-                    Items = new[] { "foo", "bar" },
-                    IsVirtualized = true,
-                    SelectedIndex = 0,
-                };
-
-                target.ApplyTemplate();
-                AssertSingle(target);
-
-                target.SelectedIndex = 1;
-                AssertSingle(target);
-
-            }
-
-            [Fact]
-            public void Should_Handle_Inserting_Item_At_SelectedItem()
-            {
-                var items = new ObservableCollection<string>
-                {
-                    "item0",
-                    "item1",
-                    "item2",
-                };
-
-                var target = new CarouselPresenter
-                {
-                    Items = items,
-                    SelectedIndex = 1,
-                    IsVirtualized = true,
-                };
-
-                target.ApplyTemplate();
-
-                items.Insert(1, "item1a");
-                AssertSingle(target);
-            }
-
-            [Fact]
-            public void Should_Handle_Inserting_Item_Before_SelectedItem()
-            {
-                var items = new ObservableCollection<string>
-                {
-                    "item0",
-                    "item1",
-                    "item2",
-                };
-
-                var target = new CarouselPresenter
-                {
-                    Items = items,
-                    SelectedIndex = 2,
-                    IsVirtualized = true,
-                };
-
-                target.ApplyTemplate();
-
-                items.Insert(1, "item1a");
-                AssertSingle(target);
-            }
-
-            [Fact]
-            public void Should_Do_Nothing_When_Inserting_Item_After_SelectedItem()
-            {
-                var items = new ObservableCollection<string>
-                {
-                    "item0",
-                    "item1",
-                    "item2",
-                };
-
-                var target = new CarouselPresenter
-                {
-                    Items = items,
-                    SelectedIndex = 1,
-                    IsVirtualized = true,
-                };
-
-                target.ApplyTemplate();
-                var child = AssertSingle(target);
-                items.Insert(2, "after");
-                Assert.Same(child, AssertSingle(target));
-            }
-
-            [Fact]
-            public void Should_Handle_Removing_Item_At_SelectedItem()
-            {
-                var items = new ObservableCollection<string>
-                {
-                    "item0",
-                    "item1",
-                    "item2",
-                };
-
-                var target = new CarouselPresenter
-                {
-                    Items = items,
-                    SelectedIndex = 1,
-                    IsVirtualized = true,
-                };
-
-                target.ApplyTemplate();
-
-                items.RemoveAt(1);
-                AssertSingle(target);
-            }
-
-            [Fact]
-            public void Should_Handle_Removing_Item_Before_SelectedItem()
-            {
-                var items = new ObservableCollection<string>
-                {
-                    "item0",
-                    "item1",
-                    "item2",
-                };
-
-                var target = new CarouselPresenter
-                {
-                    Items = items,
-                    SelectedIndex = 1,
-                    IsVirtualized = true,
-                };
-
-                target.ApplyTemplate();
-
-                items.RemoveAt(0);
-                AssertSingle(target);
-            }
-
-            [Fact]
-            public void Should_Do_Nothing_When_Removing_Item_After_SelectedItem()
-            {
-                var items = new ObservableCollection<string>
-                {
-                    "item0",
-                    "item1",
-                    "item2",
-                };
-
-                var target = new CarouselPresenter
-                {
-                    Items = items,
-                    SelectedIndex = 1,
-                    IsVirtualized = true,
-                };
-
-                target.ApplyTemplate();
-                var child = AssertSingle(target);
-                items.RemoveAt(2);
-                Assert.Same(child, AssertSingle(target));
-            }
-
-            [Fact]
-            public void Should_Handle_Removing_SelectedItem_When_Its_Last()
-            {
-                var items = new ObservableCollection<string>
-                {
-                    "item0",
-                    "item1",
-                    "item2",
-                };
-
-                var target = new CarouselPresenter
-                {
-                    Items = items,
-                    SelectedIndex = 2,
-                    IsVirtualized = true,
-                };
-
-                target.ApplyTemplate();
-
-                items.RemoveAt(2);
-                Assert.Equal(1, target.SelectedIndex);
-                AssertSingle(target);
-            }
-
-            [Fact]
-            public void Should_Handle_Removing_Last_Item()
-            {
-                var items = new ObservableCollection<string>
-                {
-                    "item0",
-                };
-
-                var target = new CarouselPresenter
-                {
-                    Items = items,
-                    SelectedIndex = 0,
-                    IsVirtualized = true,
-                };
-
-                target.ApplyTemplate();
-
-                items.RemoveAt(0);
-                Assert.Empty(target.Panel.Children);
-                Assert.Empty(target.ItemContainerGenerator.Containers);
-            }
-
-            [Fact]
-            public void Should_Handle_Replacing_SelectedItem()
-            {
-                var items = new ObservableCollection<string>
-                {
-                    "item0",
-                    "item1",
-                    "item2",
-                };
-
-                var target = new CarouselPresenter
-                {
-                    Items = items,
-                    SelectedIndex = 1,
-                    IsVirtualized = true,
-                };
-
-                target.ApplyTemplate();
-
-                items[1] = "replaced";
-                AssertSingle(target);
-            }
-
-            [Fact]
-            public void Should_Do_Nothing_When_Replacing_Non_SelectedItem()
-            {
-                var items = new ObservableCollection<string>
-                {
-                    "item0",
-                    "item1",
-                    "item2",
-                };
-
-                var target = new CarouselPresenter
-                {
-                    Items = items,
-                    SelectedIndex = 1,
-                    IsVirtualized = true,
-                };
-
-                target.ApplyTemplate();
-                var child = AssertSingle(target);
-                items[0] = "replaced";
-                Assert.Same(child, AssertSingle(target));
-            }
-
-            [Fact]
-            public void Should_Handle_Moving_SelectedItem()
-            {
-                var items = new ObservableCollection<string>
-                {
-                    "item0",
-                    "item1",
-                    "item2",
-                };
-
-                var target = new CarouselPresenter
-                {
-                    Items = items,
-                    SelectedIndex = 1,
-                    IsVirtualized = true,
-                };
-
-                target.ApplyTemplate();
-
-                items.Move(1, 0);
-                AssertSingle(target);
-            }
-
-            private static IControl AssertSingle(CarouselPresenter target)
-            {
-                var items = (IList)target.Items;
                 var index = target.SelectedIndex;
                 var content = items[index];
-                var child = Assert.Single(target.Panel.Children);
+                var child = Assert.Single(target.Children);
                 var presenter = Assert.IsType<ContentPresenter>(child);
-                var container = Assert.Single(target.ItemContainerGenerator.Containers);
-                var visible = Assert.Single(target.Panel.Children.Where(x => x.IsVisible));
+                var visible = Assert.Single(target.RealizedElements.Where(x => x.IsVisible));
 
-                Assert.Same(child, container.ContainerControl);
                 Assert.Same(child, visible);
                 Assert.Equal(content, presenter.Content);
-                Assert.Equal(content, container.Item);
-                Assert.Equal(index, container.Index);
-
-                return child;
+                Assert.Single(target.RealizedElements);
+            }
+            else
+            {
+                Assert.Empty(target.Children);
+                Assert.Empty(target.RealizedElements);
             }
         }
 
-        public class NonVirtualized
+        private static void AssertNonVirtualizedState(CarouselPresenter target)
         {
-            [Fact]
-            public void Should_Initially_Materialize_All_Containers()
+            var items = (ItemsSourceView)target.ItemsView!;
+
+            Assert.True(target.Children.Count <= items.Count);
+            Assert.True(target.RealizedElements.Count() <= items.Count);
+
+            for (var i = 0; i < items?.Count; ++i)
             {
-                var target = new CarouselPresenter
-                {
-                    Items = new[] { "foo", "bar" },
-                    IsVirtualized = false,
-                };
+                var content = items[i];
+                var container = target.TryGetElement(i);
+                var presenter = Assert.IsType<ContentPresenter>(container);
 
-                target.ApplyTemplate();
-                AssertAll(target);
-            }
-
-            [Fact]
-            public void Should_Initially_Show_Selected_Item()
-            {
-                var target = new CarouselPresenter
-                {
-                    Items = new[] { "foo", "bar" },
-                    SelectedIndex = 1,
-                    IsVirtualized = false,
-                };
-
-                target.ApplyTemplate();
-                AssertAll(target);
-            }
-
-            [Fact]
-            public void Switching_To_Non_Virtualized_Should_Reset_Containers()
-            {
-                var target = new CarouselPresenter
-                {
-                    Items = new[] { "foo", "bar" },
-                    SelectedIndex = 0,
-                    IsVirtualized = true,
-                };
-
-                target.ApplyTemplate();
-                target.IsVirtualized = false;
-
-                AssertAll(target);
-            }
-
-            [Fact]
-            public void Changing_SelectedIndex_Should_Show_Page()
-            {
-                var target = new CarouselPresenter
-                {
-                    Items = new[] { "foo", "bar" },
-                    SelectedIndex = 0,
-                    IsVirtualized = false,
-                };
-
-                target.ApplyTemplate();
-                AssertAll(target);
-
-                target.SelectedIndex = 1;
-                AssertAll(target);
-            }
-
-            [Fact]
-            public void Should_Handle_Inserting_Item_At_SelectedItem()
-            {
-                var items = new ObservableCollection<string>
-                {
-                    "item0",
-                    "item1",
-                    "item2",
-                };
-
-                var target = new CarouselPresenter
-                {
-                    Items = items,
-                    SelectedIndex = 1,
-                    IsVirtualized = false,
-                };
-
-                target.ApplyTemplate();
-
-                items.Insert(1, "item1a");
-                AssertAll(target);
-            }
-
-            [Fact]
-            public void Should_Handle_Inserting_Item_Before_SelectedItem()
-            {
-                var items = new ObservableCollection<string>
-                {
-                    "item0",
-                    "item1",
-                    "item2",
-                };
-
-                var target = new CarouselPresenter
-                {
-                    Items = items,
-                    SelectedIndex = 2,
-                    IsVirtualized = false,
-                };
-
-                target.ApplyTemplate();
-
-                items.Insert(1, "item1a");
-                AssertAll(target);
-            }
-
-            [Fact]
-            public void Should_Do_Handle_Inserting_Item_After_SelectedItem()
-            {
-                var items = new ObservableCollection<string>
-                {
-                    "item0",
-                    "item1",
-                    "item2",
-                };
-
-                var target = new CarouselPresenter
-                {
-                    Items = items,
-                    SelectedIndex = 1,
-                    IsVirtualized = false,
-                };
-
-                target.ApplyTemplate();
-                items.Insert(2, "after");
-                AssertAll(target);
-            }
-
-            [Fact]
-            public void Should_Handle_Removing_Item_At_SelectedItem()
-            {
-                var items = new ObservableCollection<string>
-                {
-                    "item0",
-                    "item1",
-                    "item2",
-                };
-
-                var target = new CarouselPresenter
-                {
-                    Items = items,
-                    SelectedIndex = 1,
-                    IsVirtualized = false,
-                };
-
-                target.ApplyTemplate();
-
-                items.RemoveAt(1);
-                AssertAll(target);
-            }
-
-            [Fact]
-            public void Should_Handle_Removing_Item_Before_SelectedItem()
-            {
-                var items = new ObservableCollection<string>
-                {
-                    "item0",
-                    "item1",
-                    "item2",
-                };
-
-                var target = new CarouselPresenter
-                {
-                    Items = items,
-                    SelectedIndex = 1,
-                    IsVirtualized = false,
-                };
-
-                target.ApplyTemplate();
-
-                items.RemoveAt(0);
-                AssertAll(target);
-            }
-
-            [Fact]
-            public void Should_Handle_Removing_Item_After_SelectedItem()
-            {
-                var items = new ObservableCollection<string>
-                {
-                    "item0",
-                    "item1",
-                    "item2",
-                };
-
-                var target = new CarouselPresenter
-                {
-                    Items = items,
-                    SelectedIndex = 1,
-                    IsVirtualized = false,
-                };
-
-                target.ApplyTemplate();
-                items.RemoveAt(2);
-                AssertAll(target);
-            }
-
-            [Fact]
-            public void Should_Handle_Removing_SelectedItem_When_Its_Last()
-            {
-                var items = new ObservableCollection<string>
-                {
-                    "item0",
-                    "item1",
-                    "item2",
-                };
-
-                var target = new CarouselPresenter
-                {
-                    Items = items,
-                    SelectedIndex = 2,
-                    IsVirtualized = false,
-                };
-
-                target.ApplyTemplate();
-
-                items.RemoveAt(2);
-                Assert.Equal(1, target.SelectedIndex);
-                AssertAll(target);
-            }
-
-            [Fact]
-            public void Should_Handle_Removing_Last_Item()
-            {
-                var items = new ObservableCollection<string>
-                {
-                    "item0",
-                };
-
-                var target = new CarouselPresenter
-                {
-                    Items = items,
-                    SelectedIndex = 0,
-                    IsVirtualized = false,
-                };
-
-                target.ApplyTemplate();
-
-                items.RemoveAt(0);
-                Assert.Empty(target.Panel.Children);
-                Assert.Empty(target.ItemContainerGenerator.Containers);
-            }
-
-            [Fact]
-            public void Should_Handle_Replacing_SelectedItem()
-            {
-                var items = new ObservableCollection<string>
-                {
-                    "item0",
-                    "item1",
-                    "item2",
-                };
-
-                var target = new CarouselPresenter
-                {
-                    Items = items,
-                    SelectedIndex = 1,
-                    IsVirtualized = false,
-                };
-
-                target.ApplyTemplate();
-
-                items[1] = "replaced";
-                AssertAll(target);
-            }
-
-            [Fact]
-            public void Should_Handle_Moving_SelectedItem()
-            {
-                var items = new ObservableCollection<string>
-                {
-                    "item0",
-                    "item1",
-                    "item2",
-                };
-
-                var target = new CarouselPresenter
-                {
-                    Items = items,
-                    SelectedIndex = 1,
-                    IsVirtualized = false,
-                };
-
-                target.ApplyTemplate();
-
-                items.Move(1, 0);
-                AssertAll(target);
-            }
-
-            private static void AssertAll(CarouselPresenter target)
-            {
-                var items = (IList)target.Items;
-
-                Assert.Equal(items?.Count ?? 0, target.Panel.Children.Count);
-                Assert.Equal(items?.Count ?? 0, target.ItemContainerGenerator.Containers.Count());
-
-                for (var i = 0; i < items?.Count; ++i)
-                {
-                    var content = items[i];
-                    var child = target.Panel.Children[i];
-                    var presenter = Assert.IsType<ContentPresenter>(child);
-                    var container = target.ItemContainerGenerator.ContainerFromIndex(i);
-
-                    Assert.Same(child, container);
-                    Assert.Equal(i == target.SelectedIndex, child.IsVisible);
-                    Assert.Equal(content, presenter.Content);
-                    Assert.Equal(i, target.ItemContainerGenerator.IndexFromContainer(container));
-                }
+                Assert.Equal(i == target.SelectedIndex, presenter.IsVisible);
+                Assert.Equal(content, presenter.Content);
+                Assert.Equal(i, target.GetElementIndex(presenter));
             }
         }
 
-        private class TestItem : ContentControl
+        private static IDisposable Start()
         {
+            var services = TestServices.MockPlatformRenderInterface;
+            return UnitTestApplication.Start(services);
         }
 
-        private class TestItemsControl : ItemsControl
+        private static bool IsContainer(Visual v, string expected)
         {
-            protected override IItemContainerGenerator CreateItemContainerGenerator()
-            {
-                return new ItemContainerGenerator<TestItem>(this, TestItem.ContentProperty, null);
-            }
+            return v is ContentPresenter cp &&
+                cp.DataContext is string s &&
+                s == expected;
         }
     }
 }

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using Avalonia.Input.Navigation;
 using Avalonia.Interactivity;
 using Avalonia.VisualTree;
 
@@ -46,6 +47,66 @@ namespace Avalonia.Input
         {
             get;
             private set;
+        }
+
+        /// <summary>
+        /// Retrieves the element that should receive focus based on the specified navigation direction.
+        /// </summary>
+        /// <param name="direction">The direction to move in.</param>
+        /// <returns>The next element, or null if no element was found.</returns>
+        public IInputElement? FindNextElement(NavigationDirection direction)
+        {
+            var container = Current?.VisualParent;
+
+            if (container is null)
+            {
+                return null;
+            }
+
+            if (container is ICustomKeyboardNavigation custom)
+            {
+                var (handled, next) = custom.GetNext(Current, direction);
+
+                if (handled)
+                {
+                    return next;
+                }
+            }
+
+            static IInputElement? GetFirst(IVisual container)
+            {
+                for (var i = 0; i < container.VisualChildren.Count; ++i)
+                {
+                    if (container.VisualChildren[i] is IInputElement ie && ie.CanFocus())
+                    {
+                        return ie;
+                    }
+                }
+                
+                return null;
+            }
+
+            static IInputElement? GetLast(IVisual container)
+            {
+                for (var i = container.VisualChildren.Count - 1; i >= 0; --i)
+                {
+                    if (container.VisualChildren[i] is IInputElement ie && ie.CanFocus())
+                    {
+                        return ie;
+                    }
+                }
+
+                return null;
+            }
+
+            return direction switch
+            {
+                NavigationDirection.Next => TabNavigation.GetNextInTabOrder(Current, direction),
+                NavigationDirection.Previous => TabNavigation.GetNextInTabOrder(Current, direction),
+                NavigationDirection.First => GetFirst(container),
+                NavigationDirection.Last => GetLast(container),
+                _ => FindInDirection(container, Current, direction),
+            };
         }
 
         /// <summary>
@@ -177,6 +238,44 @@ namespace Avalonia.Input
                 c = c.GetVisualParent<IInputElement>() ??
                     ((c as IHostedVisualTreeRoot)?.Host as IInputElement);
             }
+        }
+
+
+        private IInputElement? FindInDirection(
+            IVisual container,
+            IInputElement from,
+            NavigationDirection direction)
+        {
+            static double Distance(NavigationDirection direction, IInputElement from, IInputElement to)
+            {
+                return direction switch
+                {
+                    NavigationDirection.Left => from.Bounds.Right - to.Bounds.Right,
+                    NavigationDirection.Right => to.Bounds.X - from.Bounds.X,
+                    NavigationDirection.Up => from.Bounds.Bottom - to.Bounds.Bottom,
+                    NavigationDirection.Down => to.Bounds.Y - from.Bounds.Y,
+                    _ => throw new NotSupportedException("direction must be Up, Down, Left or Right"),
+                };
+            }
+
+            IInputElement? result = null;
+            var resultDistance = double.MaxValue;
+
+            foreach (var visual in container.VisualChildren)
+            {
+                if (visual is IInputElement child && child != from && child.CanFocus())
+                {
+                    var distance = Distance(direction, from, child);
+
+                    if (distance > 0 && distance < resultDistance)
+                    {
+                        result = child;
+                        resultDistance = distance;
+                    }
+                }
+            }
+
+            return result;
         }
 
         /// <summary>

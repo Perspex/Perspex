@@ -47,14 +47,8 @@
                  Items="{Binding Items}" 
                  Selection="{Binding Selection}"
                  SelectionMode="Multiple"
-                 VirtualizationMode="{Binding VirtualizationMode}"
                  ScrollViewer.HorizontalScrollBarVisibility="{Binding HorizontalScrollBarVisibility, Mode=TwoWay}"
                  ScrollViewer.VerticalScrollBarVisibility="{Binding VerticalScrollBarVisibility, Mode=TwoWay}">
-            <ListBox.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <VirtualizingStackPanel Orientation="{Binding Orientation}"/>
-                </ItemsPanelTemplate>
-            </ListBox.ItemsPanel>
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <TextBlock Text="{Binding Header}" Height="{Binding Height}" TextWrapping="Wrap"/>

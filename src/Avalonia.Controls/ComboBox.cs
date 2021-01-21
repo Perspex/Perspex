@@ -20,12 +20,6 @@ namespace Avalonia.Controls
     public class ComboBox : SelectingItemsControl
     {
         /// <summary>
-        /// The default value for the <see cref="ItemsControl.ItemsPanel"/> property.
-        /// </summary>
-        private static readonly FuncTemplate<IPanel> DefaultPanel =
-            new FuncTemplate<IPanel>(() => new VirtualizingStackPanel());
-
-        /// <summary>
         /// Defines the <see cref="IsDropDownOpen"/> property.
         /// </summary>
         public static readonly DirectProperty<ComboBox, bool> IsDropDownOpenProperty =
@@ -45,12 +39,6 @@ namespace Avalonia.Controls
         /// </summary>
         public static readonly DirectProperty<ComboBox, object> SelectionBoxItemProperty =
             AvaloniaProperty.RegisterDirect<ComboBox, object>(nameof(SelectionBoxItem), o => o.SelectionBoxItem);
-
-        /// <summary>
-        /// Defines the <see cref="VirtualizationMode"/> property.
-        /// </summary>
-        public static readonly StyledProperty<ItemVirtualizationMode> VirtualizationModeProperty =
-            ItemsPresenter.VirtualizationModeProperty.AddOwner<ComboBox>();
 
         /// <summary>
         /// Defines the <see cref="PlaceholderText"/> property.
@@ -86,7 +74,6 @@ namespace Avalonia.Controls
         /// </summary>
         static ComboBox()
         {
-            ItemsPanelProperty.OverrideDefaultValue<ComboBox>(DefaultPanel);
             FocusableProperty.OverrideDefaultValue<ComboBox>(true);
             SelectedItemProperty.Changed.AddClassHandler<ComboBox>((x,e) => x.SelectedItemChanged(e));
             KeyDownEvent.AddClassHandler<ComboBox>((x, e) => x.OnKeyDown(e), Interactivity.RoutingStrategies.Tunnel);
@@ -135,15 +122,6 @@ namespace Avalonia.Controls
         {
             get { return GetValue(PlaceholderForegroundProperty); }
             set { SetValue(PlaceholderForegroundProperty, value); }
-        }
-
-        /// <summary>
-        /// Gets or sets the virtualization mode for the items.
-        /// </summary>
-        public ItemVirtualizationMode VirtualizationMode
-        {
-            get { return GetValue(VirtualizationModeProperty); }
-            set { SetValue(VirtualizationModeProperty, value); }
         }
 
         /// <summary>
@@ -220,7 +198,8 @@ namespace Avalonia.Controls
             else if (IsDropDownOpen && SelectedIndex < 0 && ItemCount > 0 &&
                       (e.Key == Key.Up || e.Key == Key.Down))
             {
-                var firstChild = Presenter?.Panel?.Children.FirstOrDefault(c => CanFocus(c));
+                var panel = Presenter as IPanel;
+                var firstChild = panel?.Children.FirstOrDefault(c => CanFocus(c));
                 if (firstChild != null)
                 {
                     FocusManager.Instance?.Focus(firstChild, NavigationMethod.Directional);
@@ -342,12 +321,12 @@ namespace Avalonia.Controls
             var selectedIndex = SelectedIndex;
             if (IsDropDownOpen && selectedIndex != -1)
             {
-                var container = ItemContainerGenerator.ContainerFromIndex(selectedIndex);
+                var container = TryGetContainer(selectedIndex);
 
                 if (container == null && SelectedIndex != -1)
                 {
                     ScrollIntoView(Selection.SelectedIndex);
-                    container = ItemContainerGenerator.ContainerFromIndex(selectedIndex);
+                    container = TryGetContainer(selectedIndex);
                 }
 
                 if (container != null && CanFocus(container))
@@ -397,11 +376,16 @@ namespace Avalonia.Controls
 
         private void SelectFocusedItem()
         {
-            foreach (ItemContainerInfo dropdownItem in ItemContainerGenerator.Containers)
+            if (Presenter is null)
             {
-                if (dropdownItem.ContainerControl.IsFocused)
+                return;
+            }
+
+            foreach (var element in Presenter.RealizedElements)
+            {
+                if (element.IsFocused)
                 {
-                    SelectedIndex = dropdownItem.Index;
+                    SelectedIndex = GetContainerIndex(element);
                     break;
                 }
             }

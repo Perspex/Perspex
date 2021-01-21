@@ -1,6 +1,7 @@
 using Avalonia.Collections;
 using Avalonia.Controls.Mixins;
 using Avalonia.Controls.Presenters;
+using Avalonia.Controls.Templates;
 using Avalonia.LogicalTree;
 
 namespace Avalonia.Controls.Primitives
@@ -17,6 +18,12 @@ namespace Avalonia.Controls.Primitives
             HeaderedContentControl.HeaderProperty.AddOwner<HeaderedItemsControl>();
 
         /// <summary>
+        /// Defines the <see cref="HeaderTemplate"/> property.
+        /// </summary>
+        public static readonly StyledProperty<IDataTemplate> HeaderTemplateProperty =
+            AvaloniaProperty.Register<ContentControl, IDataTemplate>(nameof(HeaderTemplate));
+
+        /// <summary>
         /// Initializes static members of the <see cref="ContentControl"/> class.
         /// </summary>
         static HeaderedItemsControl()
@@ -31,6 +38,15 @@ namespace Avalonia.Controls.Primitives
         {
             get { return GetValue(HeaderProperty); }
             set { SetValue(HeaderProperty, value); }
+        }
+
+        /// <summary>
+        /// Gets or sets the data template used to display the header of the control.
+        /// </summary>
+        public IDataTemplate HeaderTemplate
+        {
+            get { return GetValue(HeaderTemplateProperty); }
+            set { SetValue(HeaderTemplateProperty, value); }
         }
 
         /// <summary>

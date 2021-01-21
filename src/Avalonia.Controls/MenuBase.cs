@@ -4,6 +4,7 @@ using System.Linq;
 using Avalonia.Controls.Generators;
 using Avalonia.Controls.Platform;
 using Avalonia.Controls.Primitives;
+using Avalonia.Data;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.LogicalTree;
@@ -82,26 +83,16 @@ namespace Avalonia.Controls
             get
             {
                 var index = SelectedIndex;
-                return (index != -1) ?
-                    (IMenuItem)ItemContainerGenerator.ContainerFromIndex(index) :
-                    null;
+                return (index != -1) ? (IMenuItem)TryGetContainer(index) : null;
             }
             set
             {
-                SelectedIndex = ItemContainerGenerator.IndexFromContainer(value);
+                SelectedIndex = value is object ? GetContainerIndex(value) : -1;
             }
         }
 
         /// <inheritdoc/>
-        IEnumerable<IMenuItem> IMenuElement.SubItems
-        {
-            get
-            {
-                return ItemContainerGenerator.Containers
-                    .Select(x => x.ContainerControl)
-                    .OfType<IMenuItem>();
-            }
-        }
+        IEnumerable<IMenuItem> IMenuElement.SubItems => Presenter.RealizedElements.OfType<IMenuItem>();
 
         /// <summary>
         /// Gets the interaction handler for the menu.
@@ -139,10 +130,9 @@ namespace Avalonia.Controls
         /// <inheritdoc/>
         bool IMenuElement.MoveSelection(NavigationDirection direction, bool wrap) => MoveSelection(direction, wrap);
 
-        /// <inheritdoc/>
         protected override IItemContainerGenerator CreateItemContainerGenerator()
         {
-            return new ItemContainerGenerator<MenuItem>(this, MenuItem.HeaderProperty, null);
+            return new ItemContainerGenerator<MenuItem>(this, MenuItem.HeaderProperty, MenuItem.HeaderTemplateProperty);
         }
 
         /// <inheritdoc/>

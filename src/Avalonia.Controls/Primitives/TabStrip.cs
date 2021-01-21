@@ -8,14 +8,14 @@ namespace Avalonia.Controls.Primitives
 {
     public class TabStrip : SelectingItemsControl
     {
-        private static readonly FuncTemplate<IPanel> DefaultPanel =
-            new FuncTemplate<IPanel>(() => new WrapPanel { Orientation = Orientation.Horizontal });
-
         static TabStrip()
         {
+            LayoutProperty.OverrideDefaultValue<TabStrip>(new WrapLayout
+            {
+                Orientation = Orientation.Horizontal
+            });
             SelectionModeProperty.OverrideDefaultValue<TabStrip>(SelectionMode.AlwaysSelected);
             FocusableProperty.OverrideDefaultValue(typeof(TabStrip), false);
-            ItemsPanelProperty.OverrideDefaultValue<TabStrip>(DefaultPanel);
         }
 
         protected override IItemContainerGenerator CreateItemContainerGenerator()

@@ -1,25 +1,20 @@
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Linq;
 using Avalonia.Collections;
-using Avalonia.Controls.Presenters;
-using Avalonia.Controls.Primitives;
-using Avalonia.Controls.Templates;
 using Xunit;
 
 namespace Avalonia.Controls.UnitTests.Primitives
 {
-    public class SelectingItemsControlTests_AutoSelect
+    public partial class SelectingItemsControlTests
     {
         [Fact]
         public void First_Item_Should_Be_Selected()
         {
-            var target = new TestSelector
+            var target = new TestSelector(SelectionMode.AlwaysSelected)
             {
                 Items = new[] { "foo", "bar" },
-                Template = Template(),
             };
-
-            target.ApplyTemplate();
 
             Assert.Equal(0, target.SelectedIndex);
             Assert.Equal("foo", target.SelectedItem);
@@ -29,13 +24,11 @@ namespace Avalonia.Controls.UnitTests.Primitives
         public void First_Item_Should_Be_Selected_When_Added()
         {
             var items = new AvaloniaList<string>();
-            var target = new TestSelector
+            var target = new TestSelector(SelectionMode.AlwaysSelected)
             {
                 Items = items,
-                Template = Template(),
             };
 
-            target.ApplyTemplate();
             items.Add("foo");
 
             Assert.Equal(0, target.SelectedIndex);
@@ -47,13 +40,11 @@ namespace Avalonia.Controls.UnitTests.Primitives
         public void First_Item_Should_Be_Selected_When_Reset()
         {
             var items = new ResetOnAdd();
-            var target = new TestSelector
+            var target = new TestSelector(SelectionMode.AlwaysSelected)
             {
                 Items = items,
-                Template = Template(),
             };
 
-            target.ApplyTemplate();
             items.Add("foo");
 
             Assert.Equal(0, target.SelectedIndex);
@@ -64,14 +55,11 @@ namespace Avalonia.Controls.UnitTests.Primitives
         public void Item_Should_Be_Selected_When_Selection_Removed()
         {
             var items = new AvaloniaList<string>(new[] { "foo", "bar", "baz", "qux" });
-
-            var target = new TestSelector
+            var target = new TestSelector(SelectionMode.AlwaysSelected)
             {
                 Items = items,
-                Template = Template(),
             };
 
-            target.ApplyTemplate();
             target.SelectedIndex = 2;
             items.RemoveAt(2);
 
@@ -83,14 +71,11 @@ namespace Avalonia.Controls.UnitTests.Primitives
         public void Selection_Should_Be_Cleared_When_No_Items_Left()
         {
             var items = new AvaloniaList<string>(new[] { "foo", "bar" });
-
-            var target = new TestSelector
+            var target = new TestSelector(SelectionMode.AlwaysSelected)
             {
                 Items = items,
-                Template = Template(),
             };
 
-            target.ApplyTemplate();
             target.SelectedIndex = 1;
             items.RemoveAt(1);
             items.RemoveAt(0);
@@ -102,39 +87,21 @@ namespace Avalonia.Controls.UnitTests.Primitives
         [Fact]
         public void Removing_Selected_First_Item_Should_Select_Next_Item()
         {
+            using var app = Start();
+
             var items = new AvaloniaList<string>(new[] { "foo", "bar" });
-            var target = new TestSelector
+            var target = new TestSelector(SelectionMode.AlwaysSelected)
             {
                 Items = items,
-                Template = Template(),
             };
 
-            target.ApplyTemplate();
-            target.Presenter.ApplyTemplate();
+            Prepare(target);
             items.RemoveAt(0);
+            Layout(target);
 
             Assert.Equal(0, target.SelectedIndex);
             Assert.Equal("bar", target.SelectedItem);
-            Assert.Equal(new[] { ":selected" }, target.Presenter.Panel.Children[0].Classes);
-        }
-
-        private FuncControlTemplate Template()
-        {
-            return new FuncControlTemplate<SelectingItemsControl>((control, scope) =>
-                new ItemsPresenter
-                {
-                    Name = "itemsPresenter",
-                    [~ItemsPresenter.ItemsProperty] = control[~ItemsControl.ItemsProperty],
-                    [~ItemsPresenter.ItemsPanelProperty] = control[~ItemsControl.ItemsPanelProperty],
-                }.RegisterInNameScope(scope));
-        }
-
-        private class TestSelector : SelectingItemsControl
-        {
-            static TestSelector()
-            {
-                SelectionModeProperty.OverrideDefaultValue<TestSelector>(SelectionMode.AlwaysSelected);
-            }
+            Assert.Equal(new[] { ":selected" }, target.Presenter.RealizedElements.First().Classes);
         }
 
         private class ResetOnAdd : List<string>, INotifyCollectionChanged

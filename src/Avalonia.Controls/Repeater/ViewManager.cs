@@ -78,6 +78,7 @@ namespace Avalonia.Controls
             var virtInfo = ItemsRepeater.GetVirtualizationInfo(element);
             var index = virtInfo.Index;
             bool cleared =
+                ClearInlineElement(virtInfo, isClearedDueToCollectionChange) ||
                 ClearElementToUniqueIdResetPool(element, virtInfo) ||
                 ClearElementToPinnedPool(element, virtInfo, isClearedDueToCollectionChange);
 
@@ -394,9 +395,10 @@ namespace Avalonia.Controls
                             var virtInfo = ItemsRepeater.GetVirtualizationInfo(element);
                             var dataIndex = virtInfo.Index;
 
-                            if (virtInfo.IsRealized)
+                            if (virtInfo.IsRealized || virtInfo.IsInlineElement)
                             {
-                                if (virtInfo.AutoRecycleCandidate && oldStartIndex <= dataIndex && dataIndex < oldStartIndex + oldCount)
+                                if ((virtInfo.AutoRecycleCandidate || virtInfo.IsInlineElement) &&
+                                    oldStartIndex <= dataIndex && dataIndex < oldStartIndex + oldCount)
                                 {
                                     // If we are doing the mapping, remove the element who's data was removed.
                                     _owner.ClearElementImpl(element);
@@ -417,17 +419,12 @@ namespace Avalonia.Controls
                     // running layout, we dont have to clear all the elements again.
                     if (!_isDataSourceStableResetPending)
                     {
-                        if (_owner.ItemsSourceView.HasKeyIndexMapping)
-                        {
-                            _isDataSourceStableResetPending = true;
-                        }
-
                         // Walk through all the elements and make sure they are cleared, they will go into
-                        // the stable id reset pool.
+                        // the stable id reset pool or if they are inline elements marked for removal.
                         foreach (var element in _owner.Children)
                         {
                             var virtInfo = ItemsRepeater.GetVirtualizationInfo(element);
-                            if (virtInfo.IsRealized && virtInfo.AutoRecycleCandidate)
+                            if ((virtInfo.IsRealized && virtInfo.AutoRecycleCandidate) || virtInfo.IsInlineElement)
                             {
                                 _owner.ClearElementImpl(element);
                             }
@@ -635,11 +632,15 @@ namespace Avalonia.Controls
             // Clear flag
             virtInfo.MustClearDataContext = false;
 
-            if (data != element)
+            if (!(data is IControl))
             {
                 // Prepare the element
                 element.DataContext = data;
                 virtInfo.MustClearDataContext = true;
+            }
+            else
+            {
+                virtInfo.IsInlineElement = data == element;
             }
 
             virtInfo.MoveOwnershipToLayoutFromElementFactory(
@@ -668,6 +669,21 @@ namespace Avalonia.Controls
             _lastRealizedElementIndexHeldByLayout = Math.Max(_lastRealizedElementIndexHeldByLayout, index);
 
             return element;
+        }
+
+        private bool ClearInlineElement(VirtualizationInfo virtInfo, bool isClearedDueToCollectionChange)
+        {
+            if (virtInfo.IsInlineElement)
+            {
+                if (isClearedDueToCollectionChange)
+                {
+                    virtInfo.ToRemove = true;
+                }
+
+                return true;
+            }
+
+            return false;
         }
 
         private bool ClearElementToUniqueIdResetPool(IControl element, VirtualizationInfo virtInfo)

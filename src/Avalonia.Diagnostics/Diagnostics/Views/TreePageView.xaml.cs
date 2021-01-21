@@ -1,6 +1,5 @@
 using System.Linq;
 using Avalonia.Controls;
-using Avalonia.Controls.Generators;
 using Avalonia.Controls.Primitives;
 using Avalonia.Diagnostics.ViewModels;
 using Avalonia.Input;
@@ -17,8 +16,8 @@ namespace Avalonia.Diagnostics.Views
 
         public TreePageView()
         {
-            InitializeComponent();
-            _tree.ItemContainerGenerator.Index.Materialized += TreeViewItemMaterialized;
+            this.InitializeComponent();
+            _tree.TreeContainerPrepared += TreeContainerPrepared;
 
             _adorner = new Panel
             {
@@ -91,9 +90,9 @@ namespace Avalonia.Diagnostics.Views
             _tree = this.FindControl<TreeView>("tree");
         }
 
-        private void TreeViewItemMaterialized(object sender, ItemContainerEventArgs e)
+        private void TreeContainerPrepared(object sender, TreeElementPreparedEventArgs e)
         {
-            var item = (TreeViewItem)e.Containers[0].ContainerControl;
+            var item = (TreeViewItem)e.Element;
             item.TemplateApplied += TreeViewItemTemplateApplied;
         }
 

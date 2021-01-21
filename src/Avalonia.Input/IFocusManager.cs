@@ -16,6 +16,13 @@ namespace Avalonia.Input
         IFocusScope? Scope { get; }
 
         /// <summary>
+        /// Retrieves the element that should receive focus based on the specified navigation direction.
+        /// </summary>
+        /// <param name="direction">The direction to move in.</param>
+        /// <returns>The next element, or null if no element was found.</returns>
+        IInputElement FindNextElement(NavigationDirection direction);
+
+        /// <summary>
         /// Focuses a control.
         /// </summary>
         /// <param name="control">The control to focus.</param>

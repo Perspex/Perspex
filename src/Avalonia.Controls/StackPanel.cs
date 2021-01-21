@@ -72,12 +72,10 @@ namespace Avalonia.Controls
                     {
                         case NavigationDirection.Up:
                         case NavigationDirection.Previous:
-                        case NavigationDirection.PageUp:
                             result = GetControlInDirection(NavigationDirection.Last, null);
                             break;
                         case NavigationDirection.Down:
                         case NavigationDirection.Next:
-                        case NavigationDirection.PageDown:
                             result = GetControlInDirection(NavigationDirection.First, null);
                             break;
                     }
@@ -88,12 +86,10 @@ namespace Avalonia.Controls
                     {
                         case NavigationDirection.Left:
                         case NavigationDirection.Previous:
-                        case NavigationDirection.PageUp:
                             result = GetControlInDirection(NavigationDirection.Last, null);
                             break;
                         case NavigationDirection.Right:
                         case NavigationDirection.Next:
-                        case NavigationDirection.PageDown:
                             result = GetControlInDirection(NavigationDirection.First, null);
                             break;
                     }

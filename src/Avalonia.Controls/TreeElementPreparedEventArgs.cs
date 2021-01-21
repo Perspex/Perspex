@@ -3,14 +3,16 @@
 //
 // Licensed to The Avalonia Project under MIT License, courtesy of The .NET Foundation.
 
+using Avalonia.Controls.Selection;
+
 namespace Avalonia.Controls
 {
     /// <summary>
-    /// Provides data for the <see cref="ItemsRepeater.ElementPrepared"/> event.
+    /// Provides notification that a tree element has been prepared for use.
     /// </summary>
-    public class ItemsRepeaterElementPreparedEventArgs
+    public class TreeElementPreparedEventArgs
     {
-        internal ItemsRepeaterElementPreparedEventArgs(IControl element, int index)
+        public TreeElementPreparedEventArgs(IControl element, IndexPath index)
         {
             Element = element;
             Index = index;
@@ -24,12 +26,6 @@ namespace Avalonia.Controls
         /// <summary>
         /// Gets the index of the item the element was prepared for.
         /// </summary>
-        public int Index { get; private set; }
-
-        internal void Update(IControl element, int index)
-        {
-            Element = element;
-            Index = index;
-        }
+        public IndexPath Index { get; private set; }
     }
 }

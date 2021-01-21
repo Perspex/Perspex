@@ -12,9 +12,8 @@
                     <DockPanel>
                         <ItemsPresenter
                             Name="PART_ItemsPresenter"
-                            Items="{TemplateBinding Items}"
-                            ItemsPanel="{TemplateBinding ItemsPanel}"
-                            ItemTemplate="{TemplateBinding ItemTemplate}">
+                            Layout="{TemplateBinding Layout}"
+                            ItemsView="{TemplateBinding ItemsView}">
                         </ItemsPresenter>
                         <ContentPresenter
                             Name="PART_SelectedContentHost"
@@ -43,18 +42,18 @@
     </Style>
     <Style Selector="TabControl[TabStripPlacement=Left] /template/ ItemsPresenter#PART_ItemsPresenter">
         <Setter Property="DockPanel.Dock" Value="Left"/>
-    </Style>
-    <Style Selector="TabControl[TabStripPlacement=Left] /template/ ItemsPresenter#PART_ItemsPresenter > WrapPanel">
-        <Setter Property="Orientation" Value="Vertical"/>
+        <Setter Property="Layout">
+            <StackLayout Orientation="Vertical"/>
+        </Setter>
     </Style>
     <Style Selector="TabControl[TabStripPlacement=Left]">
         <Setter Property="Padding" Value="4 0 0 0"/>
     </Style>
     <Style Selector="TabControl[TabStripPlacement=Right] /template/ ItemsPresenter#PART_ItemsPresenter">
         <Setter Property="DockPanel.Dock" Value="Right"/>
-    </Style>
-    <Style Selector="TabControl[TabStripPlacement=Right] /template/ ItemsPresenter#PART_ItemsPresenter > WrapPanel">
-        <Setter Property="Orientation" Value="Vertical"/>
+        <Setter Property="Layout">
+            <StackLayout Orientation="Vertical"/>
+        </Setter>
     </Style>
     <Style Selector="TabControl[TabStripPlacement=Right]">
         <Setter Property="Padding" Value="0 0 4 0"/>

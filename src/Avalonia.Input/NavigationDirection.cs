@@ -44,16 +44,6 @@ namespace Avalonia.Input
         /// Move the focus down.
         /// </summary>
         Down,
-
-        /// <summary>
-        /// Move the focus up a page.
-        /// </summary>
-        PageUp,
-
-        /// <summary>
-        /// Move the focus down a page.
-        /// </summary>
-        PageDown,
     }
 
     public static class NavigationDirectionExtensions
@@ -84,7 +74,7 @@ namespace Avalonia.Input
         public static bool IsDirectional(this NavigationDirection direction)
         {
             return direction > NavigationDirection.Previous &&
-                direction <= NavigationDirection.PageDown;
+                direction <= NavigationDirection.Down;
         }
 
         /// <summary>
@@ -116,13 +106,21 @@ namespace Avalonia.Input
                     return NavigationDirection.First;
                 case Key.End:
                     return NavigationDirection.Last;
-                case Key.PageUp:
-                    return NavigationDirection.PageUp;
-                case Key.PageDown:
-                    return NavigationDirection.PageDown;
                 default:
                     return null;
             }
+        }
+
+        /// <summary>
+        /// Converts a <see cref="NavigationDirection"/> into a <see cref="NavigationMethod"/>.
+        /// </summary>
+        /// <param name="direction">The navigation direction.</param>
+        public static NavigationMethod ToNavigationMethod(
+            this NavigationDirection direction)
+        {
+            return direction <= NavigationDirection.Previous ?
+                NavigationMethod.Tab :
+                NavigationMethod.Directional;
         }
     }
 }

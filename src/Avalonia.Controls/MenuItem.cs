@@ -93,12 +93,6 @@ namespace Avalonia.Controls
         public static readonly RoutedEvent<RoutedEventArgs> SubmenuOpenedEvent =
             RoutedEvent.Register<MenuItem, RoutedEventArgs>(nameof(SubmenuOpened), RoutingStrategies.Bubble);
 
-        /// <summary>
-        /// The default value for the <see cref="ItemsControl.ItemsPanel"/> property.
-        /// </summary>
-        private static readonly ITemplate<IPanel> DefaultPanel =
-            new FuncTemplate<IPanel>(() => new StackPanel());
-
         private ICommand? _command;
         private bool _commandCanExecute = true;
         private Popup? _popup;
@@ -115,7 +109,6 @@ namespace Avalonia.Controls
             HeaderProperty.Changed.AddClassHandler<MenuItem>((x, e) => x.HeaderChanged(e));
             IconProperty.Changed.AddClassHandler<MenuItem>((x, e) => x.IconChanged(e));
             IsSelectedProperty.Changed.AddClassHandler<MenuItem>((x, e) => x.IsSelectedChanged(e));
-            ItemsPanelProperty.OverrideDefaultValue<MenuItem>(DefaultPanel);
             ClickEvent.AddClassHandler<MenuItem>((x, e) => x.OnClick(e));
             SubmenuOpenedEvent.AddClassHandler<MenuItem>((x, e) => x.OnSubmenuOpened(e));
             IsSubMenuOpenProperty.Changed.AddClassHandler<MenuItem>((x, e) => x.SubMenuOpenChanged(e));
@@ -289,26 +282,16 @@ namespace Avalonia.Controls
             get
             {
                 var index = SelectedIndex;
-                return (index != -1) ?
-                    (IMenuItem)ItemContainerGenerator.ContainerFromIndex(index) :
-                    null;
+                return (index != -1) ? (IMenuItem)TryGetContainer(index) : null;
             }
             set
             {
-                SelectedIndex = ItemContainerGenerator.IndexFromContainer(value);
+                SelectedIndex = value is object ? GetContainerIndex(value) : -1;
             }
         }
 
         /// <inheritdoc/>
-        IEnumerable<IMenuItem> IMenuElement.SubItems
-        {
-            get
-            {
-                return ItemContainerGenerator.Containers
-                    .Select(x => x.ContainerControl)
-                    .OfType<IMenuItem>();
-            }
-        }            
+        IEnumerable<IMenuItem> IMenuElement.SubItems => Presenter.RealizedElements.OfType<IMenuItem>();
 
         /// <summary>
         /// Opens the submenu.
@@ -594,8 +577,7 @@ namespace Avalonia.Controls
 
             if (selected != -1)
             {
-                var container = ItemContainerGenerator.ContainerFromIndex(selected);
-                container?.Focus();
+                TryGetContainer(selected)?.Focus();
             }
         }
 

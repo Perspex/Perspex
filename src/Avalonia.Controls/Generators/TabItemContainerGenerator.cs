@@ -12,9 +12,9 @@ namespace Avalonia.Controls.Generators
 
         public new TabControl Owner { get; }
 
-        protected override IControl CreateContainer(object item)
+        protected override IControl CreateContainer(ElementFactoryGetArgs args)
         {
-            var tabItem = (TabItem)base.CreateContainer(item);
+            var tabItem = (TabItem)base.CreateContainer(args);
 
             tabItem[~TabControl.TabStripPlacementProperty] = Owner[~TabControl.TabStripPlacementProperty];
 
@@ -25,7 +25,7 @@ namespace Avalonia.Controls.Generators
 
             if (tabItem.Header == null)
             {
-                if (item is IHeadered headered)
+                if (args.Data is IHeadered headered)
                 {
                     tabItem.Header = headered.Header;
                 }

@@ -1,7 +1,9 @@
 using Avalonia.Collections;
-using Avalonia.Controls.Mixins;
 using Avalonia.Controls.Presenters;
+using Avalonia.Controls.Templates;
 using Avalonia.LogicalTree;
+
+#nullable enable
 
 namespace Avalonia.Controls.Primitives
 {
@@ -13,8 +15,14 @@ namespace Avalonia.Controls.Primitives
         /// <summary>
         /// Defines the <see cref="Header"/> property.
         /// </summary>
-        public static readonly StyledProperty<object> HeaderProperty =
+        public static readonly StyledProperty<object?> HeaderProperty =
             HeaderedContentControl.HeaderProperty.AddOwner<HeaderedSelectingItemsControl>();
+
+        /// <summary>
+        /// Defines the <see cref="HeaderTemplate"/> property.
+        /// </summary>
+        public static readonly StyledProperty<IDataTemplate?> HeaderTemplateProperty =
+            HeaderedContentControl.HeaderTemplateProperty.AddOwner<HeaderedSelectingItemsControl>();
 
         /// <summary>
         /// Initializes static members of the <see cref="ContentControl"/> class.
@@ -27,16 +35,25 @@ namespace Avalonia.Controls.Primitives
         /// <summary>
         /// Gets or sets the content of the control's header.
         /// </summary>
-        public object Header
+        public object? Header
         {
             get { return GetValue(HeaderProperty); }
             set { SetValue(HeaderProperty, value); }
         }
 
         /// <summary>
+        /// Gets or sets the data template used to display the header content of the control.
+        /// </summary>
+        public IDataTemplate? HeaderTemplate
+        {
+            get => GetValue(HeaderTemplateProperty);
+            set => SetValue(HeaderTemplateProperty, value);
+        }
+
+        /// <summary>
         /// Gets the header presenter from the control's template.
         /// </summary>
-        public IContentPresenter HeaderPresenter
+        public IContentPresenter? HeaderPresenter
         {
             get;
             private set;

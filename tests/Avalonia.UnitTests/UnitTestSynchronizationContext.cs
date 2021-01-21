@@ -1,11 +1,10 @@
 using System;
 using System.Collections.Generic;
-using System.Reactive.Disposables;
 using System.Threading;
 
-namespace Avalonia.Base.UnitTests.Data
+namespace Avalonia.UnitTests
 {
-    internal sealed class UnitTestSynchronizationContext : SynchronizationContext
+    public sealed class UnitTestSynchronizationContext : SynchronizationContext
     {
         readonly List<Tuple<SendOrPostCallback, object>> _postedCallbacks =
             new List<Tuple<SendOrPostCallback, object>>();

@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reactive;
@@ -10,18 +12,30 @@ namespace ControlCatalog.ViewModels
 {
     public class ListBoxPageViewModel : ViewModelBase
     {
+        private IList _items;
         private bool _multiple;
         private bool _toggle;
         private bool _alwaysSelected;
         private bool _autoScrollToSelectedItem = true;
-        private int _counter;
+        private ItemTypes _itemType;
         private IObservable<SelectionMode> _selectionMode;
 
         public ListBoxPageViewModel()
         {
-            Items = new ObservableCollection<string>(Enumerable.Range(1, 10000).Select(i => GenerateItem()));
+            this.WhenAnyValue(x => x.ItemType)
+                .Subscribe(x =>
+                {
+                    Items = x switch
+                    {
+                        ItemTypes.FromDataTemplate => new ObservableCollection<string>(
+                            Enumerable.Range(0, 10000).Select(i => GenerateContent(i))),
+                        ItemTypes.ListBoxItems => new ObservableCollection<ListBoxItem>(
+                            Enumerable.Range(0, 200).Select(i => GenerateItem(i))),
+                        _ => throw new NotSupportedException(),
+                    };
+                });
             
-            Selection = new SelectionModel<string>();
+            Selection = new SelectionModel<object>();
             Selection.Select(1);
 
             _selectionMode = this.WhenAnyValue(
@@ -33,7 +47,17 @@ namespace ControlCatalog.ViewModels
                     (t ? Avalonia.Controls.SelectionMode.Toggle : 0) |
                     (a ? Avalonia.Controls.SelectionMode.AlwaysSelected : 0));
 
-            AddItemCommand = MiniCommand.Create(() => Items.Add(GenerateItem()));
+            AddItemCommand = MiniCommand.Create(() =>
+            {
+                if (ItemType == ItemTypes.FromDataTemplate)
+                {
+                    Items.Add(GenerateContent(Items.Count));
+                }
+                else
+                {
+                    Items.Add(GenerateItem(Items.Count));
+                }
+            });
 
             RemoveItemCommand = MiniCommand.Create(() =>
             {
@@ -49,16 +73,24 @@ namespace ControlCatalog.ViewModels
             {
                 var random = new Random();
 
-                using (Selection.BatchUpdate())
+                if (Items.Count > 0)
                 {
-                    Selection.Clear();
-                    Selection.Select(random.Next(Items.Count - 1));
+                    using (Selection.BatchUpdate())
+                    {
+                        Selection.Clear();
+                        Selection.Select(random.Next(Items.Count - 1));
+                    }
                 }
             });
         }
 
-        public ObservableCollection<string> Items { get; }
-        public SelectionModel<string> Selection { get; }
+        public IList Items 
+        {
+            get => _items;
+            private set => this.RaiseAndSetIfChanged(ref _items, value);
+        }
+
+        public SelectionModel<object> Selection { get; }
         public IObservable<SelectionMode> SelectionMode => _selectionMode;
 
         public bool Multiple
@@ -85,10 +117,26 @@ namespace ControlCatalog.ViewModels
             set => this.RaiseAndSetIfChanged(ref _autoScrollToSelectedItem, value);
         }
 
+        public ItemTypes ItemType
+        {
+            get => _itemType;
+            set => this.RaiseAndSetIfChanged(ref _itemType, value);
+        }
+
         public MiniCommand AddItemCommand { get; }
         public MiniCommand RemoveItemCommand { get; }
         public MiniCommand SelectRandomItemCommand { get; }
 
-        private string GenerateItem() => $"Item {_counter++.ToString()}";
+        private string GenerateContent(int index) => $"Item {index}";
+        private ListBoxItem GenerateItem(int index) => new ListBoxItem 
+        { 
+            Content = "ListBoxItem " + GenerateContent(index) 
+        };
+
+        public enum ItemTypes
+        {
+            FromDataTemplate,
+            ListBoxItems,
+        }
     }
 }

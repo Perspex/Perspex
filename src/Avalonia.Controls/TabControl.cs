@@ -5,10 +5,13 @@ using Avalonia.Controls.Generators;
 using Avalonia.Controls.Presenters;
 using Avalonia.Controls.Primitives;
 using Avalonia.Controls.Templates;
+using Avalonia.Data;
 using Avalonia.Input;
 using Avalonia.Layout;
 using Avalonia.LogicalTree;
 using Avalonia.VisualTree;
+
+#nullable enable
 
 namespace Avalonia.Controls
 {
@@ -44,30 +47,27 @@ namespace Avalonia.Controls
         /// <summary>
         /// The selected content property
         /// </summary>
-        public static readonly StyledProperty<object> SelectedContentProperty =
-            AvaloniaProperty.Register<TabControl, object>(nameof(SelectedContent));
+        public static readonly StyledProperty<object?> SelectedContentProperty =
+            AvaloniaProperty.Register<TabControl, object?>(nameof(SelectedContent));
 
         /// <summary>
         /// The selected content template property
         /// </summary>
-        public static readonly StyledProperty<IDataTemplate> SelectedContentTemplateProperty =
-            AvaloniaProperty.Register<TabControl, IDataTemplate>(nameof(SelectedContentTemplate));
-
-        /// <summary>
-        /// The default value for the <see cref="ItemsControl.ItemsPanel"/> property.
-        /// </summary>
-        private static readonly FuncTemplate<IPanel> DefaultPanel =
-            new FuncTemplate<IPanel>(() => new WrapPanel());
+        public static readonly StyledProperty<IDataTemplate?> SelectedContentTemplateProperty =
+            AvaloniaProperty.Register<TabControl, IDataTemplate?>(nameof(SelectedContentTemplate));
 
         /// <summary>
         /// Initializes static members of the <see cref="TabControl"/> class.
         /// </summary>
         static TabControl()
         {
+            LayoutProperty.OverrideDefaultValue<TabControl>(new WrapLayout
+            { 
+                Orientation = Orientation.Horizontal 
+            });
+
             SelectionModeProperty.OverrideDefaultValue<TabControl>(SelectionMode.AlwaysSelected);
-            ItemsPanelProperty.OverrideDefaultValue<TabControl>(DefaultPanel);
             AffectsMeasure<TabControl>(TabStripPlacementProperty);
-            SelectedItemProperty.Changed.AddClassHandler<TabControl>((x, e) => x.UpdateSelectedContent());
         }
 
         /// <summary>
@@ -112,7 +112,7 @@ namespace Avalonia.Controls
         /// <value>
         /// The content of the selected tab.
         /// </value>
-        public object SelectedContent
+        public object? SelectedContent
         {
             get { return GetValue(SelectedContentProperty); }
             internal set { SetValue(SelectedContentProperty, value); }
@@ -124,15 +124,13 @@ namespace Avalonia.Controls
         /// <value>
         /// The content template of the selected tab.
         /// </value>
-        public IDataTemplate SelectedContentTemplate
+        public IDataTemplate? SelectedContentTemplate
         {
             get { return GetValue(SelectedContentTemplateProperty); }
             internal set { SetValue(SelectedContentTemplateProperty, value); }
         }
 
-        internal ItemsPresenter ItemsPresenterPart { get; private set; }
-
-        internal IContentPresenter ContentPart { get; private set; }
+        internal IContentPresenter? ContentPart { get; private set; }
 
         /// <inheritdoc/>
         IAvaloniaList<ILogical> IContentPresenterHost.LogicalChildren => LogicalChildren;
@@ -143,28 +141,45 @@ namespace Avalonia.Controls
             return RegisterContentPresenter(presenter);
         }
 
-        protected override void OnContainersMaterialized(ItemContainerEventArgs e)
+        protected override void OnContainerPrepared(ElementPreparedEventArgs e)
         {
-            base.OnContainersMaterialized(e);
-            UpdateSelectedContent();
+            base.OnContainerPrepared(e);
+
+            if (e.Index == SelectedIndex)
+            {
+                UpdateSelectedContent(e.Element as IContentControl);
+            }
         }
 
-        protected override void OnContainersRecycled(ItemContainerEventArgs e)
+        protected override void OnContainerIndexChanged(ElementIndexChangedEventArgs e)
         {
-            base.OnContainersRecycled(e);
-            UpdateSelectedContent();
+            base.OnContainerIndexChanged(e);
+
+            if (e.NewIndex == SelectedIndex)
+            {
+                UpdateSelectedContent(e.Element as IContentControl);
+            }
         }
 
-        private void UpdateSelectedContent()
+        protected override void OnPropertyChanged<T>(AvaloniaPropertyChangedEventArgs<T> change)
         {
-            if (SelectedIndex == -1)
+            base.OnPropertyChanged(change);
+
+            if (change.Property == SelectedIndexProperty)
+            {
+                var container = TryGetContainer(SelectedIndex) as IContentControl;
+                UpdateSelectedContent(container);
+            }
+        }
+
+        private void UpdateSelectedContent(IContentControl? container)
+        {
+            if (container is null)
             {
                 SelectedContent = SelectedContentTemplate = null;
             }
             else
             {
-                var container = SelectedItem as IContentControl ??
-                    ItemContainerGenerator.ContainerFromIndex(SelectedIndex) as IContentControl;
                 SelectedContentTemplate = container?.ContentTemplate;
                 SelectedContent = container?.Content;
             }
@@ -190,17 +205,13 @@ namespace Avalonia.Controls
             return new TabItemContainerGenerator(this);
         }
 
-        protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
-        {
-            ItemsPresenterPart = e.NameScope.Get<ItemsPresenter>("PART_ItemsPresenter");
-        }
-
         /// <inheritdoc/>
         protected override void OnGotFocus(GotFocusEventArgs e)
         {
             base.OnGotFocus(e);
 
-            if (e.NavigationMethod == NavigationMethod.Directional)
+            if (e.NavigationMethod == NavigationMethod.Directional &&
+                e.Source is object)
             {
                 e.Handled = UpdateSelectionFromEventSource(e.Source);
             }
@@ -211,7 +222,9 @@ namespace Avalonia.Controls
         {
             base.OnPointerPressed(e);
 
-            if (e.GetCurrentPoint(this).Properties.IsLeftButtonPressed && e.Pointer.Type == PointerType.Mouse)
+            if (e.GetCurrentPoint(this).Properties.IsLeftButtonPressed &&
+                e.Pointer.Type == PointerType.Mouse && 
+                e.Source is object)
             {
                 e.Handled = UpdateSelectionFromEventSource(e.Source);
             }
@@ -219,7 +232,9 @@ namespace Avalonia.Controls
 
         protected override void OnPointerReleased(PointerReleasedEventArgs e)
         {
-            if (e.InitialPressMouseButton == MouseButton.Left && e.Pointer.Type != PointerType.Mouse)
+            if (e.InitialPressMouseButton == MouseButton.Left &&
+                e.Pointer.Type != PointerType.Mouse &&
+                e.Source is object)
             {
                 var container = GetContainerFromEventSource(e.Source);
                 if (container != null

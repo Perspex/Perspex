@@ -39,7 +39,7 @@
     <Setter Property="HorizontalContentAlignment" Value="Stretch" />
     <Setter Property="VerticalContentAlignment" Value="Center" />
     <Setter Property="HorizontalAlignment" Value="Left" />
-    <Setter Property="VerticalAlignment" Value="Top" />    
+    <Setter Property="VerticalAlignment" Value="Top" />
     <Setter Property="FontSize" Value="{DynamicResource ControlContentThemeFontSize}" />
     <Setter Property="PlaceholderForeground" Value="{DynamicResource ComboBoxPlaceHolderForeground}" />
     <Setter Property="Template">
@@ -122,6 +122,7 @@
                    IsOpen="{TemplateBinding IsDropDownOpen, Mode=TwoWay}"
                    MinWidth="{Binding Bounds.Width, RelativeSource={RelativeSource TemplatedParent}}"
                    MaxHeight="{TemplateBinding MaxDropDownHeight}"
+                   PlacementConstraintAdjustment="SlideX,FlipY,ResizeY"
                    PlacementTarget="Background"
                    IsLightDismissEnabled="True">
               <Border x:Name="PopupBorder"
@@ -135,11 +136,9 @@
                 <ScrollViewer HorizontalScrollBarVisibility="{TemplateBinding ScrollViewer.HorizontalScrollBarVisibility}"
                               VerticalScrollBarVisibility="{TemplateBinding ScrollViewer.VerticalScrollBarVisibility}">
                   <ItemsPresenter Name="PART_ItemsPresenter"
-                                  Items="{TemplateBinding Items}"
+                                  ItemsView="{TemplateBinding ItemsView}"
                                   Margin="{DynamicResource ComboBoxDropdownContentMargin}"
-                                  ItemsPanel="{TemplateBinding ItemsPanel}"
-                                  ItemTemplate="{TemplateBinding ItemTemplate}"
-                                  VirtualizationMode="{TemplateBinding VirtualizationMode}" />
+                                  Layout="{TemplateBinding Layout}"/>
                 </ScrollViewer>
               </Border>
             </Popup>
@@ -226,15 +225,15 @@
   <Style Selector="ComboBox:focused:pressed /template/ Path#DropDownGlyph">
     <Setter Property="Fill" Value="{DynamicResource ComboBoxDropDownGlyphForegroundFocusedPressed}" />
   </Style>
-  
+
   <Style Selector="ComboBox /template/ Border#Background">
     <Setter Property="CornerRadius" Value="{DynamicResource ControlCornerRadius}" />
   </Style>
-  
+
   <Style Selector="ComboBox /template/ Border#HighlightBackground">
     <Setter Property="CornerRadius" Value="{DynamicResource ControlCornerRadius}" />
   </Style>
-  
+
   <!-- Error State -->
   <Style Selector="ComboBox:error /template/ Border#Background">
     <Setter Property="BorderBrush" Value="{DynamicResource SystemControlErrorTextForegroundBrush}"/>

@@ -27,7 +27,6 @@ namespace Avalonia.Controls
     internal class VirtualizationInfo
     {
         private int _pinCounter;
-        private object _data;
 
         public Rect ArrangeBounds { get; set; }
         public bool AutoRecycleCandidate { get; set; }
@@ -37,6 +36,8 @@ namespace Avalonia.Controls
         public bool IsRealized => IsHeldByLayout || Owner == ElementOwner.PinnedPool;
         public bool IsInUniqueIdResetPool => Owner == ElementOwner.UniqueIdResetPool;
         public bool MustClearDataContext { get; set; }
+        public bool IsInlineElement { get; set; }
+        public bool ToRemove { get; set; }
         public bool KeepAlive { get; set; }
         public bool IsRegisteredAsAnchorCandidate { get; set; }
         public ElementOwner Owner { get; private set; } = ElementOwner.ElementFactory;

@@ -163,26 +163,7 @@ namespace Avalonia.Layout
         /// <inheritdoc/>
         public virtual void ExecuteInitialLayoutPass()
         {
-            if (_disposed)
-            {
-                return;
-            }
-
-            try
-            {
-                _running = true;
-                Measure(_owner);
-                Arrange(_owner);
-            }
-            finally
-            {
-                _running = false;
-            }
-
-            // Running the initial layout pass may have caused some control to be invalidated
-            // so run a full layout pass now (this usually due to scrollbars; its not known
-            // whether they will need to be shown until the layout pass has run and if the
-            // first guess was incorrect the layout will need to be updated).
+            InvalidateMeasure(_owner);
             ExecuteLayoutPass();
         }
 

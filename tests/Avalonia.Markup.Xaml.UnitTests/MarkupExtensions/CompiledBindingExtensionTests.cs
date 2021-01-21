@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
+using System.Linq;
 using System.Reactive.Subjects;
 using System.Text;
 using System.Threading.Tasks;
@@ -424,11 +425,10 @@ namespace Avalonia.Markup.Xaml.UnitTests.MarkupExtensions
 
                 window.DataContext = dataContext;
 
-                window.ApplyTemplate();
-                target.ApplyTemplate();
-                target.Presenter.ApplyTemplate();
+                window.LayoutManager.ExecuteInitialLayoutPass();
 
-                Assert.Equal(dataContext.ListProperty[0], (string)((ContentPresenter)target.Presenter.Panel.Children[0]).Content);
+                var presenter = (ContentPresenter)target.Presenter.RealizedElements.First();
+                Assert.Equal(dataContext.ListProperty[0], presenter.Content);
             }
         }
 

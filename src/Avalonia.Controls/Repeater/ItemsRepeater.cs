@@ -63,9 +63,9 @@ namespace Avalonia.Controls
         private VirtualizingLayoutContext _layoutContext;
         private NotifyCollectionChangedEventArgs _processingItemsSourceChange;
         private bool _isLayoutInProgress;
-        private ItemsRepeaterElementPreparedEventArgs _elementPreparedArgs;
-        private ItemsRepeaterElementClearingEventArgs _elementClearingArgs;
-        private ItemsRepeaterElementIndexChangedEventArgs _elementIndexChangedArgs;
+        private ElementPreparedEventArgs _elementPreparedArgs;
+        private ElementClearingEventArgs _elementClearingArgs;
+        private ElementIndexChangedEventArgs _elementIndexChangedArgs;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ItemsRepeater"/> class.
@@ -171,7 +171,7 @@ namespace Avalonia.Controls
         /// outside the range of realized items. Elements are cleared when they become available
         /// for re-use.
         /// </remarks>
-        public event EventHandler<ItemsRepeaterElementClearingEventArgs> ElementClearing;
+        public event EventHandler<ElementClearingEventArgs> ElementClearing;
 
         /// <summary>
         /// Occurs for each realized <see cref="IControl"/> when the index for the item it
@@ -186,7 +186,7 @@ namespace Avalonia.Controls
         /// represents has changed. For example, when another item is added or removed in the data
         /// source, the index for items that come after in the ordering will be impacted.
         /// </remarks>
-        public event EventHandler<ItemsRepeaterElementIndexChangedEventArgs> ElementIndexChanged;
+        public event EventHandler<ElementIndexChangedEventArgs> ElementIndexChanged;
 
         /// <summary>
         /// Occurs each time an element is prepared for use.
@@ -195,7 +195,7 @@ namespace Avalonia.Controls
         /// The prepared element might be newly created or an existing element that is being re-
         /// used.
         /// </remarks>
-        public event EventHandler<ItemsRepeaterElementPreparedEventArgs> ElementPrepared;
+        public event EventHandler<ElementPreparedEventArgs> ElementPrepared;
 
         /// <summary>
         /// Retrieves the index of the item from the data source that corresponds to the specified
@@ -302,13 +302,20 @@ namespace Avalonia.Controls
                     desiredSize = layout.Measure(layoutContext, availableSize);
                     extent = new Rect(LayoutOrigin.X, LayoutOrigin.Y, desiredSize.Width, desiredSize.Height);
 
-                    // Clear auto recycle candidate elements that have not been kept alive by layout - i.e layout did not
-                    // call GetElementAt(index).
-                    foreach (var element in Children)
+                    // Clear elements:
+                    // - Inline elements that were marked as ToRemove due to a collection change
+                    // - Auto recycle candidate elements that have not been kept alive by layout - i.e layout did not
+                    //   call GetElementAt(index)
+                    for (var i = Children.Count -1; i >= 0; --i)
                     {
+                        var element = Children[i];
                         var virtInfo = GetVirtualizationInfo(element);
 
-                        if (virtInfo.Owner == ElementOwner.Layout &&
+                        if (virtInfo.ToRemove)
+                        {
+                            Children.RemoveAt(i);
+                        }
+                        else if (virtInfo.Owner == ElementOwner.Layout &&
                             virtInfo.AutoRecycleCandidate &&
                             !virtInfo.KeepAlive)
                         {
@@ -536,7 +543,7 @@ namespace Avalonia.Controls
 
                 if (_elementPreparedArgs == null)
                 {
-                    _elementPreparedArgs = new ItemsRepeaterElementPreparedEventArgs(element, index);
+                    _elementPreparedArgs = new ElementPreparedEventArgs(element, index);
                 }
                 else
                 {
@@ -553,7 +560,7 @@ namespace Avalonia.Controls
             {
                 if (_elementClearingArgs == null)
                 {
-                    _elementClearingArgs = new ItemsRepeaterElementClearingEventArgs(element);
+                    _elementClearingArgs = new ElementClearingEventArgs(element);
                 }
                 else
                 {
@@ -570,7 +577,7 @@ namespace Avalonia.Controls
             {
                 if (_elementIndexChangedArgs == null)
                 {
-                    _elementIndexChangedArgs = new ItemsRepeaterElementIndexChangedEventArgs(element, oldIndex, newIndex);
+                    _elementIndexChangedArgs = new ElementIndexChangedEventArgs(element, oldIndex, newIndex);
                 }
                 else
                 {
@@ -588,12 +595,15 @@ namespace Avalonia.Controls
                 throw new AvaloniaInternalException("Cannot set ItemsSourceView during layout.");
             }
 
+            var args = new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset);
+
             ItemsSourceView?.Dispose();
             ItemsSourceView = newValue;
 
             if (oldValue != null)
             {
                 oldValue.CollectionChanged -= OnItemsSourceViewChanged;
+                OnItemsSourceViewChanged(oldValue, args);
             }
 
             if (newValue != null)
@@ -603,7 +613,6 @@ namespace Avalonia.Controls
 
             if (Layout != null)
             {
-                var args = new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset);
 
                 try
                 {

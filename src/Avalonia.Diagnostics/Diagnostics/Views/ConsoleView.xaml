@@ -38,8 +38,7 @@
              BorderBrush="{DynamicResource ThemeControlMidBrush}"
              BorderThickness="0,0,0,1"
              FontFamily="/Assets/Fonts/SourceSansPro-Regular.ttf"
-             Items="{Binding History}"
-             VirtualizationMode="None">
+             Items="{Binding History}">
       <ListBox.ItemTemplate>
         <DataTemplate>
           <StackPanel Orientation="Vertical">

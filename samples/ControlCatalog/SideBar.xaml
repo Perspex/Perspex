@@ -13,6 +13,9 @@
         <Setter Property="TabStripPlacement" Value="Left"/>
         <Setter Property="Padding" Value="8 0 0 0"/>
         <Setter Property="Background" Value="{DynamicResource SystemAccentColor}"/>
+        <Setter Property="Layout">
+          <NonVirtualizingStackLayout Orientation="Vertical"/>
+        </Setter>
         <Setter Property="Template">
             <ControlTemplate>
                 <Border 
@@ -28,9 +31,7 @@
                             DockPanel.Dock="Left">
                             <ItemsPresenter
                                 Name="PART_ItemsPresenter"                          
-                                Items="{TemplateBinding Items}"
-                                ItemsPanel="{TemplateBinding ItemsPanel}"
-                                ItemTemplate="{TemplateBinding ItemTemplate}">
+                                ItemsView="{TemplateBinding ItemsView}">
                             </ItemsPresenter>
                         </ScrollViewer>
                         <ContentControl Content="{TemplateBinding Tag}" HorizontalContentAlignment="Right" DockPanel.Dock="Bottom"/>

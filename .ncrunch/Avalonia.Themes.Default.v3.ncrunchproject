@@ -3,6 +3,7 @@
     <HiddenComponentWarnings>
       <Value>MissingOrIgnoredProjectReference</Value>
     </HiddenComponentWarnings>
+    <InstrumentOutputAssembly>False</InstrumentOutputAssembly>
     <PreviouslyBuiltSuccessfully>True</PreviouslyBuiltSuccessfully>
   </Settings>
 </ProjectConfiguration>

@@ -1,7 +1,6 @@
 using System.Collections.ObjectModel;
 using System.Linq;
 using Avalonia.Controls.Presenters;
-using Avalonia.Controls.Primitives;
 using Avalonia.Controls.Templates;
 using Avalonia.LogicalTree;
 using Avalonia.VisualTree;
@@ -24,7 +23,7 @@ namespace Avalonia.Controls.UnitTests
                 }
             };
 
-            target.ApplyTemplate();
+            Layout(target);
 
             Assert.Equal(0, target.SelectedIndex);
             Assert.Equal("Foo", target.SelectedItem);
@@ -43,8 +42,7 @@ namespace Avalonia.Controls.UnitTests
                 }
             };
 
-            target.ApplyTemplate();
-            target.Presenter.ApplyTemplate();
+            Layout(target);
 
             Assert.Single(target.GetLogicalChildren());
 
@@ -64,12 +62,11 @@ namespace Avalonia.Controls.UnitTests
                 SelectedIndex = 0,
             };
 
-            target.ApplyTemplate();
-            target.Presenter.ApplyTemplate();
+            Layout(target);
 
-            Assert.Single(target.ItemContainerGenerator.Containers);
+            Assert.Single(target.Presenter.RealizedElements);
             target.SelectedIndex = 1;
-            Assert.Single(target.ItemContainerGenerator.Containers);
+            Assert.Single(target.Presenter.RealizedElements);
         }
 
         [Fact]
@@ -89,8 +86,7 @@ namespace Avalonia.Controls.UnitTests
                 IsVirtualized = false
             };
 
-            target.ApplyTemplate();
-            target.Presenter.ApplyTemplate();
+            Layout(target);
 
             Assert.Equal(3, target.GetLogicalChildren().Count());
 
@@ -102,6 +98,7 @@ namespace Avalonia.Controls.UnitTests
             newItems.RemoveAt(0);
 
             target.Items = newItems;
+            Layout(target);
 
             child = GetContainerTextBlock(target.GetLogicalChildren().First());
 
@@ -125,8 +122,7 @@ namespace Avalonia.Controls.UnitTests
                 IsVirtualized = true,
             };
 
-            target.ApplyTemplate();
-            target.Presenter.ApplyTemplate();
+            Layout(target);
 
             Assert.Single(target.GetLogicalChildren());
 
@@ -138,6 +134,7 @@ namespace Avalonia.Controls.UnitTests
             newItems.RemoveAt(0);
 
             target.Items = newItems;
+            Layout(target);
 
             child = GetContainerTextBlock(target.GetLogicalChildren().Single());
 
@@ -162,6 +159,7 @@ namespace Avalonia.Controls.UnitTests
             Assert.Empty(target.GetLogicalChildren());
 
             items.Add("Foo");
+            Layout(target);
 
             Assert.Equal(0, target.SelectedIndex);
             Assert.Single(target.GetLogicalChildren());
@@ -184,8 +182,7 @@ namespace Avalonia.Controls.UnitTests
                 IsVirtualized = false
             };
 
-            target.ApplyTemplate();
-            target.Presenter.ApplyTemplate();
+            Layout(target);
 
             Assert.Equal(3, target.GetLogicalChildren().Count());
 
@@ -219,8 +216,7 @@ namespace Avalonia.Controls.UnitTests
                 SelectedIndex = 2
             };
 
-            target.ApplyTemplate();
-            target.Presenter.ApplyTemplate();
+            Layout(target);
 
             Assert.Equal("FooBar", target.SelectedItem);
 
@@ -247,8 +243,7 @@ namespace Avalonia.Controls.UnitTests
                 IsVirtualized = false
             };
 
-            target.ApplyTemplate();
-            target.Presenter.ApplyTemplate();
+            Layout(target);
 
             Assert.Equal(3, target.GetLogicalChildren().Count());
 
@@ -281,8 +276,7 @@ namespace Avalonia.Controls.UnitTests
                 IsVirtualized = false
             };
 
-            target.ApplyTemplate();
-            target.Presenter.ApplyTemplate();
+            Layout(target);
 
             target.SelectedIndex = 1;
 
@@ -292,14 +286,21 @@ namespace Avalonia.Controls.UnitTests
             Assert.Equal("Foo", target.SelectedItem);
         }
 
+        private void Layout(Carousel target)
+        {
+            if (target.Presenter?.IsMeasureValid == false)
+                target.InvalidateMeasure();
+            target.Measure(new Size(100, 100));
+            target.Arrange(new Rect(target.DesiredSize));
+        }
+
         private Control CreateTemplate(Carousel control, INameScope scope)
         {
             return new CarouselPresenter
             {
                 Name = "PART_ItemsPresenter",
                 [~CarouselPresenter.IsVirtualizedProperty] = control[~Carousel.IsVirtualizedProperty],
-                [~CarouselPresenter.ItemsProperty] = control[~Carousel.ItemsProperty],
-                [~CarouselPresenter.ItemsPanelProperty] = control[~Carousel.ItemsPanelProperty],
+                [~CarouselPresenter.ItemsViewProperty] = control[~Carousel.ItemsViewProperty],
                 [~CarouselPresenter.SelectedIndexProperty] = control[~Carousel.SelectedIndexProperty],
                 [~CarouselPresenter.PageTransitionProperty] = control[~Carousel.PageTransitionProperty],
             }.RegisterInNameScope(scope);

@@ -3,5 +3,6 @@
     <HiddenComponentWarnings>
       <Value>MissingOrIgnoredProjectReference</Value>
     </HiddenComponentWarnings>
+    <InstrumentOutputAssembly>False</InstrumentOutputAssembly>
   </Settings>
 </ProjectConfiguration>

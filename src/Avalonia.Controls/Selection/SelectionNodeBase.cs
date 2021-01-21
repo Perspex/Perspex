@@ -25,7 +25,7 @@ namespace Avalonia.Controls.Selection
                 {
                     ItemsView?.RemoveListener(this);
                     _source = value;
-                    ItemsView = value is object ? ItemsSourceView<T>.GetOrCreate(value) : null;
+                    ItemsView = ItemsSourceView<T>.GetOrCreate(value);
                     ItemsView?.AddListener(this);
                 }
             }

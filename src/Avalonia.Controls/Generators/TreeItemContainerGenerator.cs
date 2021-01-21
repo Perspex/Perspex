@@ -1,43 +1,31 @@
-using System;
-using System.Collections.Generic;
+﻿using System;
+using System.Collections;
 using System.Linq;
+using System.Reactive.Linq;
 using Avalonia.Controls.Templates;
 using Avalonia.Data;
 using Avalonia.LogicalTree;
 
+#nullable enable
+
 namespace Avalonia.Controls.Generators
 {
-    /// <summary>
-    /// Creates containers for tree items and maintains a list of created containers.
-    /// </summary>
-    /// <typeparam name="T">The type of the container.</typeparam>
-    public class TreeItemContainerGenerator<T> : ItemContainerGenerator<T>, ITreeItemContainerGenerator
+    public class TreeItemContainerGenerator<T> : ItemContainerGenerator, ITreeItemContainerGenerator
         where T : class, IControl, new()
     {
-        private TreeView _treeView;
+        private TreeView? _treeView;
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="TreeItemContainerGenerator{T}"/> class.
-        /// </summary>
-        /// <param name="owner">The owner control.</param>
-        /// <param name="contentProperty">The container's Content property.</param>
-        /// <param name="contentTemplateProperty">The container's ContentTemplate property.</param>
-        /// <param name="itemsProperty">The container's Items property.</param>
-        /// <param name="isExpandedProperty">The container's IsExpanded property.</param>
         public TreeItemContainerGenerator(
-            IControl owner,
-            AvaloniaProperty contentProperty,
-            AvaloniaProperty contentTemplateProperty,
-            AvaloniaProperty itemsProperty,
-            AvaloniaProperty isExpandedProperty)
-            : base(owner, contentProperty, contentTemplateProperty)
+            ItemsControl owner,
+            AvaloniaProperty<object?> headerProperty,
+            AvaloniaProperty<IDataTemplate?> headerTemplateProperty,
+            AvaloniaProperty<IEnumerable?> itemsProperty,
+            AvaloniaProperty<bool> isExpandedProperty)
+            : base(owner)
         {
-            Contract.Requires<ArgumentNullException>(owner != null);
-            Contract.Requires<ArgumentNullException>(contentProperty != null);
-            Contract.Requires<ArgumentNullException>(itemsProperty != null);
-            Contract.Requires<ArgumentNullException>(isExpandedProperty != null);
-
-            ItemsProperty = itemsProperty;
+            HeaderProperty = headerProperty ?? throw new ArgumentNullException(nameof(headerProperty));
+            HeaderTemplateProperty = headerTemplateProperty ?? throw new ArgumentNullException(nameof(headerTemplateProperty));
+            ItemsProperty = itemsProperty ?? throw new ArgumentNullException(nameof(itemsProperty));
             IsExpandedProperty = isExpandedProperty;
             UpdateIndex();
         }
@@ -45,77 +33,27 @@ namespace Avalonia.Controls.Generators
         /// <summary>
         /// Gets the container index for the tree.
         /// </summary>
-        public TreeContainerIndex Index { get; private set; }
+        public TreeContainerIndex? Index { get; private set; }
+
+        /// <summary>
+        /// Gets the container's Header property.
+        /// </summary>
+        protected AvaloniaProperty<object?> HeaderProperty { get; }
+
+        /// <summary>
+        /// Gets the container's HeaderTemplate property.
+        /// </summary>
+        protected AvaloniaProperty<IDataTemplate?> HeaderTemplateProperty { get; }
 
         /// <summary>
         /// Gets the item container's Items property.
         /// </summary>
-        protected AvaloniaProperty ItemsProperty { get; }
+        protected AvaloniaProperty<IEnumerable?> ItemsProperty { get; }
 
         /// <summary>
         /// Gets the item container's IsExpanded property.
         /// </summary>
-        protected AvaloniaProperty IsExpandedProperty { get; }
-
-        /// <inheritdoc/>
-        protected override IControl CreateContainer(object item)
-        {
-            var container = item as T;
-
-            if (item == null)
-            {
-                return null;
-            }
-            else if (container != null)
-            {
-                Index?.Add(item, container);
-                return container;
-            }
-            else
-            {
-                var template = GetTreeDataTemplate(item, ItemTemplate);
-                var result = new T();
-
-                result.SetValue(ContentProperty, template.Build(item), BindingPriority.Style);
-
-                var itemsSelector = template.ItemsSelector(item);
-
-                if (itemsSelector != null)
-                {
-                    BindingOperations.Apply(result, ItemsProperty, itemsSelector, null);
-                }
-
-                if (!(item is IControl))
-                {
-                    result.DataContext = item;
-                }
-
-                Index?.Add(item, result);
-
-                return result;
-            }
-        }
-
-        public override IEnumerable<ItemContainerInfo> Clear()
-        {
-            var items = base.Clear();
-            Index?.Remove(0, items);
-            return items;
-        }
-
-        public override IEnumerable<ItemContainerInfo> Dematerialize(int startingIndex, int count)
-        {
-            Index?.Remove(startingIndex, GetContainerRange(startingIndex, count));
-            return base.Dematerialize(startingIndex, count);
-        }
-
-        public override IEnumerable<ItemContainerInfo> RemoveRange(int startingIndex, int count)
-        {
-            Index?.Remove(startingIndex, GetContainerRange(startingIndex, count));
-            return base.RemoveRange(startingIndex, count);
-        }
-
-        public override bool TryRecycle(int oldIndex, int newIndex, object item) => false;
+        protected AvaloniaProperty<bool> IsExpandedProperty { get; }
 
         public void UpdateIndex()
         {
@@ -127,14 +65,58 @@ namespace Avalonia.Controls.Generators
             else
             {
                 var treeView = Owner.GetSelfAndLogicalAncestors().OfType<TreeView>().FirstOrDefault();
-                
+
                 if (treeView != _treeView)
                 {
-                    Clear();
                     Index = treeView?.ItemContainerGenerator?.Index;
                     _treeView = treeView;
                 }
             }
+        }
+
+        protected override IControl CreateContainer(ElementFactoryGetArgs args)
+        {
+            if (args.Data is T c)
+            {
+                return c;
+            }
+
+            var result = new T();
+            var dataCapture = args.Data;
+            var itemsSelector = result.GetObservable(Control.DataContextProperty)
+                .Select(x =>
+                {
+                    var template = GetTreeDataTemplate(x, Owner.ItemTemplate);
+                    var itemsSelector = template.ItemsSelector(dataCapture);
+                    return itemsSelector?.Observable ??
+                        Observable.Never<object?>().StartWith(itemsSelector?.Value);
+                })
+                .Switch();
+
+            result.Bind(
+                HeaderProperty,
+                result.GetBindingObservable(Control.DataContextProperty),
+                BindingPriority.Style);
+            result.Bind(
+                HeaderTemplateProperty,
+                Owner.GetBindingObservable(ItemsControl.ItemTemplateProperty),
+                BindingPriority.Style);
+
+            if (itemsSelector != null)
+            {
+                result.Bind(ItemsProperty, itemsSelector);
+            }
+
+            return result;
+        }
+
+        protected override bool DataIsContainer(object data) => data is T;
+
+        private ITreeDataTemplate GetTreeDataTemplate(object? item, IDataTemplate? primary)
+        {
+            var template = Owner.FindDataTemplate(item, primary) ?? FuncDataTemplate.Default;
+            var treeTemplate = template as ITreeDataTemplate ?? new WrapperTreeDataTemplate(template);
+            return treeTemplate;
         }
 
         class WrapperTreeDataTemplate : ITreeDataTemplate
@@ -143,14 +125,7 @@ namespace Avalonia.Controls.Generators
             public WrapperTreeDataTemplate(IDataTemplate inner) => _inner = inner;
             public IControl Build(object param) => _inner.Build(param);
             public bool Match(object data) => _inner.Match(data);
-            public InstancedBinding ItemsSelector(object item) => null;
-        }
-
-        private ITreeDataTemplate GetTreeDataTemplate(object item, IDataTemplate primary)
-        {
-            var template = Owner.FindDataTemplate(item, primary) ?? FuncDataTemplate.Default;
-            var treeTemplate = template as ITreeDataTemplate ?? new WrapperTreeDataTemplate(template);
-            return treeTemplate;
+            public InstancedBinding? ItemsSelector(object item) => null;
         }
     }
 }

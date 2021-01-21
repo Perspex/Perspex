@@ -5,11 +5,10 @@
               BorderBrush="{TemplateBinding BorderBrush}"
               BorderThickness="{TemplateBinding BorderThickness}">
         <CarouselPresenter IsVirtualized="{TemplateBinding IsVirtualized}"
-                           Items="{TemplateBinding Items}"
-                           ItemsPanel="{TemplateBinding ItemsPanel}"
+                           ItemsView="{TemplateBinding ItemsView}"
                            Margin="{TemplateBinding Padding}"
-                           SelectedIndex="{TemplateBinding SelectedIndex}"
-                           PageTransition="{TemplateBinding PageTransition}"/>
+                           PageTransition="{TemplateBinding PageTransition}"
+                           SelectedIndex="{TemplateBinding SelectedIndex}"/>
       </Border>
     </ControlTemplate>
   </Setter>

@@ -10,6 +10,18 @@ namespace Avalonia.Build.Tasks
 {
     public class CompileAvaloniaXamlTask: ITask
     {
+        public static ITask Create(string assemblyFilePath, string referencesFilePath, string outputPath) =>
+            new CompileAvaloniaXamlTask
+            {
+                AssemblyFile = new FileInfo(assemblyFilePath).FullName,
+                ReferencesFilePath = new FileInfo(referencesFilePath).FullName,
+                OutputPath = new FileInfo(outputPath).FullName,
+                BuildEngine = new ConsoleBuildEngine(),
+                ProjectDirectory = Directory.GetCurrentDirectory(),
+                VerifyIl = true,
+                EnableComInteropPatching = true
+            };
+
         public bool Execute()
         {
             Enum.TryParse(ReportImportance, true, out MessageImportance outputImportance);
@@ -53,7 +65,7 @@ namespace Avalonia.Build.Tasks
             return true;
         }
 
-        string GetPdbPath(string p)
+        private string GetPdbPath(string p)
         {
             var d = Path.GetDirectoryName(p);
             var f = Path.GetFileNameWithoutExtension(p);

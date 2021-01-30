@@ -102,7 +102,12 @@ namespace Avalonia.Markup.Xaml.XamlIl.CompilerExtensions
             set => _bindingTransformer.CompileBindingsByDefault = value;
         }
 
-        public void ParseAndCompile(string xaml, string baseUri, IFileSource fileSource, IXamlTypeBuilder<IXamlILEmitter> tb, IXamlType overrideRootType)
+        public List<RecordingIlEmitter.RecordedInstruction> ParseAndCompile(
+            string xaml,
+            string baseUri,
+            IFileSource fileSource,
+            IXamlTypeBuilder<IXamlILEmitter> tb,
+            IXamlType overrideRootType)
         {
             var parsed = XDocumentXamlParser.Parse(xaml, new Dictionary<string, string>
             {
@@ -134,10 +139,9 @@ namespace Avalonia.Markup.Xaml.XamlIl.CompilerExtensions
             }
 
             OverrideRootType(parsed, rootType);
-
             Transform(parsed);
-            Compile(parsed, tb, _contextType, PopulateName, BuildName, "__AvaloniaXamlIlNsInfo", baseUri, fileSource);
             
+            return Compile(parsed, tb, _contextType, PopulateName, BuildName, "__AvaloniaXamlIlNsInfo", baseUri, fileSource);
         }
 
         public void OverrideRootType(XamlDocument doc, IXamlAstTypeReference newType)

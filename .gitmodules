@@ -3,4 +3,4 @@
 	url = https://github.com/kekekeks/Numerge.git
 [submodule "src/Markup/Avalonia.Markup.Xaml/XamlIl/xamlil.github"]
 	path = src/Markup/Avalonia.Markup.Xaml.Loader/xamlil.github
-	url = https://github.com/kekekeks/XamlX.git
+	url = https://github.com/notanaverageman/XamlX.git

@@ -1,27 +1,12 @@
 using System;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Reflection;
-using System.Threading;
 using Microsoft.Build.Framework;
 
 namespace Avalonia.Build.Tasks
 {
     public class CompileAvaloniaXamlTask: ITask
     {
-        public static ITask Create(string assemblyFilePath, string referencesFilePath, string outputPath) =>
-            new CompileAvaloniaXamlTask
-            {
-                AssemblyFile = new FileInfo(assemblyFilePath).FullName,
-                ReferencesFilePath = new FileInfo(referencesFilePath).FullName,
-                OutputPath = new FileInfo(outputPath).FullName,
-                BuildEngine = new ConsoleBuildEngine(),
-                ProjectDirectory = Directory.GetCurrentDirectory(),
-                VerifyIl = true,
-                EnableComInteropPatching = true
-            };
-
         public bool Execute()
         {
             Enum.TryParse(ReportImportance, true, out MessageImportance outputImportance);

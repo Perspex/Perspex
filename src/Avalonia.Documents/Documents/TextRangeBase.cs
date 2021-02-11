@@ -24,6 +24,8 @@
 using System.Collections.Specialized;
 using Avalonia;
 using Avalonia.Documents;
+using Avalonia.Documents.Internal;
+using Avalonia.Media.TextFormatting;
 
 namespace System.Windows.Documents
 {
@@ -459,7 +461,7 @@ namespace System.Windows.Documents
                 if (pointer is TextPointer) // Implement only for concrete TextCotainer returning null otherwise - for optimization
                 {
                     IAvaloniaObject element = ((TextPointer)pointer).Parent as TextElement;
-                    while (value == null && (element is Inline || /*element is Paragraph ||*/ element is ITextBlock))
+                    while (value == null && (element is Inline || /*element is Paragraph ||*/ element is NewTextBlock))
                     {
                         value = element.GetValue(formattingProperty);
 

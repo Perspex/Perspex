@@ -15,6 +15,7 @@ using MS.Internal;
 //using MS.Utility;
 //using System.Windows.Controls;
 using Avalonia.Documents;
+using Avalonia.Media.TextFormatting;
 
 #pragma warning disable 1634, 1691  // suppressing PreSharp warnings
 

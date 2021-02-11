@@ -13,6 +13,8 @@
 //using MS.Internal.Documents;
 
 using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Media.TextFormatting;
 using Avalonia.Metadata;
 
 namespace System.Windows.Documents 
@@ -51,7 +53,7 @@ namespace System.Windows.Documents
         /// <param name="childUIElement">
         /// UIElement set as a child of this inline item
         /// </param>
-        public InlineUIContainer(StyledElement childUIElement) : this(childUIElement, null)
+        public InlineUIContainer(IControl childUIElement) : this(childUIElement, null)
         {
         }
 
@@ -65,7 +67,7 @@ namespace System.Windows.Documents
         /// Optional position at which to insert the new InlineUIContainer. May
         /// be null.
         /// </param>
-        public InlineUIContainer(StyledElement childUIElement, TextPointer insertionPosition)
+        public InlineUIContainer(IControl childUIElement, TextPointer insertionPosition)
         {
             if (insertionPosition != null)
             {
@@ -104,11 +106,11 @@ namespace System.Windows.Documents
         /// The content spanned by this TextElement.
         /// </summary>
         [Content]
-        public StyledElement Child
+        public IControl Child
         {
             get
             {
-                return this.ContentStart.GetAdjacentElement(LogicalDirection.Forward) as StyledElement;
+                return this.ContentStart.GetAdjacentElement(LogicalDirection.Forward) as IControl;
             }
 
             set
@@ -120,7 +122,7 @@ namespace System.Windows.Documents
                 {
                     TextPointer contentStart = this.ContentStart;
 
-                    StyledElement child = Child;
+                    IControl child = Child;
                     if (child != null)
                     {
                         textContainer.DeleteContentInternal(contentStart, this.ContentEnd);

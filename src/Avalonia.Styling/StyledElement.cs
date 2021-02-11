@@ -857,12 +857,12 @@ namespace Avalonia
 
         void ILogicalParent.AddChild(ILogical child)
         {
-            _logicalChildren?.Add(child);
+            LogicalChildren.Add(child);
         }
 
         void ILogicalParent.RemoveChild(ILogical child)
         {
-            _logicalChildren?.Remove(child);
+            LogicalChildren.Remove(child);
         }
     }
 }

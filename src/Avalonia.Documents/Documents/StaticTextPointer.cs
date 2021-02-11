@@ -6,6 +6,8 @@
 // Description: Optimized minimal version of TextPointer that gets stored on the stack.
 //
 
+using Avalonia.Media.TextFormatting;
+
 namespace System.Windows.Documents
 {
     using System;
@@ -110,12 +112,12 @@ namespace System.Windows.Documents
             return _textContainer.CompareTo(this, position);
         }
 
-        //internal object GetValue(AvaloniaProperty formattingProperty)
-        //{
-        //    AssertGeneration();
+        internal object GetValue(AvaloniaProperty formattingProperty)
+        {
+            AssertGeneration();
 
-        //    return _textContainer.GetValue(this, formattingProperty);
-        //}
+            return _textContainer.GetValue(this, formattingProperty);
+        }
 
         internal static StaticTextPointer Min(StaticTextPointer position1, StaticTextPointer position2)
         {

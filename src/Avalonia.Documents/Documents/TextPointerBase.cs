@@ -8,6 +8,7 @@
 
 using Avalonia;
 using Avalonia.Documents;
+using Avalonia.Media.TextFormatting;
 using Avalonia.VisualTree;
 
 namespace System.Windows.Documents

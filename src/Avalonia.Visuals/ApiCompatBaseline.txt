@@ -40,6 +40,8 @@ CannotAddAbstractMembers : Member 'public System.Double Avalonia.Media.TextForma
 CannotAddAbstractMembers : Member 'public System.Int32 Avalonia.Media.TextFormatting.TextLine.TrailingWhitespaceLength.get()' is abstract in the implementation but is missing in the contract.
 CannotAddAbstractMembers : Member 'public System.Double Avalonia.Media.TextFormatting.TextLine.Width.get()' is abstract in the implementation but is missing in the contract.
 CannotAddAbstractMembers : Member 'public System.Double Avalonia.Media.TextFormatting.TextLine.WidthIncludingTrailingWhitespace.get()' is abstract in the implementation but is missing in the contract.
+MembersMustExist : Member 'public void Avalonia.Media.TextFormatting.TextLineBreak..ctor(System.Collections.Generic.IReadOnlyList<Avalonia.Media.TextFormatting.ShapedTextCharacters>)' does not exist in the implementation but it does exist in the contract.
+MembersMustExist : Member 'public System.Collections.Generic.IReadOnlyList<Avalonia.Media.TextFormatting.ShapedTextCharacters> Avalonia.Media.TextFormatting.TextLineBreak.RemainingCharacters.get()' does not exist in the implementation but it does exist in the contract.
 MembersMustExist : Member 'public void Avalonia.Media.TextFormatting.TextLineMetrics..ctor(Avalonia.Size, System.Double, Avalonia.Media.TextFormatting.TextRange, System.Boolean)' does not exist in the implementation but it does exist in the contract.
 MembersMustExist : Member 'public Avalonia.Media.TextFormatting.TextLineMetrics Avalonia.Media.TextFormatting.TextLineMetrics.Create(System.Collections.Generic.IEnumerable<Avalonia.Media.TextFormatting.TextRun>, Avalonia.Media.TextFormatting.TextRange, System.Double, Avalonia.Media.TextFormatting.TextParagraphProperties)' does not exist in the implementation but it does exist in the contract.
 MembersMustExist : Member 'public Avalonia.Size Avalonia.Media.TextFormatting.TextLineMetrics.Size.get()' does not exist in the implementation but it does exist in the contract.
@@ -55,4 +57,4 @@ CannotAddAbstractMembers : Member 'public Avalonia.Media.TextFormatting.Baseline
 InterfacesShouldHaveSameMembers : Interface member 'public Avalonia.Platform.IGlyphRunImpl Avalonia.Platform.IPlatformRenderInterface.CreateGlyphRun(Avalonia.Media.GlyphRun)' is present in the implementation but not in the contract.
 InterfacesShouldHaveSameMembers : Interface member 'public Avalonia.Platform.IGlyphRunImpl Avalonia.Platform.IPlatformRenderInterface.CreateGlyphRun(Avalonia.Media.GlyphRun, System.Double)' is present in the contract but not in the implementation.
 MembersMustExist : Member 'public Avalonia.Platform.IGlyphRunImpl Avalonia.Platform.IPlatformRenderInterface.CreateGlyphRun(Avalonia.Media.GlyphRun, System.Double)' does not exist in the implementation but it does exist in the contract.
-Total Issues: 56
+Total Issues: 58

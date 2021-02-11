@@ -7,7 +7,9 @@
 //
 
 using Avalonia;
+using Avalonia.Controls;
 using Avalonia.Documents;
+using Avalonia.Documents.Internal;
 
 namespace System.Windows.Documents
 {
@@ -24,7 +26,7 @@ namespace System.Windows.Documents
     [ContentWrapper(typeof(Run))]
     [ContentWrapper(typeof(InlineUIContainer))]
     [WhitespaceSignificantCollection]
-    public class InlineCollection : TextElementCollection<Inline>, IList
+    public class InlineCollection : TextElementCollection<Inline>
     {
         //-------------------------------------------------------------------
         //
@@ -70,9 +72,7 @@ namespace System.Windows.Documents
                 this.TextContainer.BeginChange();
                 try
                 {
-                    StyledElement uiElement = value as StyledElement;
-
-                    if (uiElement != null)
+                    if (value is IControl uiElement)
                     {
                         index = AddUIElement(uiElement, true /* returnIndex */);
                     }
@@ -106,7 +106,7 @@ namespace System.Windows.Documents
         /// <param name="uiElement">
         /// UIElement set as a Child property for the implicit InlineUIContainer.
         /// </param>
-        public void Add(StyledElement uiElement)
+        public void Add(IControl uiElement)
         {
             AddUIElement(uiElement, false /* returnIndex */);
         }
@@ -197,9 +197,9 @@ namespace System.Windows.Documents
             }
 
             // Special case for TextBlock - to keep its simple content in simple state
-            if (this.Parent is ITextBlock)
+            if (this.Parent is NewTextBlock)
             {
-                ITextBlock textBlock = (ITextBlock)this.Parent;
+                NewTextBlock textBlock = (NewTextBlock)this.Parent;
                 if (!textBlock.HasComplexContent)
                 {
                     textBlock.Text = textBlock.Text + text;
@@ -239,7 +239,7 @@ namespace System.Windows.Documents
         // If returnIndex == true, uses the more costly IList.Add
         // to calculate and return the index of the newly inserted
         // Run, otherwise returns -1.
-        private int AddUIElement(StyledElement uiElement, bool returnIndex)
+        private int AddUIElement(IControl uiElement, bool returnIndex)
         {
             if (uiElement == null)
             {

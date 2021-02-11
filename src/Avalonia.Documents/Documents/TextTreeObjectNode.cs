@@ -8,6 +8,7 @@
 
 using System;
 using Avalonia;
+using Avalonia.Media.TextFormatting;
 using MS.Internal;
 
 namespace System.Windows.Documents

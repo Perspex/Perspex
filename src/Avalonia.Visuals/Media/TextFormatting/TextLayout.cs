@@ -332,7 +332,7 @@ namespace Avalonia.Media.TextFormatting
             var glyphRun = TextShaper.Current.ShapeText(new ReadOnlySlice<char>(s_empty, startingIndex, 1),
                 properties.Typeface, properties.FontRenderingEmSize, properties.CultureInfo);
 
-            var textRuns = new List<ShapedTextCharacters>
+            var textRuns = new List<TextRun>
             {
                 new ShapedTextCharacters(glyphRun, _paragraphProperties.DefaultTextRunProperties)
             };

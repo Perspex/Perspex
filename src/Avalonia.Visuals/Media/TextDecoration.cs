@@ -212,5 +212,20 @@ namespace Avalonia.Media
 
             drawingContext.DrawLine(pen, origin, origin + new Point(shapedTextCharacters.Size.Width, 0));
         }
+
+        public TextDecoration Clone()
+        {
+            return new TextDecoration()
+            {
+                Location = Location,
+                Stroke = Stroke,
+                StrokeThicknessUnit = StrokeThicknessUnit,
+                StrokeDashArray = StrokeDashArray,
+                StrokeDashOffset = StrokeDashOffset,
+                StrokeLineCap = StrokeLineCap,
+                StrokeOffset = StrokeOffset,
+                StrokeOffsetUnit = StrokeOffsetUnit
+            };
+        }
     }
 }

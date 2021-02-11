@@ -15,7 +15,9 @@ using System.Collections;
 using System.Windows.Markup;
 //using System.Windows.Media;
 using Avalonia;
+using Avalonia.Controls;
 using Avalonia.Media;
+using Avalonia.Media.TextFormatting;
 using MS.Internal;
 //using MS.Internal.PresentationFramework;
 //using MS.Internal.PtsHost.UnsafeNativeMethods; // PTS restrictions
@@ -750,14 +752,14 @@ namespace System.Windows.Documents
         /// AvaloniaProperty getter for <see cref="Foreground" /> property.
         /// </summary>
         /// <param name="element">The element from which to read the attached property.</param>
-        public static Brush GetForeground(IAvaloniaObject element)
+        public static IBrush GetForeground(IAvaloniaObject element)
         {
             if (element == null)
             {
                 throw new ArgumentNullException("element");
             }
 
-            return (Brush)element.GetValue(ForegroundProperty);
+            return element.GetValue(ForegroundProperty);
         }
 
         ///// <summary>
@@ -820,7 +822,7 @@ namespace System.Windows.Documents
             }
             else
             {
-                StyledElement uie = value as StyledElement;
+                IControl uie = value as IControl;
                 if (uie != null)
                 {
                     InlineUIContainer inlineContainer = this as InlineUIContainer;

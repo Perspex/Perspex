@@ -7,6 +7,7 @@
 //
 
 using System;
+using System.Collections.Generic;
 using MS.Internal;
 //using System.Threading;
 //using System.Windows;
@@ -14,7 +15,9 @@ using MS.Internal;
 //using System.Collections;
 //using System.Windows.Controls; // doc comments
 using Avalonia;
+using Avalonia.Controls;
 using Avalonia.Documents;
+using Avalonia.Media.TextFormatting;
 
 namespace System.Windows.Documents
 {
@@ -514,9 +517,9 @@ namespace System.Windows.Documents
         /// <returns>
         /// <para>Returns <see cref="TextPointerContext.None"/> if this TextPointer
         /// is positioned at the beginning of a text container and the requested direction
-        /// is <see cref="System.Windows.Documents.LogicalDirection.Backward"/>, or if it is positioned
+        /// is <see cref="Avalonia.Media.TextFormatting.LogicalDirection.Backward"/>, or if it is positioned
         /// at the end of a text container  and the requested direction is
-        /// <see cref="System.Windows.Documents.LogicalDirection.Forward"/>.</para>
+        /// <see cref="Avalonia.Media.TextFormatting.LogicalDirection.Forward"/>.</para>
         /// <para>Returns <see cref="TextPointerContext.ElementStart"/> if the TextPointer
         /// has an openenig tag of some of TextElements in the requested direction.</para>
         /// <para>Returns <see cref="TextPointerContext.ElementEnd"/> if the TextPointer
@@ -1052,7 +1055,7 @@ namespace System.Windows.Documents
         /// then the returned position is the same as this one.</para>
         /// <para>Somethimes the whole document does not have even
         /// one insertion position - it happens when the content
-        /// is structurally incomplete, say in empty <see cref="List"/>
+        /// is structurally incomplete, say in empty <see cref="List{T}"/>
         /// or <see cref="Table"/>element. In such case the method
         /// will return the  original position even though it is not
         /// an insertion position. The method never returns null.</para>
@@ -2163,7 +2166,7 @@ namespace System.Windows.Documents
         /// Throws ArgumentException is contentElement is not valid
         /// according to flow schema.
         /// </exception>
-        internal void InsertUIElement(StyledElement uiElement)
+        internal void InsertUIElement(IControl uiElement)
         {
             if (uiElement == null)
             {

@@ -24,6 +24,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\packages\Avalonia\Avalonia.csproj" />
     <ProjectReference Include="..\..\src\Avalonia.Diagnostics\Avalonia.Diagnostics.csproj" />
+    <ProjectReference Include="..\..\src\Avalonia.Documents\Avalonia.Documents.csproj" />
     <ProjectReference Include="..\..\src\Avalonia.Controls.DataGrid\Avalonia.Controls.DataGrid.csproj" />
     <ProjectReference Include="..\MiniMvvm\MiniMvvm.csproj" />
   </ItemGroup>

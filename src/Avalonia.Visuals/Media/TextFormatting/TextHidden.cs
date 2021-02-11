@@ -5,5 +5,15 @@
     /// </summary>
     public class TextHidden : TextRun
     {
+        public TextHidden() : this(DefaultTextSourceLength)
+        {
+        }
+
+        public TextHidden(int textSourceLength)
+        {
+            TextSourceLength = textSourceLength;
+        }
+
+        public override int TextSourceLength { get; }
     }
 }

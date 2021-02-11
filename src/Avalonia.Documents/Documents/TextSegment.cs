@@ -6,6 +6,8 @@
 // Description: A pair of TextPositions used to denote a run of TextContainer content.
 //
 
+using Avalonia.Media.TextFormatting;
+
 namespace System.Windows.Documents
 {
     using MS.Internal;

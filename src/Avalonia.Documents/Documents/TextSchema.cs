@@ -10,7 +10,9 @@ using System.Collections.Specialized;
 using System.Net.Mime;
 using Avalonia;
 using Avalonia.Documents;
+using Avalonia.Documents.Internal;
 using Avalonia.Media;
+using Avalonia.Media.TextFormatting;
 
 namespace System.Windows.Documents
 {
@@ -641,9 +643,9 @@ namespace System.Windows.Documents
                 FontFamily fontFamily2 = (FontFamily)value2;
                 return fontFamily1.Equals(fontFamily2);
             }
-            else if (value1 is Brush)
+            else if (value1 is IBrush)
             {
-                return AreBrushesEqual((Brush)value1, (Brush)value2);
+                return AreBrushesEqual((IBrush)value1, (IBrush)value2);
             }
             else
             {
@@ -820,11 +822,11 @@ namespace System.Windows.Documents
                 return childType == typeof(string);
             }
             // TextBlock allowed children
-            //else if (typeof(TextBlock).IsAssignableFrom(parentType))
-            //{
-            //    return typeof(Inline).IsAssignableFrom(childType) &&
-            //        !typeof(AnchoredBlock).IsAssignableFrom(childType);
-            //}
+            else if (typeof(NewTextBlock).IsAssignableFrom(parentType))
+            {
+                return typeof(Inline).IsAssignableFrom(childType) /* TODO &&
+                    !typeof(AnchoredBlock).IsAssignableFrom(childType)*/;
+            }
             // Hyperlink allowed children
             else if (typeof(Hyperlink).IsAssignableFrom(parentType))
             {
@@ -913,7 +915,7 @@ namespace System.Windows.Documents
             return false;
         }
 
-        private static bool AreBrushesEqual(Brush brush1, Brush brush2)
+        private static bool AreBrushesEqual(IBrush brush1, IBrush brush2)
         {
             SolidColorBrush solidBrush1 = brush1 as SolidColorBrush;
             if (solidBrush1 != null)

@@ -7,6 +7,7 @@
 //
 
 using System;
+using Avalonia.Media.TextFormatting;
 using MS.Internal;
 //using System.Collections;
 //using System.Windows.Threading;

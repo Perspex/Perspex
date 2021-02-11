@@ -6,6 +6,8 @@
 // Description: Abstract version of TextPointer.
 //
 
+using Avalonia.Media.TextFormatting;
+
 namespace System.Windows.Documents
 {
     using System;

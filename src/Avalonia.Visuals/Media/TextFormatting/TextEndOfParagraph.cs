@@ -1,17 +1,20 @@
-﻿namespace Avalonia.Media.TextFormatting
+﻿using Avalonia.Utilities;
+
+namespace Avalonia.Media.TextFormatting
 {
     /// <summary>
     ///  A text run that indicates the end of a paragraph.
     /// </summary>
     public class TextEndOfParagraph : TextEndOfLine
     {
-        public TextEndOfParagraph() { }
+        private static readonly ReadOnlySlice<char> ParagraphSeparator = new(new[] { '\u2029' });
 
-        public TextEndOfParagraph(int textSourceLength)
+        public TextEndOfParagraph() : this(DefaultTextSourceLength) { }
+
+        public TextEndOfParagraph(int textSourceLength) : base(textSourceLength)
         {
-            TextSourceLength = textSourceLength;
         }
 
-        public override int TextSourceLength { get; }
+        public override ReadOnlySlice<char> Text => ParagraphSeparator;
     }
 }

@@ -8,6 +8,8 @@
 //      Contains an extension of ITextRange. 
 //
 
+using Avalonia.Media.TextFormatting;
+
 namespace System.Windows.Documents
 {
     //using System.Diagnostics;

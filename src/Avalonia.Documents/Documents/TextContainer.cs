@@ -20,6 +20,7 @@ using MS.Internal.Documents;
 using Avalonia;
 using Avalonia.Documents;
 using Avalonia.LogicalTree;
+using Avalonia.Media.TextFormatting;
 //using Avalonia.Threading;
 using AvaloniaProperty = Avalonia.AvaloniaProperty;
 using IAvaloniaObject = Avalonia.IAvaloniaObject;
@@ -1749,13 +1750,13 @@ namespace System.Windows.Documents
             }
         }
 
-        //Highlights ITextContainer.Highlights
-        //{
-        //    get
-        //    {
-        //        return this.Highlights;
-        //    }
-        //}
+        Highlights ITextContainer.Highlights
+        {
+            get
+            {
+                return this.Highlights;
+            }
+        }
 
         IAvaloniaObject ITextContainer.Parent
         {
@@ -1929,18 +1930,18 @@ namespace System.Windows.Documents
 #endif // REFCOUNT_DEAD_TEXTPOINTERS
 
         // Collection of highlights applied to TextContainer content.
-        //internal Highlights Highlights
-        //{
-        //    get
-        //    {
-        //        if (_highlights == null)
-        //        {
-        //            _highlights = new Highlights(this);
-        //        }
+        internal Highlights Highlights
+        {
+            get
+            {
+                if (_highlights == null)
+                {
+                    _highlights = new Highlights(this);
+                }
 
-        //        return _highlights;
-        //    }
-        //}
+                return _highlights;
+            }
+        }
 
         // The root node -- contains all content.
         internal TextTreeRootNode RootNode
@@ -3661,7 +3662,7 @@ namespace System.Windows.Documents
         private TextTreeRootNode _rootNode;
 
         // Collection of highlights applied to TextContainer content.
-        //private Highlights _highlights;
+        private Highlights _highlights;
 
         // BeginChange ref count.  When non-zero, we are inside a change block.
         private int _changeBlockLevel;

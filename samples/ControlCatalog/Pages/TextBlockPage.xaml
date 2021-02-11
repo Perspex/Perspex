@@ -1,5 +1,7 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:internal="clr-namespace:Avalonia.Documents.Internal;assembly=Avalonia.Documents"
+             xmlns:documents="clr-namespace:System.Windows.Documents;assembly=Avalonia.Documents"
              x:Class="ControlCatalog.Pages.TextBlockPage">
   <StackPanel>
     <TextBlock Classes="h1">TextBlock</TextBlock>
@@ -16,6 +18,25 @@
           <Setter Property="Padding" Value="2"/>
         </Style>
       </StackPanel.Styles>
+      <Border>
+        <internal:NewTextBlock Width="200">
+          <documents:Span Foreground="Red">Red</documents:Span>
+          <documents:Span Foreground="Green">Green</documents:Span>
+          <documents:Span Foreground="Blue">Blue</documents:Span>
+
+          <documents:Span FontWeight="Normal" FontStyle="Normal"
+                          FontFamily="avares://ControlCatalog/Assets/Fonts#Source Sans Pro">
+            Custom font regular
+            <documents:Span FontWeight="Bold">Custom font bold</documents:Span>
+            <documents:Span FontStyle="Italic">
+              Custom font italic
+              <documents:Span FontWeight="Bold">
+                Custom font bold italic
+              </documents:Span>
+            </documents:Span>
+          </documents:Span>
+        </internal:NewTextBlock>
+      </Border>
       <Border>
         <StackPanel Width="200" Spacing="8">
           <TextBlock Margin="0 0 10 0" TextTrimming="CharacterEllipsis" Text="Lorem ipsum dolor sit amet, consectetur adipiscing elit."/>

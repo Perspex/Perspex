@@ -19,6 +19,8 @@
 //using System.Windows.Markup;
 //using System.Text;
 //using MS.Utility;
+
+using Avalonia.Media.TextFormatting;
 using MS.Internal.Documents;
 
 namespace System.Windows.Documents

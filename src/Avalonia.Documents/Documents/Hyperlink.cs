@@ -18,6 +18,7 @@ using System.IO;
 using System.Windows.Input;
 using System.Windows.Markup;
 using Avalonia;
+using Avalonia.Media.TextFormatting;
 using Avalonia.Threading;
 
 //using System.Windows.Navigation;

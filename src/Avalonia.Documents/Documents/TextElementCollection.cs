@@ -7,7 +7,9 @@
 //
 
 using Avalonia;
+using Avalonia.Controls;
 using Avalonia.Documents;
+using Avalonia.Documents.Internal;
 using Avalonia.Media.TextFormatting;
 
 namespace System.Windows.Documents
@@ -45,7 +47,7 @@ namespace System.Windows.Documents
         {
             if (isOwnerParent)
             {
-                Invariant.Assert(owner is TextElement/* || owner is FlowDocument */ || owner is ITextBlock);
+                Invariant.Assert(owner is TextElement/* || owner is FlowDocument */ || owner is NewTextBlock);
             }
             else
             {
@@ -727,9 +729,9 @@ namespace System.Windows.Documents
             {
                 TextContainer textContainer;
 
-                if (_owner is ITextBlock)
+                if (_owner is NewTextBlock)
                 {
-                    textContainer = ((ITextBlock)_owner).TextContainer;
+                    textContainer = (TextContainer) ((NewTextBlock)_owner).TextContainer;
                 }
                 //else if (_owner is FlowDocument)
                 //{

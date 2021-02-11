@@ -9,7 +9,8 @@
 using System.ComponentModel;            // AsyncCompletedEventArgs
 using System.Collections.ObjectModel;   // ReadOnlyCollection           
 using Avalonia;
-using Avalonia.Media; // GlyphRun
+using Avalonia.Media;
+using Avalonia.Media.TextFormatting; // GlyphRun
 
 namespace System.Windows.Documents
 {

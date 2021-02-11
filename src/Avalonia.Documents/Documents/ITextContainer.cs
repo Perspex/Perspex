@@ -8,6 +8,7 @@
 
 using System;
 using Avalonia;
+using Avalonia.Media.TextFormatting;
 using MS.Internal.Documents;
 
 namespace System.Windows.Documents
@@ -119,7 +120,7 @@ namespace System.Windows.Documents
         /// <summary>
         /// Collection of highlights applied to TextContainer content.
         /// </summary>
-        //Highlights Highlights { get; }
+        Highlights Highlights { get; }
 
         // Optional text selection, may be null if there's no TextEditor
         // associated with an ITextContainer.

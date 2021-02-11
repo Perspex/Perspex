@@ -1,4 +1,5 @@
 ﻿using System.Windows.Documents;
+using Avalonia.Media.TextFormatting;
 using Xunit;
 
 namespace Avalonia.Documents.UnitTests

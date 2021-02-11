@@ -7,6 +7,8 @@
 //              helpoer methods for text editing operations
 //
 
+using Avalonia.Media.TextFormatting;
+
 namespace System.Windows.Documents
 {
     using System;

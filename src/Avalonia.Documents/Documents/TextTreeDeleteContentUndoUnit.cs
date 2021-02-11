@@ -14,6 +14,7 @@ using System.IO;
 //using System.Windows.Markup;
 using System.Xml;
 using Avalonia.Controls;
+using Avalonia.Media.TextFormatting;
 
 //using System.Security;
 

@@ -4,7 +4,7 @@ namespace Avalonia.Media.TextFormatting
 {
     public class TextLineBreak
     {
-        public TextLineBreak(IReadOnlyList<ShapedTextCharacters> remainingCharacters)
+        public TextLineBreak(IReadOnlyList<TextRun> remainingCharacters)
         {
             RemainingCharacters = remainingCharacters;
         }
@@ -12,6 +12,6 @@ namespace Avalonia.Media.TextFormatting
         /// <summary>
         /// Get the remaining shaped characters that were split up by the <see cref="TextFormatter"/> during the formatting process.
         /// </summary>
-        public IReadOnlyList<ShapedTextCharacters> RemainingCharacters { get; }
+        public IReadOnlyList<TextRun> RemainingCharacters { get; }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Avalonia.Media.TextFormatting.Unicode;
+using Avalonia.Utilities;
 
 namespace Avalonia.Media.TextFormatting
 {
@@ -144,7 +145,7 @@ namespace Avalonia.Media.TextFormatting
         /// <param name="textRuns">The text run's.</param>
         /// <param name="length">The length to split at.</param>
         /// <returns>The split text runs.</returns>
-        internal static SplitTextRunsResult SplitTextRuns(List<ShapedTextCharacters> textRuns, int length)
+        internal static SplitTextRunsResult SplitTextRuns(List<TextRun> textRuns, int length)
         {
             var currentLength = 0;
 
@@ -152,15 +153,15 @@ namespace Avalonia.Media.TextFormatting
             {
                 var currentRun = textRuns[i];
 
-                if (currentLength + currentRun.GlyphRun.Characters.Length < length)
+                if (currentLength + currentRun.Text.Length < length)
                 {
-                    currentLength += currentRun.GlyphRun.Characters.Length;
+                    currentLength += currentRun.Text.Length;
                     continue;
                 }
 
-                var firstCount = currentRun.GlyphRun.Characters.Length >= 1 ? i + 1 : i;
+                var firstCount = currentRun.Text.Length >= 1 ? i + 1 : i;
 
-                var first = new List<ShapedTextCharacters>(firstCount);
+                var first = new List<TextRun>(firstCount);
 
                 if (firstCount > 1)
                 {
@@ -172,11 +173,11 @@ namespace Avalonia.Media.TextFormatting
 
                 var secondCount = textRuns.Count - firstCount;
 
-                if (currentLength + currentRun.GlyphRun.Characters.Length == length)
+                if (currentLength + currentRun.Text.Length == length)
                 {
-                    var second = new List<ShapedTextCharacters>(secondCount);
+                    var second = new List<TextRun>(secondCount);
 
-                    var offset = currentRun.GlyphRun.Characters.Length > 1 ? 1 : 0;
+                    var offset = currentRun.Text.Length > 1 ? 1 : 0;
 
                     if (secondCount > 0)
                     {
@@ -194,13 +195,29 @@ namespace Avalonia.Media.TextFormatting
                 {
                     secondCount++;
 
-                    var second = new List<ShapedTextCharacters>(secondCount);
+                    var second = new List<TextRun>(secondCount);
 
-                    var split = currentRun.Split(length - currentLength);
+                    if (currentRun is ShapedTextCharacters shapedText)
+                    {
+                        var split = shapedText.Split(length - currentLength);
 
-                    first.Add(split.First);
+                        first.Add(split.First);
 
-                    second.Add(split.Second);
+                        second.Add(split.Second);
+                    }
+                    else
+                    {
+                        // We don't consider special runs like Inlines, EndOfParagraph, etc. as splittable,
+                        // and simply sort them into the first or second bucket depending on remaining space
+                        if (currentRun.Text.Length <= length - currentLength)
+                        {
+                            first.Add(currentRun);
+                        }
+                        else
+                        {
+                            second.Add(currentRun);
+                        }
+                    }
 
                     if (secondCount > 0)
                     {
@@ -227,14 +244,14 @@ namespace Avalonia.Media.TextFormatting
         /// <returns>
         /// The formatted text runs.
         /// </returns>
-        private static List<ShapedTextCharacters> FetchTextRuns(ITextSource textSource,
+        private static List<TextRun> FetchTextRuns(ITextSource textSource,
             int firstTextSourceIndex, TextLineBreak previousLineBreak, out TextLineBreak nextLineBreak)
         {
             nextLineBreak = default;
 
             var currentLength = 0;
 
-            var textRuns = new List<ShapedTextCharacters>();
+            var textRuns = new List<TextRun>();
 
             if (previousLineBreak != null)
             {
@@ -310,6 +327,11 @@ namespace Avalonia.Media.TextFormatting
                 currentLength += textRun.Text.Length;
             }
 
+            if (textRunEnumerator.Current is TextEndOfParagraph)
+            {
+                textRuns.Add(textRunEnumerator.Current);
+            }
+
             return textRuns;
         }
 
@@ -322,7 +344,7 @@ namespace Avalonia.Media.TextFormatting
                 return false;
             }
 
-            var lineBreakEnumerator = new LineBreakEnumerator(textRun.Text);
+            var lineBreakEnumerator = GetLineBreakEnumerator(textRun);
 
             while (lineBreakEnumerator.MoveNext())
             {
@@ -353,7 +375,7 @@ namespace Avalonia.Media.TextFormatting
         /// <param name="paragraphProperties">The text paragraph properties.</param>
         /// <param name="currentLineBreak">The current line break if the line was explicitly broken.</param>
         /// <returns>The wrapped text line.</returns>
-        private static TextLine PerformTextWrapping(List<ShapedTextCharacters> textRuns, TextRange textRange,
+        private static TextLine PerformTextWrapping(List<TextRun> textRuns, TextRange textRange,
             double paragraphWidth, TextParagraphProperties paragraphProperties, TextLineBreak currentLineBreak)
         {
             var availableWidth = paragraphWidth;
@@ -362,17 +384,20 @@ namespace Avalonia.Media.TextFormatting
 
             foreach (var currentRun in textRuns)
             {
-                if (currentWidth + currentRun.Size.Width > availableWidth)
+                if (currentRun is ShapedTextCharacters shapedText)
                 {
-                    if (TryMeasureCharacters(currentRun, paragraphWidth - currentWidth, out var count))
+                    if (currentWidth + shapedText.Size.Width > availableWidth)
                     {
-                        measuredLength += count;
+                        if (TryMeasureCharacters(shapedText, paragraphWidth - currentWidth, out var count))
+                        {
+                            measuredLength += count;
+                        }
+
+                        break;
                     }
 
-                    break;
+                    currentWidth += shapedText.Size.Width;
                 }
-
-                currentWidth += currentRun.Size.Width;
 
                 measuredLength += currentRun.Text.Length;
             }
@@ -393,7 +418,7 @@ namespace Avalonia.Media.TextFormatting
                 {
                     var currentRun = textRuns[index];
 
-                    var lineBreaker = new LineBreakEnumerator(currentRun.Text);
+                    var lineBreaker = GetLineBreakEnumerator(currentRun);
 
                     var breakFound = false;
 
@@ -435,7 +460,7 @@ namespace Avalonia.Media.TextFormatting
                             {
                                 var nextRun = textRuns[index + 1];
 
-                                lineBreaker = new LineBreakEnumerator(nextRun.Text);
+                                lineBreaker = GetLineBreakEnumerator(nextRun);
 
                                 if (lineBreaker.MoveNext() &&
                                     lineBreaker.Current.PositionMeasure == 0)
@@ -479,7 +504,7 @@ namespace Avalonia.Media.TextFormatting
                 }
                 else
                 {
-                    remainingCharacters = new List<ShapedTextCharacters>(currentLineBreak.RemainingCharacters);
+                    remainingCharacters = new List<TextRun>(currentLineBreak.RemainingCharacters);
                 }
             }
 
@@ -519,7 +544,7 @@ namespace Avalonia.Media.TextFormatting
 
         internal readonly struct SplitTextRunsResult
         {
-            public SplitTextRunsResult(List<ShapedTextCharacters> first, List<ShapedTextCharacters> second)
+            public SplitTextRunsResult(List<TextRun> first, List<TextRun> second)
             {
                 First = first;
 
@@ -532,7 +557,7 @@ namespace Avalonia.Media.TextFormatting
             /// <value>
             /// The first text runs.
             /// </value>
-            public List<ShapedTextCharacters> First { get; }
+            public List<TextRun> First { get; }
 
             /// <summary>
             /// Gets the second text runs.
@@ -540,7 +565,7 @@ namespace Avalonia.Media.TextFormatting
             /// <value>
             /// The second text runs.
             /// </value>
-            public List<ShapedTextCharacters> Second { get; }
+            public List<TextRun> Second { get; }
         }
 
         private struct TextRunEnumerator
@@ -576,6 +601,14 @@ namespace Avalonia.Media.TextFormatting
 
                 return !(Current is TextEndOfLine);
             }
+        }
+
+        private static LineBreakEnumerator GetLineBreakEnumerator(TextRun run)
+        {
+            return run switch
+            {
+                _ => new LineBreakEnumerator(run.Text)
+            };
         }
     }
 }

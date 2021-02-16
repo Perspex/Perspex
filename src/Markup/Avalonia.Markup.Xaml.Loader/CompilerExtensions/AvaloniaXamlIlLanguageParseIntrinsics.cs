@@ -48,10 +48,10 @@ namespace Avalonia.Markup.Xaml.XamlIl.CompilerExtensions
                 try
                 {
                     var thickness = Thickness.Parse(text);
-            
+
                     result = new AvaloniaXamlIlVectorLikeConstantAstNode(node, types, types.Thickness, types.ThicknessFullConstructor,
                         new[] { thickness.Left, thickness.Top, thickness.Right, thickness.Bottom });
-                
+
                     return true;
                 }
                 catch
@@ -65,10 +65,10 @@ namespace Avalonia.Markup.Xaml.XamlIl.CompilerExtensions
                 try
                 {
                     var point = Point.Parse(text);
-            
+
                     result = new AvaloniaXamlIlVectorLikeConstantAstNode(node, types, types.Point, types.PointFullConstructor,
                         new[] { point.X, point.Y });
-                
+
                     return true;
                 }
                 catch
@@ -76,16 +76,16 @@ namespace Avalonia.Markup.Xaml.XamlIl.CompilerExtensions
                     throw new XamlX.XamlLoadException($"Unable to parse \"{text}\" as a point", node);
                 }
             }
-            
+
             if (type.Equals(types.Vector))
             {
                 try
                 {
                     var vector = Vector.Parse(text);
-            
+
                     result = new AvaloniaXamlIlVectorLikeConstantAstNode(node, types, types.Vector, types.VectorFullConstructor,
                         new[] { vector.X, vector.Y });
-                
+
                     return true;
                 }
                 catch
@@ -93,16 +93,16 @@ namespace Avalonia.Markup.Xaml.XamlIl.CompilerExtensions
                     throw new XamlX.XamlLoadException($"Unable to parse \"{text}\" as a vector", node);
                 }
             }
-            
+
             if (type.Equals(types.Size))
             {
                 try
                 {
                     var size = Size.Parse(text);
-                
+
                     result = new AvaloniaXamlIlVectorLikeConstantAstNode(node, types, types.Size, types.SizeFullConstructor,
                         new[] { size.Width, size.Height });
-                
+
                     return true;
                 }
                 catch
@@ -110,16 +110,16 @@ namespace Avalonia.Markup.Xaml.XamlIl.CompilerExtensions
                     throw new XamlX.XamlLoadException($"Unable to parse \"{text}\" as a size", node);
                 }
             }
-            
+
             if (type.Equals(types.Matrix))
             {
                 try
                 {
                     var matrix = Matrix.Parse(text);
-                    
+
                     result = new AvaloniaXamlIlVectorLikeConstantAstNode(node, types, types.Matrix, types.MatrixFullConstructor,
                         new[] { matrix.M11, matrix.M12, matrix.M21, matrix.M22, matrix.M31, matrix.M32 });
-                
+
                     return true;
                 }
                 catch
@@ -127,16 +127,16 @@ namespace Avalonia.Markup.Xaml.XamlIl.CompilerExtensions
                     throw new XamlX.XamlLoadException($"Unable to parse \"{text}\" as a matrix", node);
                 }
             }
-            
+
             if (type.Equals(types.CornerRadius))
             {
                 try
                 {
                     var cornerRadius = CornerRadius.Parse(text);
-            
+
                     result = new AvaloniaXamlIlVectorLikeConstantAstNode(node, types, types.CornerRadius, types.CornerRadiusFullConstructor,
                         new[] { cornerRadius.TopLeft, cornerRadius.TopRight, cornerRadius.BottomRight, cornerRadius.BottomLeft });
-                
+
                     return true;
                 }
                 catch
@@ -144,7 +144,7 @@ namespace Avalonia.Markup.Xaml.XamlIl.CompilerExtensions
                     throw new XamlX.XamlLoadException($"Unable to parse \"{text}\" as a corner radius", node);
                 }
             }
-            
+
             if (type.Equals(types.Color))
             {
                 if (!Color.TryParse(text, out Color color))
@@ -165,9 +165,9 @@ namespace Avalonia.Markup.Xaml.XamlIl.CompilerExtensions
                 try
                 {
                     var gridLength = GridLength.Parse(text);
-                
+
                     result = new AvaloniaXamlIlGridLengthAstNode(node, types, gridLength);
-                    
+
                     return true;
                 }
                 catch
@@ -183,7 +183,7 @@ namespace Avalonia.Markup.Xaml.XamlIl.CompilerExtensions
                     var cursorTypeRef = new XamlAstClrTypeReference(node, types.Cursor, false);
 
                     result = new XamlAstNewClrObjectNode(node, cursorTypeRef, types.CursorTypeConstructor, new List<IXamlAstValueNode> { enumConstantNode });
-                    
+
                     return true;
                 }
             }
@@ -198,12 +198,59 @@ namespace Avalonia.Markup.Xaml.XamlIl.CompilerExtensions
                 return ConvertDefinitionList(node, text, types, types.RowDefinitions, types.RowDefinition, "row definitions", out result);
             }
 
+            if (type.Equals(types.RelativePoint))
+            {
+                try
+                {
+                    var point = RelativePoint.Parse(text);
+
+                    result = new AvaloniaXamlIlVisualElementAstNode<RelativePoint>(node, types.RelativePoint,
+                        types.RelativePointConstructor, point);
+
+                    return true;
+                }
+                catch
+                {
+                    throw new XamlX.XamlLoadException($"Unable to parse \"{text}\" as a {nameof(RelativePoint)}", node);
+                }
+            }
+
+            if (type.Equals(types.IBrush) || type.Equals(types.SolidColorBrush))
+            {
+                try
+                {
+                    var brush = type.Equals(types.SolidColorBrush) ? SolidColorBrush.Parse(text) : Brush.Parse(text);
+
+                    if (brush is SolidColorBrush solidColorBrush)
+                    {
+                        result = new AvaloniaXamlIlVisualElementAstNode<SolidColorBrush>(node, types.IBrush,
+                            types.SolidColorBrushConstructor, solidColorBrush);
+                    }
+                    else
+                    {
+                        var toBrushMethod = types.KnownColors.GetMethod(
+                            new FindMethodMethodSignature("ToBrush", types.ISolidColorBrush, types.KnownColor)
+                            {
+                                IsStatic = true
+                            });
+                        result = new AvaloniaXamlIlImmutableBrushAstNode(node, types.IBrush, KnownColors.GetKnownColor(text),
+                            toBrushMethod);
+                    }
+
+                    return true;
+                }
+                catch
+                {
+                    throw new XamlX.XamlLoadException($"Unable to parse \"{text}\" as a {nameof(IBrush)}", node);
+                }
+            }
+
             result = null;
             return false;
         }
 
         private static bool ConvertDefinitionList(
-            IXamlAstValueNode node, 
+            IXamlAstValueNode node,
             string text,
             AvaloniaXamlIlWellKnownTypes types,
             IXamlType listType,

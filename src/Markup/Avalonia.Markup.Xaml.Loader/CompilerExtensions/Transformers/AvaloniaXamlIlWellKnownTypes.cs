@@ -77,6 +77,14 @@ namespace Avalonia.Markup.Xaml.XamlIl.CompilerExtensions.Transformers
         public IXamlType RowDefinitions { get; }
         public IXamlType ColumnDefinition { get; }
         public IXamlType ColumnDefinitions { get; }
+        public IXamlType RelativePoint { get; }
+        public IXamlConstructor RelativePointConstructor { get; }
+        public IXamlType IBrush { get; }
+        public IXamlConstructor SolidColorBrushConstructor { get; }
+        public IXamlType KnownColor { get; }
+        public IXamlType KnownColors { get; }
+        public IXamlType ISolidColorBrush { get; }
+        public IXamlType SolidColorBrush { get; }
 
         public AvaloniaXamlIlWellKnownTypes(TransformerConfiguration cfg)
         {
@@ -166,6 +174,19 @@ namespace Avalonia.Markup.Xaml.XamlIl.CompilerExtensions.Transformers
             ColumnDefinitions = cfg.TypeSystem.GetType("Avalonia.Controls.ColumnDefinitions");
             RowDefinition = cfg.TypeSystem.GetType("Avalonia.Controls.RowDefinition");
             RowDefinitions = cfg.TypeSystem.GetType("Avalonia.Controls.RowDefinitions");
+
+            RelativePoint = cfg.TypeSystem.GetType("Avalonia.RelativePoint");
+            RelativePointConstructor = RelativePoint.GetConstructor(new List<IXamlType>
+            {
+                XamlIlTypes.Double, XamlIlTypes.Double, cfg.TypeSystem.GetType("Avalonia.RelativeUnit")
+            });
+            IBrush = cfg.TypeSystem.GetType("Avalonia.Media.IBrush");
+            SolidColorBrushConstructor = cfg.TypeSystem.GetType("Avalonia.Media.SolidColorBrush")
+                .GetConstructor(new List<IXamlType> { UInt });
+            KnownColor = cfg.TypeSystem.GetType("Avalonia.Media.KnownColor");
+            KnownColors = cfg.TypeSystem.GetType("Avalonia.Media.KnownColors");
+            ISolidColorBrush = cfg.TypeSystem.GetType("Avalonia.Media.ISolidColorBrush");
+            SolidColorBrush = cfg.TypeSystem.GetType("Avalonia.Media.SolidColorBrush");
         }
     }
 
@@ -178,7 +199,7 @@ namespace Avalonia.Markup.Xaml.XamlIl.CompilerExtensions.Transformers
             ctx.SetItem(rv = new AvaloniaXamlIlWellKnownTypes(ctx.Configuration));
             return rv;
         }
-        
+
         public static AvaloniaXamlIlWellKnownTypes GetAvaloniaTypes(this XamlEmitContext<IXamlILEmitter, XamlILNodeEmitResult> ctx)
         {
             if (ctx.TryGetItem<AvaloniaXamlIlWellKnownTypes>(out var rv))

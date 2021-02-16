@@ -4,13 +4,14 @@ using System.Collections.Generic;
 
 namespace Avalonia.Media
 {
-    internal static class KnownColors
-    {
-        private static readonly IReadOnlyDictionary<string, KnownColor> _knownColorNames;
-        private static readonly IReadOnlyDictionary<uint, string> _knownColors;
 #if !BUILDTASK
-        private static readonly Dictionary<KnownColor, ISolidColorBrush> _knownBrushes;
+    public
 #endif
+    static class KnownColors
+    {
+        private static readonly IDictionary<string, KnownColor> _knownColorNames;
+        private static readonly IReadOnlyDictionary<uint, string> _knownColors;
+        private static readonly Dictionary<KnownColor, ISolidColorBrush> _knownBrushes;
 
         static KnownColors()
         {
@@ -34,19 +35,15 @@ namespace Avalonia.Media
 
             _knownColorNames = knownColorNames;
             _knownColors = knownColors;
-            
-#if !BUILDTASK
+
             _knownBrushes = new Dictionary<KnownColor, ISolidColorBrush>();
-#endif
         }
 
-#if !BUILDTASK
         public static ISolidColorBrush GetKnownBrush(string s)
         {
             var color = GetKnownColor(s);
             return color != KnownColor.None ? color.ToBrush() : null;
         }
-#endif
 
         public static KnownColor GetKnownColor(string s)
         {
@@ -68,7 +65,6 @@ namespace Avalonia.Media
             return Color.FromUInt32((uint)color);
         }
 
-#if !BUILDTASK
         public static ISolidColorBrush ToBrush(this KnownColor color)
         {
             lock (_knownBrushes)
@@ -82,10 +78,12 @@ namespace Avalonia.Media
                 return brush;
             }
         }
-#endif
     }
 
-    internal enum KnownColor : uint
+#if !BUILDTASK
+    public
+#endif
+    enum KnownColor : uint
     {
         None,
         AliceBlue = 0xfff0f8ff,

@@ -5,7 +5,10 @@ namespace Avalonia.Media.Immutable
     /// <summary>
     /// Fills an area with a solid color.
     /// </summary>
-    public readonly struct ImmutableSolidColorBrush : ISolidColorBrush, IEquatable<ImmutableSolidColorBrush>
+#if !BUILDTASK
+    public
+#endif
+    readonly struct ImmutableSolidColorBrush : ISolidColorBrush, IEquatable<ImmutableSolidColorBrush>
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="ImmutableSolidColorBrush"/> class.

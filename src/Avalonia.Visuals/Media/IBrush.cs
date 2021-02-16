@@ -5,8 +5,11 @@ namespace Avalonia.Media
     /// <summary>
     /// Describes how an area is painted.
     /// </summary>
+#if !BUILDTASK
     [TypeConverter(typeof(BrushConverter))]
-    public interface IBrush
+    public
+#endif
+    interface IBrush
     {
         /// <summary>
         /// Gets the opacity of the brush.

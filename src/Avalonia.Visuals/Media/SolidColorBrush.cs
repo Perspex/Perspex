@@ -1,5 +1,7 @@
+#if !BUILDTASK
 using Avalonia.Animation;
 using Avalonia.Animation.Animators;
+#endif
 using Avalonia.Media.Immutable;
 
 namespace Avalonia.Media
@@ -7,8 +9,12 @@ namespace Avalonia.Media
     /// <summary>
     /// Fills an area with a solid color.
     /// </summary>
-    public class SolidColorBrush : Brush, ISolidColorBrush
+#if !BUILDTASK
+    public
+#endif
+    class SolidColorBrush : Brush, ISolidColorBrush
     {
+#if !BUILDTASK
         /// <summary>
         /// Defines the <see cref="Color"/> property.
         /// </summary>
@@ -20,6 +26,7 @@ namespace Avalonia.Media
             Animation.Animation.RegisterAnimator<SolidColorBrushAnimator>(prop => typeof(IBrush).IsAssignableFrom(prop.PropertyType));
             AffectsRender<SolidColorBrush>(ColorProperty);
         }
+#endif
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SolidColorBrush"/> class.
@@ -51,11 +58,15 @@ namespace Avalonia.Media
         /// <summary>
         /// Gets or sets the color of the brush.
         /// </summary>
+#if !BUILDTASK
         public Color Color
         {
             get { return GetValue(ColorProperty); }
             set { SetValue(ColorProperty, value); }
         }
+#else
+        public Color Color { get; set; }
+#endif
 
         /// <summary>
         /// Parses a brush string.
@@ -81,10 +92,12 @@ namespace Avalonia.Media
             return Color.ToString();
         }
 
+#if !BUILDTASK
         /// <inheritdoc/>
         public override IBrush ToImmutable()
         {
             return new ImmutableSolidColorBrush(this);
         }
+#endif
     }
 }

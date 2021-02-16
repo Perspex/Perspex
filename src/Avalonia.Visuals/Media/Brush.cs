@@ -1,15 +1,26 @@
 using System;
 using System.ComponentModel;
+#if !BUILDTASK
 using Avalonia.Animation;
+#endif
 
 namespace Avalonia.Media
 {
     /// <summary>
     /// Describes how an area is painted.
     /// </summary>
+#if !BUILDTASK
     [TypeConverter(typeof(BrushConverter))]
-    public abstract class Brush : Animatable, IMutableBrush
+    public
+#endif
+    abstract class Brush
+#if !BUILDTASK
+        : Animatable, IMutableBrush
+#else
+        : IBrush
+#endif
     {
+#if !BUILDTASK
         /// <summary>
         /// Defines the <see cref="Opacity"/> property.
         /// </summary>
@@ -32,6 +43,9 @@ namespace Avalonia.Media
             get { return GetValue(OpacityProperty); }
             set { SetValue(OpacityProperty, value); }
         }
+#else
+        public double Opacity { get; set; }
+#endif
 
         /// <summary>
         /// Parses a brush string.
@@ -40,8 +54,10 @@ namespace Avalonia.Media
         /// <returns>The <see cref="Color"/>.</returns>
         public static IBrush Parse(string s)
         {
+#if !BUILDTASK
             Contract.Requires<ArgumentNullException>(s != null);
             Contract.Requires<FormatException>(s.Length > 0);
+#endif
 
             if (s[0] == '#')
             {
@@ -57,6 +73,7 @@ namespace Avalonia.Media
             throw new FormatException($"Invalid brush string: '{s}'.");
         }
 
+#if !BUILDTASK
         /// <inheritdoc/>
         public abstract IBrush ToImmutable();
 
@@ -87,5 +104,6 @@ namespace Avalonia.Media
         /// </summary>
         /// <param name="e">The event args.</param>
         protected void RaiseInvalidated(EventArgs e) => Invalidated?.Invoke(this, e);
+#endif
     }
 }

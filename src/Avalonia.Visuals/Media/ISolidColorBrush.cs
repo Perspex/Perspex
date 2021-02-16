@@ -3,7 +3,10 @@ namespace Avalonia.Media
     /// <summary>
     /// Fills an area with a solid color.
     /// </summary>
-    public interface ISolidColorBrush : IBrush
+#if !BUILDTASK
+    public
+#endif
+    interface ISolidColorBrush : IBrush
     {
         /// <summary>
         /// Gets the color of the brush.

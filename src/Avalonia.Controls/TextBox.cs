@@ -325,7 +325,7 @@ namespace Avalonia.Controls
                 _undoRedoHelper.Snapshot();
                 if (string.IsNullOrEmpty(value))
                 {
-                    DeleteSelection();
+                    DeleteSelection(true);
                 }
                 else
                 {
@@ -521,13 +521,29 @@ namespace Avalonia.Controls
                 int caretIndex = CaretIndex;
                 if (!string.IsNullOrEmpty(input) && (MaxLength == 0 || input.Length + text.Length - (Math.Abs(SelectionStart - SelectionEnd)) <= MaxLength))
                 {
-                    DeleteSelection();
-                    caretIndex = CaretIndex;
-                    text = Text ?? string.Empty;
-                    SetTextInternal(text.Substring(0, caretIndex) + input + text.Substring(caretIndex));
-                    CaretIndex += input.Length;
-                    ClearSelection();
-                    _undoRedoHelper.DiscardRedo();
+                    var oldText = _text;
+
+                    _ignoreTextChanges = true;
+
+                    try
+                    {
+                        DeleteSelection(false);
+                        caretIndex = CaretIndex;
+                        text = Text ?? string.Empty;
+                        SetTextInternal(text.Substring(0, caretIndex) + input + text.Substring(caretIndex), false);
+                        CaretIndex += input.Length;
+                        ClearSelection();
+                        _undoRedoHelper.DiscardRedo();
+
+                        if (_text != oldText)
+                        {
+                            RaisePropertyChanged(TextProperty, oldText, _text);
+                        }
+                    }
+                    finally
+                    {
+                        _ignoreTextChanges = false;
+                    }
                 }
             }
         }
@@ -1121,7 +1137,7 @@ namespace Avalonia.Controls
             CaretIndex = SelectionEnd;
         }
 
-        private bool DeleteSelection()
+        private bool DeleteSelection(bool raiseTextChanged = true)
         {
             if (!IsReadOnly)
             {
@@ -1133,7 +1149,7 @@ namespace Avalonia.Controls
                     var start = Math.Min(selectionStart, selectionEnd);
                     var end = Math.Max(selectionStart, selectionEnd);
                     var text = Text;
-                    SetTextInternal(text.Substring(0, start) + text.Substring(end));
+                    SetTextInternal(text.Substring(0, start) + text.Substring(end), raiseTextChanged);
                     CaretIndex = start;
                     ClearSelection();
                     return true;
@@ -1184,16 +1200,23 @@ namespace Avalonia.Controls
             return i;
         }
 
-        private void SetTextInternal(string value)
+        private void SetTextInternal(string value, bool raiseTextChanged = true)
         {
-            try
+            if (raiseTextChanged)
             {
-                _ignoreTextChanges = true;
-                SetAndRaise(TextProperty, ref _text, value);
+                try
+                {
+                    _ignoreTextChanges = true;
+                    SetAndRaise(TextProperty, ref _text, value);
+                }
+                finally
+                {
+                    _ignoreTextChanges = false;
+                }
             }
-            finally
+            else
             {
-                _ignoreTextChanges = false;
+                _text = value;
             }
         }
 

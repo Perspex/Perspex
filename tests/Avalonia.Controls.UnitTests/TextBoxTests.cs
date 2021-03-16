@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 using Avalonia.Controls.Presenters;
@@ -690,6 +691,54 @@ namespace Avalonia.Controls.UnitTests
                 RaiseKeyEvent(target, key, modifiers);
                 RaiseKeyEvent(target, Key.Z, KeyModifiers.Control); // undo
                 Assert.True(target.Text == "0123");
+            }
+        }
+
+        [Fact]
+        public void Setting_SelectedText_Should_Fire_Single_Text_Changed_Notification()
+        {
+            using (UnitTestApplication.Start(Services))
+            {
+                var target = new TextBox
+                {
+                    Template = CreateTemplate(),
+                    Text = "0123",
+                    AcceptsReturn = true,
+                    AcceptsTab = true,
+                    SelectionStart = 1,
+                    SelectionEnd = 3,
+                };
+
+                var values = new List<string>();
+                target.GetObservable(TextBox.TextProperty).Subscribe(x => values.Add(x));
+
+                target.SelectedText = "A";
+
+                Assert.Equal(new[] { "0123", "0A3" }, values);
+            }
+        }
+
+        [Fact]
+        public void Entering_Text_With_SelectedText_Should_Fire_Single_Text_Changed_Notification()
+        {
+            using (UnitTestApplication.Start(Services))
+            {
+                var target = new TextBox
+                {
+                    Template = CreateTemplate(),
+                    Text = "0123",
+                    AcceptsReturn = true,
+                    AcceptsTab = true,
+                    SelectionStart = 1,
+                    SelectionEnd = 3,
+                };
+
+                var values = new List<string>();
+                target.GetObservable(TextBox.TextProperty).Subscribe(x => values.Add(x));
+
+                RaiseTextEvent(target, "A");
+
+                Assert.Equal(new[] { "0123", "0A3" }, values);
             }
         }
 

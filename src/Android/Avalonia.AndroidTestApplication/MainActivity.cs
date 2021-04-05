@@ -38,7 +38,7 @@ namespace Avalonia.AndroidTestApplication
             Styles.Add(new DefaultTheme());
 
             var baseLight = (IStyle)AvaloniaXamlLoader.Load(
-                new Uri("resm:Avalonia.Themes.Default.Accents.BaseLight.xaml?assembly=Avalonia.Themes.Default"));
+                new Uri("avares://Avalonia.Themes.Default/Accents/BaseLight.xaml"));
             Styles.Add(baseLight);
 
 

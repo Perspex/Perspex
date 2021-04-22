@@ -54,6 +54,9 @@
       <TabItem Header="GlyphRun">
         <pages:GlyphRunPage/>
       </TabItem>
+      <TabItem Header="FormattedText">
+        <pages:FormattedTextPage/>
+      </TabItem>
       <TabItem Header="LineBounds">
         <pages:LineBoundsPage />
       </TabItem>

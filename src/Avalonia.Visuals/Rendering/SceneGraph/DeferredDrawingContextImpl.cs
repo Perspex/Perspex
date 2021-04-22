@@ -189,21 +189,6 @@ namespace Avalonia.Rendering.SceneGraph
         }
 
         /// <inheritdoc/>
-        public void DrawText(IBrush foreground, Point origin, IFormattedTextImpl text)
-        {
-            var next = NextDrawAs<TextNode>();
-
-            if (next == null || !next.Item.Equals(Transform, foreground, origin, text))
-            {
-                Add(new TextNode(Transform, foreground, origin, text, CreateChildScene(foreground)));
-            }
-            else
-            {
-                ++_drawOperationindex;
-            }
-        }
-
-        /// <inheritdoc/>
         public void DrawGlyphRun(IBrush foreground, GlyphRun glyphRun)
         {
             var next = NextDrawAs<GlyphRunNode>();

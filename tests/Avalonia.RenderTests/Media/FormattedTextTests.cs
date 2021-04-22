@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text;
+using Avalonia.Media.TextFormatting;
 using Xunit;
 
 #if AVALONIA_SKIA
@@ -40,7 +41,7 @@ namespace Avalonia.Direct2D1.RenderTests.Media
         {
         }
 
-        private IFormattedTextImpl Create(string text,
+        private TextLayout Create(string text,
             string fontFamily,
             double fontSize,
             FontStyle fontStyle,
@@ -49,17 +50,15 @@ namespace Avalonia.Direct2D1.RenderTests.Media
             TextWrapping wrapping,
             double widthConstraint)
         {
-            var r = AvaloniaLocator.Current.GetService<IPlatformRenderInterface>();
-            return r.CreateFormattedText(text,
-                new Typeface(fontFamily, fontStyle, fontWeight),
-                fontSize,
-                textAlignment,
-                wrapping,
-                widthConstraint == -1 ? Size.Infinity : new Size(widthConstraint, double.PositiveInfinity),
-                null);
+            var typeface = new Typeface(fontFamily, fontStyle, fontWeight);
+
+            var formattedText = new TextLayout(text, typeface, fontSize, null, textAlignment, wrapping,
+                maxWidth: widthConstraint == -1 ? double.PositiveInfinity : widthConstraint);
+
+            return formattedText;
         }
 
-        private IFormattedTextImpl Create(string text, double fontSize)
+        private TextLayout Create(string text, double fontSize)
         {
             return Create(text, FontName, fontSize,
                 FontStyle.Normal, TextAlignment.Left,
@@ -67,7 +66,7 @@ namespace Avalonia.Direct2D1.RenderTests.Media
                 -1);
         }
 
-        private IFormattedTextImpl Create(string text, double fontSize, TextAlignment alignment, double widthConstraint)
+        private TextLayout Create(string text, double fontSize, TextAlignment alignment, double widthConstraint)
         {
             return Create(text, FontName, fontSize,
                 FontStyle.Normal, alignment,
@@ -75,7 +74,7 @@ namespace Avalonia.Direct2D1.RenderTests.Media
                 widthConstraint);
         }
 
-        private IFormattedTextImpl Create(string text, double fontSize, TextWrapping wrap, double widthConstraint)
+        private TextLayout Create(string text, double fontSize, TextWrapping wrap, double widthConstraint)
         {
             return Create(text, FontName, fontSize,
                 FontStyle.Normal, TextAlignment.Left,
@@ -99,16 +98,11 @@ namespace Avalonia.Direct2D1.RenderTests.Media
         public void Should_Measure_String_Correctly(string input, double fontSize, double expWidth, double expHeight)
         {
             var fmt = Create(input, fontSize);
-            var size = fmt.Bounds.Size;
 
-            Assert.Equal(expWidth, size.Width, 2);
-            Assert.Equal(expHeight, size.Height, 2);
-
-            var linesHeight = fmt.GetLines().Sum(l => l.Height);
-
-            Assert.Equal(expHeight, linesHeight, 2);
+            Assert.Equal(expWidth, fmt.Size.Width, 2);
+            Assert.Equal(expHeight, fmt.Size.Height, 2);
         }
-        
+
         [Theory]
         [InlineData("", 1, -1, TextWrapping.NoWrap)]
         [InlineData("x", 1, -1, TextWrapping.NoWrap)]
@@ -129,36 +123,36 @@ namespace Avalonia.Direct2D1.RenderTests.Media
             var fmt = Create(input, FontSize, wrap, widthConstraint);
             var constrained = fmt;
 
-            var lines = constrained.GetLines().ToArray();
+            var lines = constrained.TextLines.ToArray();
             Assert.Equal(linesCount, lines.Count());
         }
-        
+
         [Theory]
         [InlineData("x", 0, 0, true, false, 0)]
         [InlineData(stringword, -1, -1, false, false, 0)]
         [InlineData(stringword, 25, 13, true, false, 3)]
-        [InlineData(stringword, 28.70, 13.5, true, true, 3)]
-        [InlineData(stringword, 30, 13, false, true, 3)]
+        [InlineData(stringword, 28.70, 13.5, true, true, 4)]
+        [InlineData(stringword, 30, 13, false, true, 4)]
         [InlineData(stringword + "\r\n", 30, 13, false, false, 4)]
         [InlineData(stringword + "\r\nnext", 30, 13, false, false, 4)]
-        [InlineData(stringword, 300, 13, false, true, 3)]
+        [InlineData(stringword, 300, 13, false, true, 4)]
         [InlineData(stringword + "\r\n", 300, 13, false, false, 4)]
         [InlineData(stringword + "\r\nnext", 300, 13, false, false, 4)]
-        [InlineData(stringword, 300, 300, false, true, 3)]
+        [InlineData(stringword, 300, 300, false, true, 4)]
         //TODO: Direct2D implementation return textposition 6
         //but the text is 6 length, can't find the logic for me it should be 5
         //[InlineData(stringword + "\r\n", 300, 300, false, false, 6)]
-        [InlineData(stringword + "\r\nnext", 300, 300, false, true, 9)]
-        [InlineData(stringword + "\r\nnext", 300, 25, false, true, 9)]
-        [InlineData(stringword, 28, 15, false, true, 3)]
-        [InlineData(stringword, 30, 15, false, true, 3)]
+        [InlineData(stringword + "\r\nnext", 300, 300, false, true, 10)]
+        [InlineData(stringword + "\r\nnext", 300, 25, false, true, 10)]
+        [InlineData(stringword, 28, 15, false, true, 4)]
+        [InlineData(stringword, 30, 15, false, true, 4)]
         [InlineData(stringmiddle3lines, 30, 15, false, false, 9)]
         [InlineData(stringmiddle3lines, 500, 13, false, false, 8)]
         [InlineData(stringmiddle3lines, 30, 25, false, false, 9)]
         [InlineData(stringmiddle3lines, -1, 30, false, false, 10)]
         public void Should_HitTestPoint_Correctly(string input,
-                                    double x, double y,
-                                    bool isInside, bool isTrailing, int pos)
+            double x, double y,
+            bool isInside, bool isTrailing, int pos)
         {
             var fmt = Create(input, FontSize);
             var htRes = fmt.HitTestPoint(new Point(x, y));
@@ -167,7 +161,7 @@ namespace Avalonia.Direct2D1.RenderTests.Media
             Assert.Equal(isInside, htRes.IsInside);
             Assert.Equal(isTrailing, htRes.IsTrailing);
         }
-        
+
         [Theory]
         [InlineData("", 0, 0, 0, 0, FontSizeHeight)]
         [InlineData("x", 0, 0, 0, 7.20, FontSizeHeight)]
@@ -189,7 +183,7 @@ namespace Avalonia.Direct2D1.RenderTests.Media
             Assert.Equal(width, r.Width, 2);
             Assert.Equal(height, r.Height, 2);
         }
-        
+
         [Theory]
         [InlineData("x", 0, 200, 200 - 7.20, 0, 7.20, FontSizeHeight)]
         [InlineData(stringword, 0, 200, 171.20, 0, 7.20, FontSizeHeight)]
@@ -208,7 +202,7 @@ namespace Avalonia.Direct2D1.RenderTests.Media
             Assert.Equal(width, r.Width, 2);
             Assert.Equal(height, r.Height, 2);
         }
-        
+
         [Theory]
         [InlineData("x", 0, 200, 100 - 7.20 / 2, 0, 7.20, FontSizeHeight)]
         [InlineData(stringword, 0, 200, 85.6, 0, 7.20, FontSizeHeight)]
@@ -227,7 +221,7 @@ namespace Avalonia.Direct2D1.RenderTests.Media
             Assert.Equal(width, r.Width, 2);
             Assert.Equal(height, r.Height, 2);
         }
-        
+
         [Theory]
         [InlineData("x", 0, 1, "0,0,7.20,13.59")]
         [InlineData(stringword, 0, 4, "0,0,28.80,13.59")]

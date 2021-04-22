@@ -72,14 +72,6 @@ namespace Avalonia.Platform
             BoxShadows boxShadows = default);
 
         /// <summary>
-        /// Draws text.
-        /// </summary>
-        /// <param name="foreground">The foreground brush.</param>
-        /// <param name="origin">The upper-left corner of the text.</param>
-        /// <param name="text">The text.</param>
-        void DrawText(IBrush foreground, Point origin, IFormattedTextImpl text);
-
-        /// <summary>
         /// Draws a glyph run.
         /// </summary>
         /// <param name="foreground">The foreground.</param>

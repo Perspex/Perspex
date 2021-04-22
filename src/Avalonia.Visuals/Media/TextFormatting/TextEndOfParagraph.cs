@@ -5,5 +5,14 @@
     /// </summary>
     public class TextEndOfParagraph : TextEndOfLine
     {
+        public TextEndOfParagraph()
+        {
+            
+        }
+        
+        public TextEndOfParagraph(int textSourceLength) : base(textSourceLength)
+        {
+            
+        }
     }
 }

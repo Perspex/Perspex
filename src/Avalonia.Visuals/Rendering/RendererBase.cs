@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Globalization;
 using Avalonia.Media;
-using Avalonia.Platform;
 
 namespace Avalonia.Rendering
 {
@@ -12,22 +12,16 @@ namespace Avalonia.Rendering
         private readonly Stopwatch _stopwatch = Stopwatch.StartNew();
         private int _framesThisSecond;
         private int _fps;
-        private FormattedText _fpsText;
         private TimeSpan _lastFpsUpdate;
 
         public RendererBase(bool useManualFpsCounting = false)
         {
             _useManualFpsCounting = useManualFpsCounting;
-            _fpsText = new FormattedText
-            {
-                Typeface = new Typeface(FontFamily.Default),
-                FontSize = s_fontSize
-            };
         }
 
         protected void FpsTick() => _framesThisSecond++;
 
-        protected void RenderFps(IDrawingContextImpl context, Rect clientRect, int? layerCount)
+        protected void RenderFps(DrawingContext context, Rect clientRect, int? layerCount)
         {
             var now = _stopwatch.Elapsed;
             var elapsed = now - _lastFpsUpdate;
@@ -42,21 +36,15 @@ namespace Avalonia.Rendering
                 _lastFpsUpdate = now;
             }
 
-            if (layerCount.HasValue)
-            {
-                _fpsText.Text = string.Format("Layers: {0} FPS: {1:000}", layerCount, _fps);
-            }
-            else
-            {
-                _fpsText.Text = string.Format("FPS: {0:000}", _fps);
-            }
+            var text = layerCount.HasValue ? $"Layers: {layerCount} FPS: {_fps:000}" : $"FPS: {_fps:000}";
 
-            var size = _fpsText.Bounds.Size;
-            var rect = new Rect(clientRect.Right - size.Width, 0, size.Width, size.Height);
+            var formattedText = new FormattedText(text, CultureInfo.CurrentCulture, FlowDirection.LeftToRight, Typeface.Default, s_fontSize, Brushes.White);
 
-            context.Transform = Matrix.Identity;
-            context.DrawRectangle(Brushes.Black,null, rect);
-            context.DrawText(Brushes.White, rect.TopLeft, _fpsText.PlatformImpl);
+            var rect = new Rect(clientRect.Right - formattedText.Width, 0, formattedText.Width, formattedText.Height);
+
+            context.DrawRectangle(Brushes.Black, null, rect);
+
+            context.DrawText(formattedText, rect.TopLeft);
         }
     }
 }

@@ -573,7 +573,10 @@ namespace Avalonia.Rendering
 
             if (DrawFps)
             {
-                RenderFps(context, clientRect, scene.Layers.Count);
+                using (var c = new DrawingContext(context, false))
+                {
+                    RenderFps(c, clientRect, scene.Layers.Count);
+                }
             }
         }
 

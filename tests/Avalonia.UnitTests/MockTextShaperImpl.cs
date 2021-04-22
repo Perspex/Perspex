@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using Avalonia.Media;
 using Avalonia.Media.TextFormatting.Unicode;
@@ -12,26 +13,28 @@ namespace Avalonia.UnitTests
         public GlyphRun ShapeText(ReadOnlySlice<char> text, Typeface typeface, double fontRenderingEmSize, CultureInfo culture)
         {
             var glyphTypeface = typeface.GlyphTypeface;
-            var glyphIndices = new ushort[text.Length];
-            var glyphCount = 0;
+            var glyphIndices = new List<ushort>();
+            var glyphClusters = new List<ushort>();
 
             for (var i = 0; i < text.Length;)
             {
-                var index = i;
-
+                glyphClusters.Add((ushort)i);
+                
                 var codepoint = Codepoint.ReadAt(text, i, out var count);
-
-                i += count;
 
                 var glyph = glyphTypeface.GetGlyph(codepoint);
 
-                glyphIndices[index] = glyph;
+                glyphIndices.Add(glyph);
 
-                glyphCount++;
+                i += count;
             }
 
-            return new GlyphRun(glyphTypeface, fontRenderingEmSize,
-                new ReadOnlySlice<ushort>(glyphIndices.AsMemory(0, glyphCount)), characters: text);
+            return new GlyphRun(
+                glyphTypeface, 
+                fontRenderingEmSize,
+                glyphIndices.ToArray(), 
+                characters: text,
+                glyphClusters: glyphClusters.ToArray());
         }
     }
 }

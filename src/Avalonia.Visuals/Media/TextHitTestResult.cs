@@ -14,6 +14,11 @@ namespace Avalonia.Media
         /// Gets the index of the hit character in the text.
         /// </summary>
         public int TextPosition { get; set; }
+        
+        /// <summary>
+        /// Gets the caret position.
+        /// </summary>
+        public Rect CaretBounds { get; set; }
 
         /// <summary>
         /// Gets a value indicating whether the hit is on the trailing edge of the character.

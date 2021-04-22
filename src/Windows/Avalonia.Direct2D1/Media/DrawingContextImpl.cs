@@ -338,29 +338,6 @@ namespace Avalonia.Direct2D1.Media
         }
 
         /// <summary>
-        /// Draws text.
-        /// </summary>
-        /// <param name="foreground">The foreground brush.</param>
-        /// <param name="origin">The upper-left corner of the text.</param>
-        /// <param name="text">The text.</param>
-        public void DrawText(IBrush foreground, Point origin, IFormattedTextImpl text)
-        {
-            if (!string.IsNullOrEmpty(text.Text))
-            {
-                var impl = (FormattedTextImpl)text;
-
-                using (var brush = CreateBrush(foreground, impl.Bounds.Size))
-                using (var renderer = new AvaloniaTextRenderer(this, _deviceContext, brush.PlatformBrush))
-                {
-                    if (brush.PlatformBrush != null)
-                    {
-                        impl.TextLayout.Draw(renderer, (float)origin.X, (float)origin.Y);
-                    }
-                }
-            }
-        }
-
-        /// <summary>
         /// Draws a glyph run.
         /// </summary>
         /// <param name="foreground">The foreground.</param>

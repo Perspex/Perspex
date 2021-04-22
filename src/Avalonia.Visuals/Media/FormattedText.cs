@@ -1403,7 +1403,7 @@ namespace Avalonia.Media
             {
                 if (textSourceCharacterIndex >= _that._text.Length)
                 {
-                    return new TextEndOfParagraph(1);
+                    return null;
                 }
 
                 var thatFormatRider = new SpanRider(_that._formatRuns, _that._latestPosition, textSourceCharacterIndex);

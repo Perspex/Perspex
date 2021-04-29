@@ -37,19 +37,6 @@ namespace Avalonia.Skia
                 _skiaGpu = new GlSkiaGpu(gl, maxResourceBytes);
         }
 
-        /// <inheritdoc />
-        public IFormattedTextImpl CreateFormattedText(
-            string text,
-            Typeface typeface,
-            double fontSize,
-            TextAlignment textAlignment,
-            TextWrapping wrapping,
-            Size constraint,
-            IReadOnlyList<FormattedTextStyleSpan> spans)
-        {
-            return new FormattedTextImpl(text, typeface, fontSize, textAlignment, wrapping, constraint, spans);
-        }
-
         public IGeometryImpl CreateEllipseGeometry(Rect rect) => new EllipseGeometryImpl(rect);
 
         public IGeometryImpl CreateLineGeometry(Point p1, Point p2) => new LineGeometryImpl(p1, p2);

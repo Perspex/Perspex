@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using Avalonia.Media.Imaging;
 using Avalonia.Platform;
 using Avalonia.Rendering.SceneGraph;
 using Avalonia.Threading;
@@ -199,17 +198,13 @@ namespace Avalonia.Media
         /// <summary>
         /// Draws text.
         /// </summary>
-        /// <param name="foreground">The foreground brush.</param>
+        /// <param name="formattedText">The text.</param>
         /// <param name="origin">The upper-left corner of the text.</param>
-        /// <param name="text">The text.</param>
-        public void DrawText(IBrush foreground, Point origin, FormattedText text)
+        public void DrawText(FormattedText formattedText, Point origin)
         {
-            Contract.Requires<ArgumentNullException>(text != null);
+            Contract.Requires<ArgumentNullException>(formattedText != null);
 
-            if (foreground != null)
-            {
-                PlatformImpl.DrawText(foreground, origin, text.PlatformImpl);
-            }
+            formattedText.Draw(this, origin);
         }
 
         /// <summary>

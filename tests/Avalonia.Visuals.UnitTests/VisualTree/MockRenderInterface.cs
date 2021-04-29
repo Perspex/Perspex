@@ -10,18 +10,6 @@ namespace Avalonia.Visuals.UnitTests.VisualTree
 {
     class MockRenderInterface : IPlatformRenderInterface
     {
-        public IFormattedTextImpl CreateFormattedText(
-            string text,
-            Typeface typeface,
-            double fontSize,
-            TextAlignment textAlignment,
-            TextWrapping wrapping,
-            Size constraint,
-            IReadOnlyList<FormattedTextStyleSpan> spans)
-        {
-            throw new NotImplementedException();
-        }
-
         public IRenderTarget CreateRenderTarget(IEnumerable<object> surfaces)
         {
             throw new NotImplementedException();

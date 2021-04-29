@@ -14,6 +14,7 @@ using Avalonia.Data;
 using Avalonia.Layout;
 using Avalonia.Utilities;
 using Avalonia.Controls.Metadata;
+using Avalonia.Media.TextFormatting;
 
 namespace Avalonia.Controls
 {
@@ -538,7 +539,7 @@ namespace Avalonia.Controls
                 caretIndex = CaretIndex;
                 text = Text ?? string.Empty;
                 SetTextInternal(text.Substring(0, caretIndex) + input + text.Substring(caretIndex));
-                CaretIndex += input.Length;
+                MoveHorizontal(1,false,false);
                 ClearSelection();
                 _undoRedoHelper.DiscardRedo();
             }
@@ -578,7 +579,10 @@ namespace Avalonia.Controls
         {
             var text = await ((IClipboard)AvaloniaLocator.Current.GetService(typeof(IClipboard))).GetTextAsync();
 
-            if (text is null) return;
+            if (string.IsNullOrEmpty(text))
+            {
+                return;
+            }
 
             _undoRedoHelper.Snapshot();
             HandleTextInput(text);
@@ -715,7 +719,8 @@ namespace Avalonia.Controls
             }
             else
             {
-                bool hasWholeWordModifiers = modifiers.HasAllFlags(keymap.WholeWordTextActionModifiers);
+                var oldCaretIndex = _presenter.CaretIndex;
+                bool hasWholeWordModifiers = modifiers.HasFlag(keymap.WholeWordTextActionModifiers);
                 switch (e.Key)
                 {
                     case Key.Left:
@@ -731,12 +736,20 @@ namespace Avalonia.Controls
                         break;
 
                     case Key.Up:
-                        movement = MoveVertical(-1);
+                        _presenter.MoveCaretVertical(LogicalDirection.Backward);
+                        if (oldCaretIndex != _presenter.CaretIndex)
+                        {
+                            movement = true;
+                        }
                         selection = DetectSelection();
                         break;
 
                     case Key.Down:
-                        movement = MoveVertical(1);
+                        _presenter.MoveCaretVertical(LogicalDirection.Forward);
+                        if (oldCaretIndex != _presenter.CaretIndex)
+                        {
+                            movement = true;
+                        }
                         selection = DetectSelection();
                         break;
 
@@ -995,28 +1008,9 @@ namespace Avalonia.Controls
                     return;
                 }
 
-                var index = caretIndex + direction;
+                _presenter.MoveCaretHorizontal(direction > 0 ? LogicalDirection.Forward : LogicalDirection.Backward);
 
-                if (index < 0 || index > text.Length)
-                {
-                    return;
-                }
-                else if (index == text.Length)
-                {
-                    CaretIndex = index;
-                    return;
-                }
-
-                var c = text[index];
-
-                if (direction > 0)
-                {
-                    CaretIndex += (c == '\r' && index < text.Length - 1 && text[index + 1] == '\n') ? 2 : 1;
-                }
-                else
-                {
-                    CaretIndex -= (c == '\n' && index > 0 && text[index - 1] == '\r') ? 2 : 1;
-                }
+                _caretIndex = _presenter.CaretIndex;
             }
             else
             {
@@ -1031,29 +1025,6 @@ namespace Avalonia.Controls
             }
         }
 
-        private bool MoveVertical(int count)
-        {
-            var formattedText = _presenter.FormattedText;
-            var lines = formattedText.GetLines().ToList();
-            var caretIndex = CaretIndex;
-            var lineIndex = GetLine(caretIndex, lines) + count;
-
-            if (lineIndex >= 0 && lineIndex < lines.Count)
-            {
-                var line = lines[lineIndex];
-                var rect = formattedText.HitTestTextPosition(caretIndex);
-                var y = count < 0 ? rect.Y : rect.Bottom;
-                var point = new Point(rect.X, y + (count * (line.Height / 2)));
-                var hit = formattedText.HitTestPoint(point);
-                CaretIndex = hit.TextPosition + (hit.IsTrailing ? 1 : 0);
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
-
         private void MoveHome(bool document)
         {
             var text = Text ?? string.Empty;
@@ -1065,17 +1036,17 @@ namespace Avalonia.Controls
             }
             else
             {
-                var lines = _presenter.FormattedText.GetLines();
+                var lines = _presenter.TextLayout.TextLines;
                 var pos = 0;
 
                 foreach (var line in lines)
                 {
-                    if (pos + line.Length > caretIndex || pos + line.Length == text.Length)
+                    if (pos + line.TextRange.Length > caretIndex || pos + line.TextRange.Length == text.Length)
                     {
                         break;
                     }
 
-                    pos += line.Length;
+                    pos += line.TextRange.Length;
                 }
 
                 caretIndex = pos;
@@ -1095,12 +1066,12 @@ namespace Avalonia.Controls
             }
             else
             {
-                var lines = _presenter.FormattedText.GetLines();
+                var lines = _presenter.TextLayout.TextLines;
                 var pos = 0;
 
                 foreach (var line in lines)
                 {
-                    pos += line.Length;
+                    pos += line.TextRange.Length;
 
                     if (pos > caretIndex)
                     {
@@ -1175,25 +1146,6 @@ namespace Avalonia.Controls
                 return "";
             }
             return text.Substring(start, end - start);
-        }
-
-        private int GetLine(int caretIndex, IList<FormattedTextLine> lines)
-        {
-            int pos = 0;
-            int i;
-
-            for (i = 0; i < lines.Count - 1; ++i)
-            {
-                var line = lines[i];
-                pos += line.Length;
-
-                if (pos > caretIndex)
-                {
-                    break;
-                }
-            }
-
-            return i;
         }
 
         private void SetTextInternal(string value)

@@ -1,4 +1,5 @@
-﻿using Avalonia.Controls.Presenters;
+﻿using System.Linq;
+using Avalonia.Controls.Presenters;
 using Avalonia.UnitTests;
 using Xunit;
 
@@ -16,7 +17,7 @@ namespace Avalonia.Controls.UnitTests.Presenters
                     PasswordChar = '*'
                 };
 
-                Assert.NotNull(target.FormattedText);
+                Assert.NotNull(target.TextLayout);
             }
         }
 
@@ -28,7 +29,7 @@ namespace Avalonia.Controls.UnitTests.Presenters
 
                 var target = new TextPresenter();
 
-                Assert.NotNull(target.FormattedText);
+                Assert.NotNull(target.TextLayout);
             }
         }
 
@@ -40,8 +41,14 @@ namespace Avalonia.Controls.UnitTests.Presenters
 
                 var target = new TextPresenter { PasswordChar = '*', Text = "Test" };
 
-                Assert.NotNull(target.FormattedText);
-                Assert.Equal("****", target.FormattedText.Text);
+                target.Measure(Size.Infinity);
+
+                Assert.NotNull(target.TextLayout);
+
+                var actual = string.Join(null,
+                    target.TextLayout.TextLines.SelectMany(x => x.TextRuns).Select(x => x.Text.Buffer.ToString()));
+
+                Assert.Equal("****", actual);
             }
         }
     }

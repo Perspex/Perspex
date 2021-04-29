@@ -177,14 +177,6 @@ namespace Avalonia.UnitTests
         private static IPlatformRenderInterface CreateRenderInterfaceMock()
         {
             return Mock.Of<IPlatformRenderInterface>(x =>
-                x.CreateFormattedText(
-                    It.IsAny<string>(),
-                    It.IsAny<Typeface>(),
-                    It.IsAny<double>(),
-                    It.IsAny<TextAlignment>(),
-                    It.IsAny<TextWrapping>(),
-                    It.IsAny<Size>(),
-                    It.IsAny<IReadOnlyList<FormattedTextStyleSpan>>()) == Mock.Of<IFormattedTextImpl>() &&
                 x.CreateStreamGeometry() == Mock.Of<IStreamGeometryImpl>(
                     y => y.Open() == Mock.Of<IStreamGeometryContextImpl>()));
         }

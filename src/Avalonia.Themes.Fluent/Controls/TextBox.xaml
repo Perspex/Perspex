@@ -79,7 +79,7 @@
                         <TextPresenter Name="PART_TextPresenter"
                                       Margin="0 1 0 0"
                                       Text="{TemplateBinding Text, Mode=TwoWay}"
-                                      CaretIndex="{TemplateBinding CaretIndex}"
+                                      CaretIndex="{TemplateBinding CaretIndex, Mode=TwoWay}"
                                       SelectionStart="{TemplateBinding SelectionStart}"
                                       SelectionEnd="{TemplateBinding SelectionEnd}"
                                       TextAlignment="{TemplateBinding TextAlignment}"

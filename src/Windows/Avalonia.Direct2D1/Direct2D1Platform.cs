@@ -115,25 +115,6 @@ namespace Avalonia.Direct2D1
             SharpDX.Configuration.EnableReleaseOnFinalizer = true;
         }
 
-        public IFormattedTextImpl CreateFormattedText(
-            string text,
-            Typeface typeface,
-            double fontSize,
-            TextAlignment textAlignment,
-            TextWrapping wrapping,
-            Size constraint,
-            IReadOnlyList<FormattedTextStyleSpan> spans)
-        {
-            return new FormattedTextImpl(
-                text,
-                typeface,
-                fontSize,
-                textAlignment,
-                wrapping,
-                constraint,
-                spans);
-        }
-
         public IRenderTarget CreateRenderTarget(IEnumerable<object> surfaces)
         {
             foreach (var s in surfaces)

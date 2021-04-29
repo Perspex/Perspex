@@ -67,7 +67,7 @@
                               IsVisible="{TemplateBinding Text, Converter={x:Static StringConverters.IsNullOrEmpty}}"/>
                     <TextPresenter Name="PART_TextPresenter"
                                     Text="{TemplateBinding Text, Mode=TwoWay}"
-                                    CaretIndex="{TemplateBinding CaretIndex}"
+                                    CaretIndex="{TemplateBinding CaretIndex, Mode=TwoWay}"
                                     SelectionStart="{TemplateBinding SelectionStart}"
                                     SelectionEnd="{TemplateBinding SelectionEnd}"
                                     TextAlignment="{TemplateBinding TextAlignment}"

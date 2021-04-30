@@ -1066,7 +1066,7 @@ namespace Avalonia.Controls.UnitTests
         [Fact]
         public void Auto_Expanding_In_Style_Should_Not_Break_Range_Selection()
         {
-            /// Issue #2980.
+            // Issue #2980.
             using (Application())
             {
                 var target = new DerivedTreeView

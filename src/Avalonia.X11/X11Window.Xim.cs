@@ -112,8 +112,8 @@ namespace Avalonia.X11
             public ValueTask<bool> HandleEventAsync(RawKeyEventArgs args, int keyVal, int keyCode) =>
                 new ValueTask<bool>(false);
 
-            public event Action<string> Commit;
-            public event Action<X11InputMethodForwardedKey> ForwardKey;
+            public event Action<string> Commit { add { } remove { } }
+            public event Action<X11InputMethodForwardedKey> ForwardKey { add { } remove { } }
 
         }
         

@@ -40,7 +40,7 @@ namespace MicroComGenerator
         SyntaxToken Semicolon() => Token(SyntaxKind.SemicolonToken);
 
         static VariableDeclarationSyntax DeclareVar(string type, string name,
-            ExpressionSyntax? initializer = null)
+            ExpressionSyntax initializer = null)
             => VariableDeclaration(ParseTypeName(type),
                 SingletonSeparatedList(VariableDeclarator(name)
                     .WithInitializer(initializer == null ? null : EqualsValueClause(initializer))));

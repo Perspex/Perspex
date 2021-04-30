@@ -554,7 +554,7 @@ namespace Avalonia.Controls
             return text;
         }
 
-        public async void Cut()
+        public void Cut()
         {
             var text = GetSelection();
             if (text is null) return;
@@ -854,7 +854,9 @@ namespace Avalonia.Controls
             {
                 var point = e.GetPosition(_presenter);
                 var index = CaretIndex = _presenter.GetCaretIndex(point);
+#pragma warning disable CS0618 // Type or member is obsolete
                 switch (e.ClickCount)
+#pragma warning restore CS0618 // Type or member is obsolete
                 {
                     case 1:
                         SelectionStart = SelectionEnd = index;

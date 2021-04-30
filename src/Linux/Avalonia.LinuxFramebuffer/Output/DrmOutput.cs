@@ -16,7 +16,6 @@ namespace Avalonia.LinuxFramebuffer.Output
     public unsafe class DrmOutput : IGlOutputBackend, IGlPlatformSurface
     {
         private DrmCard _card;
-        private readonly EglGlPlatformSurface _eglPlatformSurface;
         public PixelSize PixelSize => _mode.Resolution;
         public double Scaling { get; set; }
         public IGlContext PrimaryContext => _deferredContext;

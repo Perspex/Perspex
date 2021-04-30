@@ -57,7 +57,6 @@ namespace Avalonia.Controls.Utils
             private IDisposable _subscription;
             private object _controlValue;
             private bool _isControlValueSet = false;
-            private bool _settingSourceValue = false;
 
             public SubjectWrapper(ISubject<object> bindingSourceSubject, CellEditBinding editBinding)
             {
@@ -67,11 +66,7 @@ namespace Avalonia.Controls.Utils
 
             private void SetSourceValue(object value)
             {
-                _settingSourceValue = true;
-
                 _sourceSubject.OnNext(value);
-
-                _settingSourceValue = false;
             }
             private void SetControlValue(object value)
             {

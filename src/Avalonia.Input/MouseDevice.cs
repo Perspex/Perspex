@@ -75,7 +75,9 @@ namespace Avalonia.Input
                 throw new InvalidOperationException("Control is not attached to visual tree.");
             }
 
+#pragma warning disable CS0618 // Type or member is obsolete
             var rootPoint = relativeTo.VisualRoot.PointToClient(Position);
+#pragma warning restore CS0618 // Type or member is obsolete
             var transform = relativeTo.VisualRoot.TransformToVisual(relativeTo);
             return rootPoint * transform!.Value;
         }

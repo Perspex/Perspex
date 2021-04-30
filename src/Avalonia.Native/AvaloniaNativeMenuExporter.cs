@@ -35,7 +35,7 @@ namespace Avalonia.Native
 
         public bool IsNativeMenuExported => _exported;
 
-        public event EventHandler OnIsNativeMenuExportedChanged;
+        public event EventHandler OnIsNativeMenuExportedChanged { add { } remove { } }
 
         public void SetNativeMenu(NativeMenu menu)
         {

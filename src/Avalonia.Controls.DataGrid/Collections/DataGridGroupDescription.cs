@@ -58,7 +58,6 @@ namespace Avalonia.Collections
     {
         private string _propertyPath;
         private Type _propertyType;
-        private IValueConverter _valueConverter;
         private StringComparison _stringComparison = StringComparison.Ordinal;
 
         public DataGridPathGroupDescription(string propertyPath)
@@ -83,8 +82,8 @@ namespace Avalonia.Collections
             if (key == null)
                 key = item;
 
-            if (_valueConverter != null)
-                key = _valueConverter.Convert(key, typeof(object), level, culture);
+            if (ValueConverter != null)
+                key = ValueConverter.Convert(key, typeof(object), level, culture);
 
             return key;
         }
@@ -98,6 +97,8 @@ namespace Avalonia.Collections
                 return base.KeysMatch(groupKey, itemKey);
         }
         public override string PropertyName => _propertyPath;
+
+        public IValueConverter ValueConverter { get; set; }
 
         private Type GetPropertyType(object o)
         {

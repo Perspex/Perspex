@@ -175,7 +175,7 @@ namespace Avalonia
                    MathUtilities.AreClose(_y, other._y);
         }
 
-        public override bool Equals(object obj) => obj is Vector other && Equals(other);
+        public override bool Equals(object? obj) => obj is Vector other && Equals(other);
 
         public override int GetHashCode()
         {

@@ -377,11 +377,13 @@ namespace Avalonia.FreeDesktop
 
             #region Events
 
+#pragma warning disable CS0067
             private event Action<((int, IDictionary<string, object>)[] updatedProps, (int, string[])[] removedProps)>
                 ItemsPropertiesUpdated;
             private event Action<(uint revision, int parent)> LayoutUpdated;
             private event Action<(int id, uint timestamp)> ItemActivationRequested;
             private event Action<PropertyChanges> PropertiesChanged;
+#pragma warning restore CS0067
 
             async Task<IDisposable> IDBusMenu.WatchItemsPropertiesUpdatedAsync(Action<((int, IDictionary<string, object>)[] updatedProps, (int, string[])[] removedProps)> handler, Action<Exception> onError)
             {

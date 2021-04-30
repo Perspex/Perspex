@@ -75,8 +75,10 @@ namespace Avalonia.Diagnostics.Views
 
             if (e.Modifiers == modifiers)
             {
+#pragma warning disable CS0618 // Type or member is obsolete
                 var point = (Root as IInputRoot)?.MouseDevice?.GetPosition(Root) ?? default;
-                
+#pragma warning restore CS0618 // Type or member is obsolete                
+
                 var control = Root.GetVisualsAt(point, x =>
                     {
                         if (x is AdornerLayer || !x.IsVisible) return false;

@@ -164,10 +164,13 @@ namespace Avalonia.Rendering.SceneGraph
             var visual = node.Visual;
             var opacity = visual.Opacity;
             var clipToBounds = visual.ClipToBounds;
+
+#pragma warning disable CS0618 // Type or member is obsolete
             var clipToBoundsRadius = visual is IVisualWithRoundRectClip roundRectClip ?
                 roundRectClip.ClipToBoundsRadius :
                 default;
-            
+#pragma warning restore CS0618 // Type or member is obsolete
+
             var bounds = new Rect(visual.Bounds.Size);
             var contextImpl = (DeferredDrawingContextImpl)context.PlatformImpl;
 

@@ -30,7 +30,6 @@ namespace Avalonia.X11
         ITopLevelImplWithTextInputMethod
     {
         private readonly AvaloniaX11Platform _platform;
-        private readonly IWindowImpl _popupParent;
         private readonly bool _popup;
         private readonly X11Info _x11;
         private XConfigureEvent? _configure;
@@ -416,7 +415,9 @@ namespace Avalonia.X11
                             2 => RawPointerEventType.MiddleButtonDown,
                             3 => RawPointerEventType.RightButtonDown,
                             8 => RawPointerEventType.XButton1Down,
-                            9 => RawPointerEventType.XButton2Down
+                            9 => RawPointerEventType.XButton2Down,
+                            _ => throw new AvaloniaInternalException(
+                                "No raw event defined for button press event.")
                         },
                         ref ev, ev.ButtonEvent.state);
                 else
@@ -444,7 +445,9 @@ namespace Avalonia.X11
                             2 => RawPointerEventType.MiddleButtonUp,
                             3 => RawPointerEventType.RightButtonUp,
                             8 => RawPointerEventType.XButton1Up,
-                            9 => RawPointerEventType.XButton2Up
+                            9 => RawPointerEventType.XButton2Up,
+                            _ => throw new AvaloniaInternalException(
+                                "No raw event defined for button release event.")
                         },
                         ref ev, ev.ButtonEvent.state);
             }

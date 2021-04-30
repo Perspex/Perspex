@@ -10,7 +10,6 @@ namespace Avalonia.X11
         private readonly X11Globals _globals;
         private WindowTransparencyLevel _currentLevel;
         private WindowTransparencyLevel _requestedLevel;
-        private bool _isCompositing;
         private bool _blurAtomsAreSet;
         
         public Action<WindowTransparencyLevel> TransparencyLevelChanged { get; set; }

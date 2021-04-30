@@ -25,7 +25,6 @@ namespace Avalonia.DesignerSupport.Remote.HtmlTransport
         private AutoResetEvent _wakeup = new AutoResetEvent(false);
         private FrameMessage _lastFrameMessage = null;
         private FrameMessage _lastSentFrameMessage = null;
-        private RequestViewportResizeMessage _lastViewportRequest;
         private Action<IAvaloniaRemoteTransportConnection, object> _onMessage;
         private Action<IAvaloniaRemoteTransportConnection, Exception> _onException;
         
@@ -177,6 +176,7 @@ namespace Avalonia.DesignerSupport.Remote.HtmlTransport
         
         public void Dispose()
         {
+            _disposed = true;
             _pendingSocket?.Dispose();
             _simpleServer.Dispose();
         }

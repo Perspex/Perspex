@@ -33,8 +33,6 @@ namespace Avalonia.X11
                         && ((int)(style & XIMProperties.XIMStatusNothing) != 0))
                     {
                         XPoint spot = default;
-                        XRectangle area = default;
-
 
                         //using var areaS = new Utf8Buffer("area");
                         using var spotS = new Utf8Buffer("spotLocation");

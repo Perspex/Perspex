@@ -447,8 +447,10 @@ namespace Avalonia.Controls.Primitives.PopupPositioning
             PopupPositionerConstraintAdjustment constraintAdjustment, Rect? rect)
         {
             // We need a better way for tracking the last pointer position
+#pragma warning disable CS0618 // Type or member is obsolete
             var pointer = topLevel.PointToClient(topLevel.PlatformImpl.MouseDevice.Position);
-            
+#pragma warning restore CS0618 // Type or member is obsolete
+
             positionerParameters.Offset = offset;
             positionerParameters.ConstraintAdjustment = constraintAdjustment;
             if (placement == PlacementMode.Pointer)

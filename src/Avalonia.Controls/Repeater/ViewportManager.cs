@@ -4,16 +4,8 @@
 // Licensed to The Avalonia Project under MIT License, courtesy of The .NET Foundation.
 
 using System;
-using System.Collections.Generic;
-using System.Reactive.Disposables;
-using System.Reactive.Linq;
-using System.Threading.Tasks;
-using Avalonia.Controls.Presenters;
-using Avalonia.Input;
 using Avalonia.Layout;
 using Avalonia.Logging;
-using Avalonia.Media;
-using Avalonia.Reactive;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
 
@@ -27,7 +19,6 @@ namespace Avalonia.Controls
         private IScrollAnchorProvider _scroller;
         private IControl _makeAnchorElement;
         private bool _isAnchorOutsideRealizedRange;
-        private Task _cacheBuildAction;
         private Rect _visibleWindow;
         private Rect _layoutExtent;
         // This is the expected shift by the layout.

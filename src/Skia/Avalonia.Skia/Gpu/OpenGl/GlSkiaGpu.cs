@@ -66,7 +66,7 @@ namespace Avalonia.Skia
                 _canCreateSurfaces = true;
                 return surface;
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 Logger.TryGet(LogEventLevel.Error, "OpenGL")
                     ?.Log(this, "Unable to create a Skia-compatible FBO manually");

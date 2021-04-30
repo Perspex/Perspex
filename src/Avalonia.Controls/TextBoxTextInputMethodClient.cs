@@ -18,7 +18,7 @@ namespace Avalonia.Controls
 
         public bool SupportsSurroundingText => false;
         public TextInputMethodSurroundingText SurroundingText => throw new NotSupportedException();
-        public event EventHandler SurroundingTextChanged;
+        public event EventHandler SurroundingTextChanged { add { } remove { } }
         public string TextBeforeCursor => null;
         public string TextAfterCursor => null;
 

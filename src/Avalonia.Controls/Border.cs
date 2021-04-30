@@ -8,7 +8,9 @@ namespace Avalonia.Controls
     /// <summary>
     /// A control which decorates a child with a border and background.
     /// </summary>
+#pragma warning disable CS0618 // Type or member is obsolete
     public partial class Border : Decorator, IVisualWithRoundRectClip
+#pragma warning restore CS0618 // Type or member is obsolete
     {
         /// <summary>
         /// Defines the <see cref="Background"/> property.

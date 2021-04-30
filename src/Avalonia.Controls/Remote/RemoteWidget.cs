@@ -77,8 +77,10 @@ namespace Avalonia.Controls.Remote
                     _bitmap.PixelSize.Height != _lastFrame.Height)
                 {
                     _bitmap?.Dispose();
+#pragma warning disable CS0618 // Type or member is obsolete
                     _bitmap = new WriteableBitmap(new PixelSize(_lastFrame.Width, _lastFrame.Height),
                         new Vector(96, 96), fmt);
+#pragma warning restore CS0618 // Type or member is obsolete
                 }
                 using (var l = _bitmap.Lock())
                 {

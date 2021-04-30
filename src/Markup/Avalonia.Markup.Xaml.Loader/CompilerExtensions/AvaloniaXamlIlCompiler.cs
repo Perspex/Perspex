@@ -14,7 +14,6 @@ namespace Avalonia.Markup.Xaml.XamlIl.CompilerExtensions
 {
     class AvaloniaXamlIlCompiler : XamlILCompiler
     {
-        private readonly TransformerConfiguration _configuration;
         private readonly IXamlType _contextType;
         private readonly AvaloniaXamlIlDesignPropertiesTransformer _designTransformer;
         private readonly AvaloniaBindingExtensionTransformer _bindingTransformer;
@@ -22,8 +21,6 @@ namespace Avalonia.Markup.Xaml.XamlIl.CompilerExtensions
         private AvaloniaXamlIlCompiler(TransformerConfiguration configuration, XamlLanguageEmitMappings<IXamlILEmitter, XamlILNodeEmitResult> emitMappings)
             : base(configuration, emitMappings, true)
         {
-            _configuration = configuration;
-
             void InsertAfter<T>(params IXamlAstTransformer[] t) 
                 => Transformers.InsertRange(Transformers.FindIndex(x => x is T) + 1, t);
 

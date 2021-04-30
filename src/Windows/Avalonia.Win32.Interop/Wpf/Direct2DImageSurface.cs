@@ -150,6 +150,7 @@ namespace Avalonia.Win32.Interop.Wpf
             if (_image == null || _oldDpi.X != dpi.X || _oldDpi.Y != dpi.Y)
             {
                 _image = new D3DImage(dpi.X, dpi.Y);
+                _oldDpi = dpi;
             }
             _impl.ImageSource = _image;
             

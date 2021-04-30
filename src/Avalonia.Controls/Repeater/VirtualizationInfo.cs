@@ -27,7 +27,6 @@ namespace Avalonia.Controls
     internal class VirtualizationInfo
     {
         private int _pinCounter;
-        private object _data;
 
         public Rect ArrangeBounds { get; set; }
         public bool AutoRecycleCandidate { get; set; }

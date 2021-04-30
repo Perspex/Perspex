@@ -129,14 +129,14 @@ namespace Avalonia.Controls
         /// <summary>
         /// Defines the <see cref="Pane"/> property
         /// </summary>
-        public static readonly StyledProperty<object?> PaneProperty =
-            AvaloniaProperty.Register<SplitView, object?>(nameof(Pane));
+        public static readonly StyledProperty<object> PaneProperty =
+            AvaloniaProperty.Register<SplitView, object>(nameof(Pane));
 
         /// <summary>
-        /// Defines the <see cref="HeaderTemplate"/> property.
+        /// Defines the <see cref="PaneTemplate"/> property.
         /// </summary>
-        public static readonly StyledProperty<IDataTemplate?> PaneTemplateProperty =
-            AvaloniaProperty.Register<HeaderedContentControl, IDataTemplate?>(nameof(PaneTemplate));
+        public static readonly StyledProperty<IDataTemplate> PaneTemplateProperty =
+            AvaloniaProperty.Register<HeaderedContentControl, IDataTemplate>(nameof(PaneTemplate));
 
         /// <summary>
         /// Defines the <see cref="UseLightDismissOverlayMode"/> property
@@ -267,7 +267,7 @@ namespace Avalonia.Controls
         /// <summary>
         /// Gets or sets the data template used to display the header content of the control.
         /// </summary>
-        public IDataTemplate? PaneTemplate
+        public IDataTemplate PaneTemplate
         {
             get => GetValue(PaneTemplateProperty);
             set => SetValue(PaneTemplateProperty, value);

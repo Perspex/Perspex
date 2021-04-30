@@ -81,6 +81,7 @@ namespace Avalonia.Input
                 var e = (PointerPressedEventArgs)ev;
                 var visual = (IVisual)ev.Source;
 
+#pragma warning disable CS0618 // Type or member is obsolete
                 if (e.ClickCount <= 1)
                 {
                     s_lastPress = new WeakReference<IInteractive>(ev.Source);
@@ -92,6 +93,7 @@ namespace Avalonia.Input
                         e.Source.RaiseEvent(new TappedEventArgs(DoubleTappedEvent, e));
                     }
                 }
+#pragma warning restore CS0618 // Type or member is obsolete
             }
         }
 

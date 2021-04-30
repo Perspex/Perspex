@@ -59,7 +59,7 @@ namespace Avalonia.DesignerSupport.Remote
             remove { _onMessage -= value; }
         }
 
-        public event Action<IAvaloniaRemoteTransportConnection, Exception> OnException;
+        public event Action<IAvaloniaRemoteTransportConnection, Exception> OnException { add { } remove { } }
         public void Start()
         {
             UpdaterThread();

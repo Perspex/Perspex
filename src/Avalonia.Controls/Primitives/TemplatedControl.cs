@@ -265,7 +265,9 @@ namespace Avalonia.Controls.Primitives
 
                     var e = new TemplateAppliedEventArgs(nameScope);
                     OnApplyTemplate(e);
+#pragma warning disable CS0618 // Type or member is obsolete
                     OnTemplateApplied(e);
+#pragma warning restore CS0618 // Type or member is obsolete
                     RaiseEvent(e);
                 }
 

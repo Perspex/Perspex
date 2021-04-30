@@ -170,7 +170,7 @@ namespace Avalonia.Data.Converters
                 .Compile();
         }
 
-        private static Expression? ConvertTarget(object? target, MethodInfo method) =>
+        private static Expression ConvertTarget(object target, MethodInfo method) =>
             target is null ? null : Expression.Convert(Expression.Constant(target), method.DeclaringType);
 
         internal class WeakPropertyChangedProxy

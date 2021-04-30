@@ -83,7 +83,8 @@ namespace Avalonia.Controls.Platform
 
         public bool CurrentThreadIsLoopThread => TlsCurrentThreadIsLoopThread;
         public event Action<DispatcherPriority?> Signaled;
+#pragma warning disable CS0067
         public event Action<TimeSpan> Tick;
-
+#pragma warning restore CS0067
     }
 }

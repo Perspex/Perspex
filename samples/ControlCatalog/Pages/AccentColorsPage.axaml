@@ -1,0 +1,67 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="ControlCatalog.Pages.AccentColorsPage"
+             Padding="20">
+    <Grid x:Name="ColorBordersGrid"
+          ColumnDefinitions="auto,5,auto,5,auto"
+          RowDefinitions="auto,5,auto,5,auto">
+        <Grid.Styles>
+            <Style Selector="Border">
+                <Setter Property="BorderBrush" Value="Gray"/>
+                <Setter Property="Width" Value="200"/>
+                <Setter Property="Height" Value="200"/>
+                <Setter Property="BorderThickness" Value="2.5"/> 
+            </Style>
+            <Style Selector="TextBlock">
+                <Setter Property="VerticalAlignment" Value="Bottom"/>
+            </Style>
+        </Grid.Styles>
+        <Border Grid.Column="0" Grid.Row="0">
+            <Border.Background>
+                <SolidColorBrush Color="{DynamicResource SystemAccentColor}"/>
+            </Border.Background>
+            <TextBlock Text="SystemAccentColor"/>
+        </Border>
+        
+        <Border Grid.Column="0" Grid.Row="2">
+            <Border.Background>
+                <SolidColorBrush Color="{DynamicResource SystemAccentColorDark1}"/>
+            </Border.Background>
+            <TextBlock Text="SystemAccentColorDark1"/>
+        </Border>
+        <Border Grid.Column="2" Grid.Row="2">
+            <Border.Background>
+                <SolidColorBrush Color="{DynamicResource SystemAccentColorDark2}"/>
+            </Border.Background>
+            <TextBlock Text="SystemAccentColorDark2"/>
+        </Border>
+        <Border Grid.Column="4" Grid.Row="2">
+            <Border.Background>
+                <SolidColorBrush Color="{DynamicResource SystemAccentColorDark3}"/>
+            </Border.Background>
+            <TextBlock Text="SystemAccentColorDark3"/>
+        </Border>
+        
+        <Border Grid.Column="0" Grid.Row="4">
+            <Border.Background>
+                <SolidColorBrush Color="{DynamicResource SystemAccentColorLight1}"/>
+            </Border.Background>
+            <TextBlock Text="SystemAccentColorLight1"/>
+        </Border>
+        <Border Grid.Column="2" Grid.Row="4">
+            <Border.Background>
+                <SolidColorBrush Color="{DynamicResource SystemAccentColorLight2}"/>
+            </Border.Background>
+            <TextBlock Text="SystemAccentColorLight2"/>
+        </Border>
+        <Border Grid.Column="4" Grid.Row="4">
+            <Border.Background>
+                <SolidColorBrush Color="{DynamicResource SystemAccentColorLight3}"/>
+            </Border.Background>
+            <TextBlock Text="SystemAccentColorLight3"/>
+        </Border>
+    </Grid>
+</UserControl>

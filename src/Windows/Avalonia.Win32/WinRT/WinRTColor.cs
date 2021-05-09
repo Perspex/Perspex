@@ -1,5 +1,7 @@
 ﻿using System.Runtime.InteropServices;
 
+using Avalonia.Media;
+
 namespace Avalonia.Win32.WinRT
 {
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
@@ -14,5 +16,10 @@ namespace Avalonia.Win32.WinRT
         {
             A = a, R = r, G = g, B = b
         };
+
+        public static implicit operator Color(WinRTColor color)
+        {
+            return new Color(color.A, color.R, color.G, color.B);
+        }
     }
 }

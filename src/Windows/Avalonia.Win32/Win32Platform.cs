@@ -46,6 +46,7 @@ namespace Avalonia
         public bool? EnableMultitouch { get; set; }
         public bool OverlayPopups { get; set; }
         public bool UseWgl { get; set; }
+        public bool UseSystemAccentColor { get; set; }
         public IList<GlVersion> WglProfiles { get; set; } = new List<GlVersion>
         {
             new GlVersion(GlProfileType.OpenGL, 4, 0),
@@ -116,6 +117,9 @@ namespace Avalonia.Win32
                 .Bind<IPlatformIconLoader>().ToConstant(s_instance)
                 .Bind<NonPumpingLockHelper.IHelperImpl>().ToConstant(new NonPumpingSyncContext.HelperImpl())
                 .Bind<IMountedVolumeInfoProvider>().ToConstant(new WindowsMountedVolumeInfoProvider());
+
+            if(options.UseSystemAccentColor)
+                AvaloniaLocator.CurrentMutable.Bind<IPlatformColorSchemeProvider>().ToConstant(new WindowsColorSchemeProvider());
 
             Win32GlManager.Initialize();
 

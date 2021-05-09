@@ -114,7 +114,8 @@ namespace ControlCatalog.NetCore
                 })
                 .With(new Win32PlatformOptions
                 {
-                    EnableMultitouch = true
+                    EnableMultitouch = true,
+                    UseSystemAccentColor = true
                 })
                 .UseSkia()
                 .UseManagedSystemDialogs()

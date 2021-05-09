@@ -11,6 +11,7 @@
         </Style>
     </Grid.Styles>  
     <TabControl Classes="sidebar" Name="Sidebar">
+      <TabItem Header="Accent Colors"><pages:AccentColorsPage/></TabItem>
       <TabItem Header="Acrylic"><pages:AcrylicPage/></TabItem>
       <TabItem Header="AutoCompleteBox"><pages:AutoCompleteBoxPage/></TabItem>
       <TabItem Header="Border"><pages:BorderPage/></TabItem>

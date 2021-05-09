@@ -2,16 +2,6 @@
        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
        xmlns:sys="clr-namespace:System;assembly=netstandard">
   <Style.Resources>
-    <!-- Accent Colours -->
-    <!-- TODO pull accents from system... algorithm to generate shades -->
-    <Color x:Key="SystemAccentColor">#FF0078D7</Color>
-    <Color x:Key="SystemAccentColorDark1">#FF005A9E</Color>
-    <Color x:Key="SystemAccentColorDark2">#FF004275</Color>
-    <Color x:Key="SystemAccentColorDark3">#FF002642</Color>
-    <Color x:Key="SystemAccentColorLight1">#FF429CE3</Color>
-    <Color x:Key="SystemAccentColorLight2">#FF76B9ED</Color>
-    <Color x:Key="SystemAccentColorLight3">#FFA6D8FF</Color>
-
     <!-- System Control Colors -->
     <Color x:Key="SystemAltHighColor">#FF000000</Color>
     <Color x:Key="SystemAltLowColor">#33000000</Color>

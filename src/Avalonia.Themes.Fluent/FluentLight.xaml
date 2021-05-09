@@ -1,6 +1,7 @@
 <Styles xmlns="https://github.com/avaloniaui"
        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
        xmlns:sys="clr-namespace:System;assembly=netstandard">
+  <StyleInclude Source="avares://Avalonia.Themes.Fluent/Accents/AccentColors.xaml"/>
   <StyleInclude Source="avares://Avalonia.Themes.Fluent/Accents/BaseLight.xaml" />
   <StyleInclude Source="avares://Avalonia.Themes.Fluent/Accents/Base.xaml" />  
   <StyleInclude Source="avares://Avalonia.Themes.Fluent/Accents/FluentBaseLight.xaml" />

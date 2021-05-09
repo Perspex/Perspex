@@ -216,6 +216,20 @@ enum PropertyType
     OtherTypeArray   = 1044
 }
 
+enum UIColorType
+{
+    Background = 0,
+    Foreground = 1,
+    AccentDark3 = 2,
+    AccentDark2 = 3,
+    AccentDark1 = 4,
+    Accent = 5,
+    AccentLight1 = 6,
+    AccentLight2 = 7,
+    AccentLight3 = 8,
+    Complement = 9
+}
+
 [uuid(4BD682DD-7554-40E9-9A9B-82654EDE7E62)]
 interface IPropertyValue : IInspectable
 {
@@ -715,4 +729,10 @@ interface ICompositor5 : IInspectable
     [overload("CreateSpriteShape")] HRESULT CreateSpriteShapeWithGeometry([in] void* geometry, [out] [retval] void** result);
     HRESULT CreateViewBox([out] [retval] void** result);
     HRESULT RequestCommitAsync([out] [retval] IAsyncAction** operation);
+}
+
+[uuid(03021BE4-5254-4781-8194-5168F7D06D7B)]
+interface IUISettings3 : IInspectable
+{
+    HRESULT GetColorValue([in] UIColorType desiredColor, [out][retval] Color* value);
 }

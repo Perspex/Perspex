@@ -12,8 +12,9 @@
 
           <Border HorizontalAlignment="Center" Grid.Column="0" BorderThickness="1" BorderBrush="Orange" Width="200" Height="200">
             <Border VerticalAlignment="Center" HorizontalAlignment="Center" Grid.Column="0" BorderThickness="1" BorderBrush="CornflowerBlue" Width="{Binding #WidthSlider.Value}" Height="{Binding #HeightSlider.Value}" >
-              <Viewbox x:Name="Viewbox"
-                StretchDirection="{Binding #StretchDirectionSelector.SelectedItem}">
+              <Viewbox
+                  Stretch="{Binding #StretchSelector.SelectedItem}"
+                  StretchDirection="{Binding #StretchDirectionSelector.SelectedItem}">
                 <Ellipse Width="50" Height="50" Fill="CornflowerBlue" />
               </Viewbox>
             </Border>
@@ -25,7 +26,7 @@
             <TextBlock Text="Height" />
             <Slider Minimum="10" Maximum="200" Value="100" x:Name="HeightSlider" TickFrequency="25" TickPlacement="TopLeft" />
             <TextBlock Text="Stretch" />
-            <ComboBox x:Name="StretchSelector" HorizontalAlignment="Stretch" Margin="0,0,0,2" SelectionChanged="StretchSelector_OnSelectionChanged" />
+            <ComboBox x:Name="StretchSelector" HorizontalAlignment="Stretch" Margin="0,0,0,2" />
             <TextBlock Text="Stretch Direction" />
             <ComboBox x:Name="StretchDirectionSelector" HorizontalAlignment="Stretch" />
           </StackPanel>

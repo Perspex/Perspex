@@ -6,8 +6,13 @@ InterfacesShouldHaveSameMembers : Interface member 'public void Avalonia.Control
 InterfacesShouldHaveSameMembers : Interface member 'public void Avalonia.Controls.INativeMenuExporterEventsImplBridge.RaiseOpening()' is present in the implementation but not in the contract.
 MembersMustExist : Member 'public void Avalonia.Controls.Embedding.Offscreen.OffscreenTopLevelImplBase.SetCursor(Avalonia.Platform.IPlatformHandle)' does not exist in the implementation but it does exist in the contract.
 MembersMustExist : Member 'public Avalonia.AvaloniaProperty Avalonia.AvaloniaProperty Avalonia.Controls.Notifications.NotificationCard.CloseOnClickProperty' does not exist in the implementation but it does exist in the contract.
+TypesMustExist : Type 'Avalonia.Controls.Templates.ControlTemplateResult' does not exist in the implementation but it does exist in the contract.
+CannotRemoveBaseTypeOrInterface : Type 'Avalonia.Controls.Templates.FuncControlTemplate' does not implement interface 'Avalonia.Controls.Templates.ITemplate<Avalonia.Styling.ITemplatedControl, Avalonia.Controls.Templates.ControlTemplateResult>' in the implementation but it does in the contract.
+MembersMustExist : Member 'public Avalonia.Controls.Templates.ControlTemplateResult Avalonia.Controls.Templates.FuncControlTemplate.Build(Avalonia.Styling.ITemplatedControl)' does not exist in the implementation but it does exist in the contract.
+CannotRemoveBaseTypeOrInterface : Type 'Avalonia.Controls.Templates.FuncControlTemplate<T>' does not implement interface 'Avalonia.Controls.Templates.ITemplate<Avalonia.Styling.ITemplatedControl, Avalonia.Controls.Templates.ControlTemplateResult>' in the implementation but it does in the contract.
+CannotRemoveBaseTypeOrInterface : Type 'Avalonia.Controls.Templates.IControlTemplate' does not implement interface 'Avalonia.Controls.Templates.ITemplate<Avalonia.Styling.ITemplatedControl, Avalonia.Controls.Templates.ControlTemplateResult>' in the implementation but it does in the contract.
 EnumValuesMustMatch : Enum value 'Avalonia.Platform.ExtendClientAreaChromeHints Avalonia.Platform.ExtendClientAreaChromeHints.Default' is (System.Int32)2 in the implementation but (System.Int32)1 in the contract.
 InterfacesShouldHaveSameMembers : Interface member 'public void Avalonia.Platform.ITopLevelImpl.SetCursor(Avalonia.Platform.ICursorImpl)' is present in the implementation but not in the contract.
 InterfacesShouldHaveSameMembers : Interface member 'public void Avalonia.Platform.ITopLevelImpl.SetCursor(Avalonia.Platform.IPlatformHandle)' is present in the contract but not in the implementation.
 MembersMustExist : Member 'public void Avalonia.Platform.ITopLevelImpl.SetCursor(Avalonia.Platform.IPlatformHandle)' does not exist in the implementation but it does exist in the contract.
-Total Issues: 11
+Total Issues: 16

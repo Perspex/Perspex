@@ -18,10 +18,10 @@ namespace Avalonia.Controls.Templates
         {
         }
 
-        public new ControlTemplateResult Build(ITemplatedControl param)
+        public new TemplateResult<IControl> Build(ITemplatedControl param)
         {
             var (control, scope) = BuildWithNameScope(param);
-            return new ControlTemplateResult(control, scope);
+            return new TemplateResult<IControl>(control, scope);
         }
     }
 }

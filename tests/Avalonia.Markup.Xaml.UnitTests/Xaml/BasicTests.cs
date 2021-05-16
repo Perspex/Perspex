@@ -293,7 +293,7 @@ namespace Avalonia.Markup.Xaml.UnitTests.Xaml
 ";
             var template = AvaloniaRuntimeXamlLoader.Parse<ControlTemplate>(xaml);
 
-            var parent = (ContentControl)template.Build(new ContentControl()).Control;
+            var parent = (ContentControl)template.Build(new ContentControl()).Result;
 
             Assert.Equal("parent", parent.Name);
 
@@ -318,7 +318,7 @@ namespace Avalonia.Markup.Xaml.UnitTests.Xaml
 
             Assert.Equal(typeof(ContentControl), template.TargetType);
 
-            Assert.IsType(typeof(ContentPresenter), template.Build(new ContentControl()).Control);
+            Assert.IsType(typeof(ContentPresenter), template.Build(new ContentControl()).Result);
         }
 
         [Fact]
@@ -334,7 +334,7 @@ namespace Avalonia.Markup.Xaml.UnitTests.Xaml
 ";
             var template = AvaloniaRuntimeXamlLoader.Parse<ControlTemplate>(xaml);
 
-            var panel = (Panel)template.Build(new ContentControl()).Control;
+            var panel = (Panel)template.Build(new ContentControl()).Result;
 
             Assert.Equal(2, panel.Children.Count);
 
@@ -695,7 +695,7 @@ namespace Avalonia.Markup.Xaml.UnitTests.Xaml
 
             var control = new ContentControl();
 
-            var result = (ContentPresenter)template.Build(control).Control;
+            var result = (ContentPresenter)template.Build(control).Result;
 
             Assert.NotNull(result);
         }

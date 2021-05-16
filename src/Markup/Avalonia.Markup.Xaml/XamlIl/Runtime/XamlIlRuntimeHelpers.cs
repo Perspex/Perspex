@@ -25,7 +25,11 @@ namespace Avalonia.Markup.Xaml.XamlIl.Runtime
                 var scope = parentScope != null ? new ChildNameScope(parentScope) : (INameScope)new NameScope();
                 var obj = builder(new DeferredParentServiceProvider(sp, resourceNodes, rootObject, scope));
                 scope.Complete();
-                return new ControlTemplateResult((IControl)obj, scope);
+                if (obj is IControl control)
+                {
+                    return new TemplateResult<IControl>(control, scope);
+                }
+                return new TemplateResult<object>(obj, scope);
             };
         }
 

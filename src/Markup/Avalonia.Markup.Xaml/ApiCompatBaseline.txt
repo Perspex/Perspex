@@ -1,0 +1,5 @@
+Compat issues with assembly Avalonia.Markup.Xaml:
+CannotRemoveBaseTypeOrInterface : Type 'Avalonia.Markup.Xaml.Templates.ControlTemplate' does not implement interface 'Avalonia.Controls.Templates.ITemplate<Avalonia.Styling.ITemplatedControl, Avalonia.Controls.Templates.ControlTemplateResult>' in the implementation but it does in the contract.
+MembersMustExist : Member 'public Avalonia.Controls.Templates.ControlTemplateResult Avalonia.Markup.Xaml.Templates.ControlTemplate.Build(Avalonia.Styling.ITemplatedControl)' does not exist in the implementation but it does exist in the contract.
+MembersMustExist : Member 'public Avalonia.Controls.Templates.ControlTemplateResult Avalonia.Markup.Xaml.Templates.TemplateContent.Load(System.Object)' does not exist in the implementation but it does exist in the contract.
+Total Issues: 3

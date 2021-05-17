@@ -1,7 +1,8 @@
 <UserControl 
   xmlns="https://github.com/avaloniaui" 
   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" 
-  x:Class="RenderDemo.Pages.AnimationsPage">
+  x:Class="RenderDemo.Pages.AnimationsPage"
+  MaxWidth="600">
   <UserControl.Styles>
     <Styles>
       <Styles.Resources>
@@ -167,8 +168,8 @@
       <StackPanel.Clock>
         <Clock />
       </StackPanel.Clock>
-      <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-        <TextBlock VerticalAlignment="Center">Hover to activate Transform Keyframe Animations.</TextBlock>
+      <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Spacing="20">
+        <TextBlock VerticalAlignment="Center">Hover to activate Keyframe Animations.</TextBlock>
         <Button Content="{Binding PlayStateText}" Command="{Binding TogglePlayState}" Click="ToggleClock" />
       </StackPanel>
       <WrapPanel ClipToBounds="False">

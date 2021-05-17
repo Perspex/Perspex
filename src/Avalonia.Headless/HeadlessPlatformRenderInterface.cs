@@ -70,6 +70,28 @@ namespace Avalonia.Headless
             return new HeadlessBitmapStub(new Size(1, 1), new Vector(96, 96));
         }
 
+        public IWriteableBitmapImpl LoadWriteableBitmapToWidth(Stream stream, int width,
+            BitmapInterpolationMode interpolationMode = BitmapInterpolationMode.HighQuality)
+        {
+            return new HeadlessBitmapStub(new Size(1, 1), new Vector(96, 96));
+        }
+
+        public IWriteableBitmapImpl LoadWriteableBitmapToHeight(Stream stream, int height,
+            BitmapInterpolationMode interpolationMode = BitmapInterpolationMode.HighQuality)
+        {
+            return new HeadlessBitmapStub(new Size(1, 1), new Vector(96, 96));
+        }
+
+        public IWriteableBitmapImpl LoadWriteableBitmap(string fileName)
+        {
+            return new HeadlessBitmapStub(new Size(1, 1), new Vector(96, 96));
+        }
+
+        public IWriteableBitmapImpl LoadWriteableBitmap(Stream stream)
+        {
+            return new HeadlessBitmapStub(new Size(1, 1), new Vector(96, 96));
+        }
+
         public IBitmapImpl LoadBitmap(PixelFormat format, AlphaFormat alphaFormat, IntPtr data, PixelSize size, Vector dpi, int stride)
         {
             return new HeadlessBitmapStub(new Size(1, 1), new Vector(96, 96));

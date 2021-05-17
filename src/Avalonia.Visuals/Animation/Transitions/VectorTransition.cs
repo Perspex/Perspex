@@ -1,6 +1,8 @@
 using System;
 using System.Reactive.Linq;
 
+using Avalonia.Animation.Animators;
+
 namespace Avalonia.Animation
 {
     /// <summary>
@@ -8,15 +10,13 @@ namespace Avalonia.Animation
     /// </summary>  
     public class VectorTransition : Transition<Vector>
     {
+        private static readonly VectorAnimator s_animator = new VectorAnimator();
+
         /// <inheritdocs/>
         public override IObservable<Vector> DoTransition(IObservable<double> progress, Vector oldValue, Vector newValue)
         {
             return progress
-                .Select(p =>
-                {
-                    var f = Easing.Ease(p);
-                    return ((newValue - oldValue) * f) + oldValue;
-                });
+                .Select(progress => s_animator.Interpolate(Easing.Ease(progress), oldValue, newValue));
         }
     }
 }

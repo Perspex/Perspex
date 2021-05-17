@@ -41,6 +41,10 @@ namespace ControlCatalog
         {
             new StyleInclude(new Uri("resm:Styles?assembly=ControlCatalog"))
             {
+                Source = new Uri("avares://Avalonia.Themes.Fluent/Accents/AccentColors.xaml")
+            },
+            new StyleInclude(new Uri("resm:Styles?assembly=ControlCatalog"))
+            {
                 Source = new Uri("avares://Avalonia.Themes.Fluent/Accents/Base.xaml")
             },
             new StyleInclude(new Uri("resm:Styles?assembly=ControlCatalog"))
@@ -60,6 +64,10 @@ namespace ControlCatalog
 
         public static Styles DefaultDark = new Styles
         {
+            new StyleInclude(new Uri("resm:Styles?assembly=ControlCatalog"))
+            {
+                Source = new Uri("avares://Avalonia.Themes.Fluent/Accents/AccentColors.xaml")
+            },
             new StyleInclude(new Uri("resm:Styles?assembly=ControlCatalog"))
             {
                 Source = new Uri("avares://Avalonia.Themes.Fluent/Accents/Base.xaml")

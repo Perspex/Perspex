@@ -1,6 +1,8 @@
 using System;
 using System.Reactive.Linq;
 
+using Avalonia.Animation.Animators;
+
 namespace Avalonia.Animation
 {
     /// <summary>
@@ -8,15 +10,13 @@ namespace Avalonia.Animation
     /// </summary>  
     public class DoubleTransition : Transition<double>
     {
+        private static readonly DoubleAnimator s_animator = new DoubleAnimator();
+
         /// <inheritdocs/>
         public override IObservable<double> DoTransition(IObservable<double> progress, double oldValue, double newValue)
         {
             return progress
-                .Select(p =>
-                {
-                    var f = Easing.Ease(p);
-                    return ((newValue - oldValue) * f) + oldValue;
-                });
+                .Select(progress => s_animator.Interpolate(Easing.Ease(progress), oldValue, newValue));
         }
     }
 }

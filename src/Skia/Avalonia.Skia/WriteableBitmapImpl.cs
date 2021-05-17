@@ -1,8 +1,10 @@
 using System;
 using System.IO;
 using System.Threading;
+using Avalonia.Media.Imaging;
 using Avalonia.Platform;
 using Avalonia.Skia.Helpers;
+using Avalonia.Visuals.Media.Imaging;
 using SkiaSharp;
 
 namespace Avalonia.Skia
@@ -15,7 +17,70 @@ namespace Avalonia.Skia
         private static readonly SKBitmapReleaseDelegate s_releaseDelegate = ReleaseProc;
         private readonly SKBitmap _bitmap;
         private readonly object _lock = new object();
+        
+        /// <summary>
+        /// Create a WriteableBitmap from given stream.
+        /// </summary>
+        /// <param name="stream">Stream containing encoded data.</param>
+        public WriteableBitmapImpl(Stream stream)
+        {
+            using (var skiaStream = new SKManagedStream(stream))
+            {
+                _bitmap = SKBitmap.Decode(skiaStream);
 
+                if (_bitmap == null)
+                {
+                    throw new ArgumentException("Unable to load bitmap from provided data");
+                }
+
+                PixelSize = new PixelSize(_bitmap.Width, _bitmap.Height);
+                Dpi = SkiaPlatform.DefaultDpi;
+            }
+        }
+
+        public WriteableBitmapImpl(Stream stream, int decodeSize, bool horizontal, BitmapInterpolationMode interpolationMode)
+        {
+            using (var skStream = new SKManagedStream(stream))
+            using (var codec = SKCodec.Create(skStream))
+            {
+                var info = codec.Info;
+
+                // get the scale that is nearest to what we want (eg: jpg returned 512)
+                var supportedScale = codec.GetScaledDimensions(horizontal ? ((float)decodeSize / info.Width) : ((float)decodeSize / info.Height));
+
+                // decode the bitmap at the nearest size
+                var nearest = new SKImageInfo(supportedScale.Width, supportedScale.Height);
+                var bmp = SKBitmap.Decode(codec, nearest);
+
+                // now scale that to the size that we want
+                var realScale = horizontal ? ((double)info.Height / info.Width) : ((double)info.Width / info.Height);
+
+                SKImageInfo desired;
+
+
+                if (horizontal)
+                {
+                    desired = new SKImageInfo(decodeSize, (int)(realScale * decodeSize));
+                }
+                else
+                {
+                    desired = new SKImageInfo((int)(realScale * decodeSize), decodeSize);
+                }
+
+                if (bmp.Width != desired.Width || bmp.Height != desired.Height)
+                {
+                    var scaledBmp = bmp.Resize(desired, interpolationMode.ToSKFilterQuality());
+                    bmp.Dispose();
+                    bmp = scaledBmp;
+                }
+
+                _bitmap = bmp;
+
+                PixelSize = new PixelSize(bmp.Width, bmp.Height);
+                Dpi = SkiaPlatform.DefaultDpi;
+            }
+        }
+        
         /// <summary>
         /// Create new writeable bitmap.
         /// </summary>

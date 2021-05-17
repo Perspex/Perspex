@@ -1,7 +1,8 @@
 <UserControl 
   xmlns="https://github.com/avaloniaui" 
-  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" 
-  x:Class="RenderDemo.Pages.TransitionsPage">
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  x:Class="RenderDemo.Pages.TransitionsPage"
+  MaxWidth="600">
   <UserControl.Styles>
     <Styles>
       <Styles.Resources>
@@ -90,6 +91,56 @@
         <Setter Property="RenderTransform" Value="none" />
       </Style>
 
+      <Style Selector="Border.Rect7">
+        <Setter Property="Transitions">
+          <Transitions>
+            <DoubleTransition Property="Height" Duration="0:0:0.5" />
+          </Transitions>
+        </Setter>
+      </Style>
+
+      <Style Selector="Border.Rect7:pointerover">
+        <Setter Property="Height" Value="50" />
+      </Style>
+
+      <Style Selector="Border.Rect8">
+        <Setter Property="Transitions">
+          <Transitions>
+            <CornerRadiusTransition Property="CornerRadius" Duration="0:0:0.5" />
+          </Transitions>
+        </Setter>
+      </Style>
+
+      <Style Selector="Border.Rect8:pointerover">
+        <Setter Property="CornerRadius" Value="50" />
+      </Style>
+
+      <Style Selector="Border.Rect9">
+        <Setter Property="Transitions">
+          <Transitions>
+            <ThicknessTransition Property="Padding" Duration="0:0:0.5" />
+          </Transitions>
+        </Setter>
+      </Style>
+
+      <Style Selector="Border.Rect9:pointerover">
+        <Setter Property="Padding" Value="10" />
+      </Style>
+
+      <Style Selector="Border.Shadow">
+        <Setter Property="Background" Value="Transparent"/>        
+        <Setter Property="BorderBrush" Value="Black"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="BoxShadow" Value="inset 0 0 0 2 Red, -15 -15 Green"/>
+        <Setter Property="Transitions">
+          <Transitions>
+            <BoxShadowsTransition Property="BoxShadow" Duration="0:0:0.5" />
+          </Transitions>
+        </Setter>
+      </Style>
+      <Style Selector="Border.Shadow:pointerover">
+        <Setter Property="BoxShadow" Value="inset 30 30 20 30 Green, 20 40 20 10 Red"/>
+      </Style>
     </Styles>
   </UserControl.Styles>
 
@@ -98,8 +149,8 @@
       <StackPanel.Clock>
         <Clock />
       </StackPanel.Clock>
-      <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-        <TextBlock VerticalAlignment="Center">Hover to activate Transform Keyframe Animations.</TextBlock>
+      <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Spacing="20">
+        <TextBlock VerticalAlignment="Center">Hover to activate Transitions.</TextBlock>
         <Button Content="{Binding PlayStateText}" Command="{Binding TogglePlayState}" Click="ToggleClock" />
       </StackPanel>
       <WrapPanel ClipToBounds="False">
@@ -109,6 +160,12 @@
         <Border Classes="Test Rect4" Background="Navy"/>
         <Border Classes="Test Rect5" Background="SeaGreen"/>
         <Border Classes="Test Rect6" Background="Orange"/>
+        <Border Classes="Test Rect7" Background="Gold"/>
+        <Border Classes="Test Rect8" Background="Gray" />
+        <Border Classes="Test Rect9" Background="Red" />
+
+        <Border Classes="Test Shadow" CornerRadius="10" Child="{x:Null}" />
+        <Border Classes="Test Shadow" CornerRadius="0 30 60 0" Child="{x:Null}" />
       </WrapPanel>
     </StackPanel>
   </Grid>

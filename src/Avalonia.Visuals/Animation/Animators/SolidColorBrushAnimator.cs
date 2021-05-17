@@ -12,6 +12,11 @@ namespace Avalonia.Animation.Animators
     {
         public override ISolidColorBrush Interpolate(double progress, ISolidColorBrush oldValue, ISolidColorBrush newValue)
         {
+            if (oldValue is null || newValue is null)
+            {
+                return oldValue;
+            }
+
             return new ImmutableSolidColorBrush(ColorAnimator.InterpolateCore(progress, oldValue.Color, newValue.Color));
         }
 
@@ -26,6 +31,11 @@ namespace Avalonia.Animation.Animators
     {    
         public override SolidColorBrush Interpolate(double progress, SolidColorBrush oldValue, SolidColorBrush newValue)
         {
+            if (oldValue is null || newValue is null)
+            {
+                return oldValue;
+            }
+
             return new SolidColorBrush(ColorAnimator.InterpolateCore(progress, oldValue.Color, newValue.Color));
         }
     }

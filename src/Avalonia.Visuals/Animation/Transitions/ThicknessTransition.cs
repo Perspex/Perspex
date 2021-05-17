@@ -1,6 +1,8 @@
 using System;
 using System.Reactive.Linq;
 
+using Avalonia.Animation.Animators;
+
 namespace Avalonia.Animation
 {
     /// <summary>
@@ -8,15 +10,13 @@ namespace Avalonia.Animation
     /// </summary>  
     public class ThicknessTransition : Transition<Thickness>
     {
+        private static readonly ThicknessAnimator s_animator = new ThicknessAnimator();
+
         /// <inheritdocs/>
         public override IObservable<Thickness> DoTransition(IObservable<double> progress, Thickness oldValue, Thickness newValue)
         {
             return progress
-                .Select(p =>
-                {
-                    var f = Easing.Ease(p);
-                    return ((newValue - oldValue) * f) + oldValue;
-                });
+                .Select(progress => s_animator.Interpolate(Easing.Ease(progress), oldValue, newValue));
         }
     }
 }

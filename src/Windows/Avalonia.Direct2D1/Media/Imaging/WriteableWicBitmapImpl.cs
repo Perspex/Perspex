@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using Avalonia.Platform;
 using SharpDX.WIC;
 using PixelFormat = Avalonia.Platform.PixelFormat;
@@ -7,8 +8,24 @@ namespace Avalonia.Direct2D1.Media.Imaging
 {
     class WriteableWicBitmapImpl : WicBitmapImpl, IWriteableBitmapImpl
     {
+        public WriteableWicBitmapImpl(Stream stream, int decodeSize, bool horizontal,
+            Avalonia.Visuals.Media.Imaging.BitmapInterpolationMode interpolationMode)
+        : base(stream, decodeSize, horizontal, interpolationMode)
+        {
+        }
+        
         public WriteableWicBitmapImpl(PixelSize size, Vector dpi, PixelFormat? pixelFormat, AlphaFormat? alphaFormat) 
             : base(size, dpi, pixelFormat, alphaFormat)
+        {
+        }
+
+        public WriteableWicBitmapImpl(Stream stream)
+            : base(stream)
+        {
+        }
+
+        public WriteableWicBitmapImpl(string fileName)
+            : base(fileName)
         {
         }
 

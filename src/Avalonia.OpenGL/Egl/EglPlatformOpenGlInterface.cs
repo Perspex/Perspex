@@ -6,11 +6,14 @@ namespace Avalonia.OpenGL.Egl
 {
     public class EglPlatformOpenGlInterface : IPlatformOpenGlInterface
     {
-        public EglDisplay Display { get; private set; }
+        public EglDisplay Display { get; }
+        
         public bool CanCreateContexts => true;
+        
         public bool CanShareContexts => Display.SupportsSharing;
         
         public EglContext PrimaryEglContext { get; }
+        
         public IGlContext PrimaryContext => PrimaryEglContext;
         
         public EglPlatformOpenGlInterface(EglDisplay display)

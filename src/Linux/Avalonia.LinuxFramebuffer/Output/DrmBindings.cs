@@ -16,6 +16,9 @@ namespace Avalonia.LinuxFramebuffer.Output
         };
 
         public DrmModeConnection Connection { get; }
+
+        public bool IsConnected => Connection == DrmModeConnection.DRM_MODE_CONNECTED;
+        
         public uint Id { get; }
         public string Name { get; }
         public Size SizeMm { get; }
@@ -137,22 +140,60 @@ namespace Avalonia.LinuxFramebuffer.Output
         }
     }
     
-    public unsafe class DrmCard : IDisposable
+    public class DrmCard : IDisposable
     {
-        public int Fd { get; private set; }
+        private bool _disposed;
+        
         public DrmCard(string path = null)
         {
-            path = path ?? "/dev/dri/card0";
-            Fd = open(path, 2, 0);
+            Path = path ?? "/dev/dri/card0";
+            
+            Fd = open(Path, 2, 0);
             if (Fd == -1)
-                throw new Win32Exception("Couldn't open " + path);
+                throw new Win32Exception("Couldn't open " + Path);
+
+            GbmDevice = new GbmDevice(this);
         }
 
+        ~DrmCard() => Dispose(false);
+
+        public int Fd { get; private set; }
+
+        public GbmDevice GbmDevice { get; }
+
+        public string Path { get; }
+
         public DrmResources GetResources() => new DrmResources(Fd);
+
         public void Dispose()
         {
-            close(Fd);
-            Fd = -1;
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        private void Dispose(bool disposing)
+        { 
+            if (_disposed)
+            {
+                return;
+            }
+
+            if (disposing)
+            {
+                GbmDevice.Dispose();
+            }
+
+            ReleaseUnmanagedResources();
+            _disposed = true;
+        }
+
+        private void ReleaseUnmanagedResources()
+        {
+            if (Fd != -1)
+            {
+                close(Fd);
+                Fd = -1;
+            }
         }
     }
 }

@@ -1,73 +1,55 @@
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.InteropServices;
 using Avalonia.OpenGL;
 using Avalonia.OpenGL.Egl;
 using Avalonia.OpenGL.Surfaces;
-using Avalonia.Platform.Interop;
 using static Avalonia.LinuxFramebuffer.NativeUnsafeMethods;
 using static Avalonia.LinuxFramebuffer.Output.LibDrm;
 using static Avalonia.LinuxFramebuffer.Output.LibDrm.GbmColorFormats;
 
 namespace Avalonia.LinuxFramebuffer.Output
 {
-    public unsafe class DrmOutput : IGlOutputBackend, IGlPlatformSurface
+    public unsafe class DrmOutput : IOutputBackend, IGlPlatformSurface, IDisposable
     {
-        private DrmCard _card;
-        private readonly EglGlPlatformSurface _eglPlatformSurface;
-        public PixelSize PixelSize => _mode.Resolution;
-        public double Scaling { get; set; }
-        public IGlContext PrimaryContext => _deferredContext;
-
-        private EglPlatformOpenGlInterface _platformGl;
-        public IPlatformOpenGlInterface PlatformOpenGlInterface => _platformGl;
-
-        public DrmOutput(string path = null)
-        {
-            var card = new DrmCard(path);
-
-            var resources = card.GetResources();
-
-
-            var connector =
-                resources.Connectors.FirstOrDefault(x => x.Connection == DrmModeConnection.DRM_MODE_CONNECTED);
-            if(connector == null)
-                throw new InvalidOperationException("Unable to find connected DRM connector");
-
-            var mode = connector.Modes.OrderByDescending(x => x.IsPreferred)
-                .ThenByDescending(x => x.Resolution.Width * x.Resolution.Height)
-                //.OrderByDescending(x => x.Resolution.Width * x.Resolution.Height)
-                .FirstOrDefault();
-            if(mode == null)
-                throw new InvalidOperationException("Unable to find a usable DRM mode");
-            Init(card, resources, connector, mode);
-        }
-
-        public DrmOutput(DrmCard card, DrmResources resources, DrmConnector connector, DrmModeInfo modeInfo)
-        {
-            Init(card, resources, connector, modeInfo);
-        }
-
-        [DllImport("libEGL.so.1")]
-        static extern IntPtr eglGetProcAddress(Utf8Buffer proc);
+        private readonly DrmPlatform _drmPlatform;
+        private readonly DrmCard _card;
 
         private GbmBoUserDataDestroyCallbackDelegate FbDestroyDelegate;
         private drmModeModeInfo _mode;
-        private EglDisplay _eglDisplay;
         private EglSurface _eglSurface;
         private EglContext _deferredContext;
         private IntPtr _currentBo;
         private IntPtr _gbmTargetSurface;
         private uint _crtcId;
+        private bool _disposed;
 
-        void FbDestroyCallback(IntPtr bo, IntPtr userData)
+        internal DrmOutput(DrmPlatform drmPlatform, DrmResources resources, DrmConnector connector, DrmModeInfo modeInfo)
+        {
+            _drmPlatform = drmPlatform;
+            _card = drmPlatform.Card;
+            
+            Init(resources, connector, modeInfo);
+        }
+
+        ~DrmOutput() => Dispose(false);
+        
+        /// <inheritdoc />
+        public PixelSize PixelSize => _mode.Resolution;
+        
+        /// <inheritdoc />
+        public double Scaling { get; set; }
+        
+        /// <inheritdoc />
+        public string Name => "drm";
+
+        private void FbDestroyCallback(IntPtr bo, IntPtr userData)
         {
             drmModeRmFB(_card.Fd, userData.ToInt32());
         }
 
-        uint GetFbIdForBo(IntPtr bo)
+        private uint GetFbIdForBo(IntPtr bo)
         {
             if (bo == IntPtr.Zero)
                 throw new ArgumentException("bo is 0");
@@ -101,15 +83,14 @@ namespace Avalonia.LinuxFramebuffer.Output
 
             gbm_bo_set_user_data(bo, new IntPtr((int)fbHandle), FbDestroyDelegate);
             
-            
             return fbHandle;
         }
         
         
-        void Init(DrmCard card, DrmResources resources, DrmConnector connector, DrmModeInfo modeInfo)
+        private void Init(DrmResources resources, DrmConnector connector, DrmModeInfo modeInfo)
         {
             FbDestroyDelegate = FbDestroyCallback;
-            _card = card;
+            
             uint GetCrtc()
             {
                 if (resources.Encoders.TryGetValue(connector.EncoderId, out var encoder))
@@ -131,17 +112,16 @@ namespace Avalonia.LinuxFramebuffer.Output
             }
 
             _crtcId = GetCrtc();
-            var device = gbm_create_device(card.Fd);
-            _gbmTargetSurface = gbm_surface_create(device, modeInfo.Resolution.Width, modeInfo.Resolution.Height,
+
+            _gbmTargetSurface = _card.GbmDevice.CreateSurface(modeInfo.Resolution.Width, modeInfo.Resolution.Height,
                 GbmColorFormats.GBM_FORMAT_XRGB8888, GbmBoFlags.GBM_BO_USE_SCANOUT | GbmBoFlags.GBM_BO_USE_RENDERING);
+            
             if(_gbmTargetSurface == null)
                 throw new InvalidOperationException("Unable to create GBM surface");
+            
+            _eglSurface =  _drmPlatform.EglPlatformInterface.CreateWindowSurface(_gbmTargetSurface);
 
-            _eglDisplay = new EglDisplay(new EglInterface(eglGetProcAddress), false, 0x31D7, device, null);
-            _platformGl = new EglPlatformOpenGlInterface(_eglDisplay);
-            _eglSurface =  _platformGl.CreateWindowSurface(_gbmTargetSurface);
-
-            _deferredContext = _platformGl.PrimaryEglContext;
+            _deferredContext = _drmPlatform.EglPlatformInterface.PrimaryEglContext;
 
             using (_deferredContext.MakeCurrent(_eglSurface))
             {
@@ -170,7 +150,6 @@ namespace Avalonia.LinuxFramebuffer.Output
                     _deferredContext.GlInterface.ClearColor(0, 0, 0, 0);
                     _deferredContext.GlInterface.Clear(GlConsts.GL_COLOR_BUFFER_BIT | GlConsts.GL_STENCIL_BUFFER_BIT);
                 }
-            
         }
 
         public IGlPlatformSurfaceRenderTarget CreateGlRenderTarget()
@@ -178,7 +157,7 @@ namespace Avalonia.LinuxFramebuffer.Output
             return new RenderTarget(this);
         }
 
-        class RenderTarget : IGlPlatformSurfaceRenderTarget
+        private class RenderTarget : IGlPlatformSurfaceRenderTarget
         {
             private readonly DrmOutput _parent;
 
@@ -191,7 +170,7 @@ namespace Avalonia.LinuxFramebuffer.Output
                 // We are wrapping GBM buffer chain associated with CRTC, and don't free it on a whim
             }
 
-            class RenderSession : IGlPlatformSurfaceRenderingSession
+            private class RenderSession : IGlPlatformSurfaceRenderingSession
             {
                 private readonly DrmOutput _parent;
                 private readonly IDisposable _clearContext;
@@ -261,11 +240,24 @@ namespace Avalonia.LinuxFramebuffer.Output
             }
         }
 
-        public IGlContext CreateContext()
+        public void Dispose()
         {
-            throw new NotImplementedException();
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+        
+        private  void Dispose(bool disposing)
+        {
+            if (_disposed)
+                return;
+            
+            if (_currentBo != IntPtr.Zero) 
+                gbm_surface_release_buffer(_gbmTargetSurface, _currentBo);
+            
+            gbm_bo_destroy(_currentBo);
+            gbm_surface_destroy(_gbmTargetSurface);
+
+            _disposed = true;
         }
     }
-
-
 }

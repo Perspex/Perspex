@@ -14,7 +14,6 @@ namespace Avalonia.LinuxFramebuffer
         private fb_var_screeninfo _varInfo;
         private IntPtr _mappedLength;
         private IntPtr _mappedAddress;
-        public double Scaling { get; set; }
 
         public FbdevOutput(string fileName = null)
         {
@@ -33,6 +32,12 @@ namespace Avalonia.LinuxFramebuffer
                 throw;
             }
         }
+        
+        /// <inheritdoc />
+        public double Scaling { get; set; }
+        
+        /// <inheritdoc />
+        public string Name => "fbdev";
 
         void Init()
         {

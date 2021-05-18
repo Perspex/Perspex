@@ -211,7 +211,9 @@ namespace Avalonia.LinuxFramebuffer.Output
         [DllImport(libgbm, SetLastError = true)]
         public static extern IntPtr gbm_create_device(int fd);
         
-        
+        [DllImport(libgbm, SetLastError = true)]
+        public static extern void gbm_device_destroy(IntPtr IntPtr);
+
         [Flags]
         public enum GbmBoFlags {
             /**
@@ -244,6 +246,10 @@ namespace Avalonia.LinuxFramebuffer.Output
 
         [DllImport(libgbm, SetLastError = true)]
         public static extern IntPtr gbm_surface_create(IntPtr device, int width, int height, uint format, GbmBoFlags flags);
+        
+        [DllImport(libgbm, SetLastError = true)]
+        public static extern IntPtr gbm_surface_destroy(IntPtr gbmSurface);
+        
         [DllImport(libgbm, SetLastError = true)]
         public static extern IntPtr gbm_surface_lock_front_buffer(IntPtr surface);
         [DllImport(libgbm, SetLastError = true)]
@@ -257,6 +263,9 @@ namespace Avalonia.LinuxFramebuffer.Output
         [DllImport(libgbm, SetLastError = true)]
         public static extern IntPtr gbm_bo_set_user_data(IntPtr bo, IntPtr userData,
             GbmBoUserDataDestroyCallbackDelegate onFree);
+        
+        [DllImport(libgbm, SetLastError = true)]
+        public static extern void gbm_bo_destroy(IntPtr bo);
 
         [DllImport(libgbm, SetLastError = true)]
         public static extern uint gbm_bo_get_width(IntPtr bo);

@@ -17,7 +17,7 @@ namespace Avalonia.Rendering.SceneGraph
         public SceneLayer(IVisual layerRoot, int distanceFromRoot)
         {
             LayerRoot = layerRoot;
-            Dirty = new DirtyRects();
+            Dirty = new DirtyRects(layerRoot);
             DistanceFromRoot = distanceFromRoot;
         }
 

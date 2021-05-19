@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Avalonia.VisualTree;
 
 namespace Avalonia.Rendering
 {
@@ -9,6 +10,12 @@ namespace Avalonia.Rendering
     internal class DirtyRects : IEnumerable<Rect>
     {
         private List<Rect> _rects = new List<Rect>();
+        private IVisual _root;
+
+        public DirtyRects(IVisual root = null)
+        {
+            _root = root;
+        }
 
         public bool IsEmpty => _rects.Count == 0;
 
@@ -27,6 +34,13 @@ namespace Avalonia.Rendering
         /// </remarks>
         public void Add(Rect rect)
         {
+            if (_root != null)
+            {
+                rect = _root.Bounds;
+                _rects.Add(rect);
+                return;
+            }
+
             if (!rect.IsEmpty)
             {
                 for (var i = 0; i < _rects.Count; ++i)

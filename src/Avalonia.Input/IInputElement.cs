@@ -8,7 +8,7 @@ namespace Avalonia.Input
     /// <summary>
     /// Defines input-related functionality for a control.
     /// </summary>
-    public interface IInputElement : IInteractive, IVisual
+    public interface IInputElement : IInteractive
     {
         /// <summary>
         /// Occurs when the control receives focus.
@@ -101,6 +101,24 @@ namespace Avalonia.Input
         bool IsFocused { get; }
 
         /// <summary>
+        /// Determines whether this element can be focused with keyboard tab navigation.
+        /// <see cref="Focusable"/> must still be true.
+        /// </summary>
+        bool IsTabFocusable { get; }
+
+        /// <summary>
+        /// Defines how pressing the Tab key causes focus to be navigated between the children of this input element.
+        /// </summary>
+        KeyboardNavigationMode TabNavigation { get; }
+
+        /// <summary>
+        /// When focus enters this node, which has its <see cref="TabNavigation"/>
+        /// attached property set to <see cref="KeyboardNavigationMode.Once"/>, this property
+        /// defines to which element the focus should move to.
+        /// </summary>
+        IInputElement? TabOnceActiveElement { get; }
+
+        /// <summary>
         /// Gets a value indicating whether the control is considered for hit testing.
         /// </summary>
         bool IsHitTestVisible { get; }
@@ -119,5 +137,23 @@ namespace Avalonia.Input
         /// Gets the key bindings for the element.
         /// </summary>
         List<KeyBinding> KeyBindings { get; }
+
+        /// <summary>
+        /// Gets the input root for this node in the input tree. May be null if the node is not attached
+        /// to an actual input tree (i.e. it may be hidden visually).
+        /// </summary>
+        IInputRoot? InputRoot { get; }
+
+        /// <summary>
+        /// The closest parent of this element that is also an <see cref="IInputElement"/>.
+        /// </summary>
+        IInputElement? InputParent { get; }
+
+        /// <summary>
+        /// The direct children of this element that are also <see cref="IInputElement"/>.
+        /// </summary>
+        IEnumerable<IInputElement> InputChildren { get; }
+
     }
+
 }

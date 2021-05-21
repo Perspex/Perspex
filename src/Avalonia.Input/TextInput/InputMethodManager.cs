@@ -55,9 +55,12 @@ namespace Avalonia.Input.TextInput
 
         private void UpdateCursorRect()
         {
-            if (_im == null || _client == null || _focusedElement?.VisualRoot == null)
+            if (_im == null || _client == null)
                 return;
-            var transform = _focusedElement.TransformToVisual(_focusedElement.VisualRoot);
+            var visualWithFocus = _focusedElement?.GetClosestVisual();
+            if (visualWithFocus?.VisualRoot == null)
+                return;
+            var transform = visualWithFocus.TransformToVisual(visualWithFocus.VisualRoot);
             if (transform == null)
                 _im.SetCursorRect(default);
             else
@@ -76,7 +79,7 @@ namespace Avalonia.Input.TextInput
                 return;
             _focusedElement = element;
             
-            var inputMethod = (element?.VisualRoot as ITextInputMethodRoot)?.InputMethod;
+            var inputMethod = (element?.GetClosestVisual()?.VisualRoot as ITextInputMethodRoot)?.InputMethod;
             if(_im != inputMethod)
                 _im?.SetActive(false);
 

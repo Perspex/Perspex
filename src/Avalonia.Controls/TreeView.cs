@@ -376,7 +376,7 @@ namespace Avalonia.Controls
         {
             if (direction == NavigationDirection.Next || direction == NavigationDirection.Previous)
             {
-                if (!this.IsVisualAncestorOf(element))
+                if (!this.IsVisualAncestorOf(element?.GetClosestVisual()))
                 {
                     var result = _selectedItem != null ?
                         ItemContainerGenerator.Index.ContainerFromItem(_selectedItem) :

@@ -634,17 +634,20 @@ namespace Avalonia.Controls.Primitives
 
         private void PassThroughEvent(PointerPressedEventArgs e)
         {
-            if (e.Source is LightDismissOverlayLayer layer &&
-                layer.GetVisualRoot() is IInputElement root)
+            if (e.Source is LightDismissOverlayLayer layer)
             {
-                var p = e.GetCurrentPoint(root);
-                var hit = root.InputHitTest(p.Position, x => x != layer);
-
-                if (hit != null)
+                var visualRoot = layer.GetVisualRoot();
+                if (visualRoot is IInputElement root)
                 {
-                    e.Pointer.Capture(hit);
-                    hit.RaiseEvent(e);
-                    e.Handled = true;
+                    var p = e.GetCurrentPoint(visualRoot);
+                    var hit = root.InputHitTest(p.Position, x => x != layer);
+
+                    if (hit != null)
+                    {
+                        e.Pointer.Capture(hit);
+                        hit.RaiseEvent(e);
+                        e.Handled = true;
+                    }
                 }
             }
         }

@@ -47,7 +47,7 @@ namespace Avalonia.Input
         /// </summary>
         /// <param name="element">The container.</param>
         /// <returns>The <see cref="KeyboardNavigationMode"/> for the container.</returns>
-        public static KeyboardNavigationMode GetTabNavigation(InputElement element)
+        public static KeyboardNavigationMode GetTabNavigation(IAvaloniaObject element)
         {
             return element.GetValue(TabNavigationProperty);
         }
@@ -57,7 +57,7 @@ namespace Avalonia.Input
         /// </summary>
         /// <param name="element">The container.</param>
         /// <param name="value">The <see cref="KeyboardNavigationMode"/> for the container.</param>
-        public static void SetTabNavigation(InputElement element, KeyboardNavigationMode value)
+        public static void SetTabNavigation(IAvaloniaObject element, KeyboardNavigationMode value)
         {
             element.SetValue(TabNavigationProperty, value);
         }
@@ -67,7 +67,7 @@ namespace Avalonia.Input
         /// </summary>
         /// <param name="element">The container.</param>
         /// <returns>The active element for the container.</returns>
-        public static IInputElement? GetTabOnceActiveElement(InputElement element)
+        public static IInputElement? GetTabOnceActiveElement(IAvaloniaObject element)
         {
             return element.GetValue(TabOnceActiveElementProperty);
         }
@@ -77,7 +77,7 @@ namespace Avalonia.Input
         /// </summary>
         /// <param name="element">The container.</param>
         /// <param name="value">The active element for the container.</param>
-        public static void SetTabOnceActiveElement(InputElement element, IInputElement? value)
+        public static void SetTabOnceActiveElement(IAvaloniaObject element, IInputElement? value)
         {
             element.SetValue(TabOnceActiveElementProperty, value);
         }
@@ -87,7 +87,7 @@ namespace Avalonia.Input
         /// </summary>
         /// <param name="element">The container.</param>
         /// <param name="value">Value indicating whether the container is a tab stop.</param>
-        public static void SetIsTabStop(InputElement element, bool value)
+        public static void SetIsTabStop(IAvaloniaObject element, bool value)
         {
             element.SetValue(IsTabStopProperty, value);
         }
@@ -97,7 +97,7 @@ namespace Avalonia.Input
         /// </summary>
         /// <param name="element">The container.</param>
         /// <returns>Whether the container is a tab stop.</returns>
-        public static bool GetIsTabStop(InputElement element)
+        public static bool GetIsTabStop(IAvaloniaObject element)
         {
             return element.GetValue(IsTabStopProperty);
         }

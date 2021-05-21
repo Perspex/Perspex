@@ -222,7 +222,7 @@ namespace Avalonia.Input
         }
 
         private MouseButton _lastMouseDownButton;
-        private bool MouseDown(IMouseDevice device, ulong timestamp, IInputElement root, Point p,
+        private bool MouseDown(IMouseDevice device, ulong timestamp, IInputRoot root, Point p,
             PointerPointProperties properties,
             KeyModifiers inputModifiers)
         {
@@ -332,13 +332,10 @@ namespace Avalonia.Input
             return false;
         }
 
-        private IInteractive GetSource(IVisual hit)
+        private IInteractive? GetSource(IInputElement? hit)
         {
             hit = hit ?? throw new ArgumentNullException(nameof(hit));
-
-            return _pointer.Captured ??
-                (hit as IInteractive) ??
-                hit.GetSelfAndVisualAncestors().OfType<IInteractive>().FirstOrDefault();
+            return _pointer.Captured ?? hit;
         }
 
         private IInputElement? HitTest(IInputElement root, Point p)
@@ -366,7 +363,7 @@ namespace Avalonia.Input
             var element = root.PointerOverElement;
             var e = CreateSimpleEvent(InputElement.PointerLeaveEvent, timestamp, element, properties, inputModifiers);
 
-            if (element!=null && !element.IsAttachedToVisualTree)
+            if (element!=null && !element.IsAttachedToInputTree())
             {
                 // element has been removed from visual tree so do top down cleanup
                 if (root.IsPointerOver)
@@ -377,7 +374,7 @@ namespace Avalonia.Input
                 e.Source = element;
                 e.Handled = false;
                 element.RaiseEvent(e);
-                element = (IInputElement)element.VisualParent;
+                element = element.InputParent;
             }
             
             root.PointerOverElement = null;
@@ -385,7 +382,7 @@ namespace Avalonia.Input
 
         private void ClearChildrenPointerOver(PointerEventArgs e, IInputElement element,bool clearRoot)
         {
-            foreach (IInputElement el in element.VisualChildren)
+            foreach (var el in element.InputChildren)
             {
                 if (el.IsPointerOver)
                 {
@@ -444,13 +441,13 @@ namespace Avalonia.Input
                     branch = el;
                     break;
                 }
-                el = (IInputElement)el.VisualParent;
+                el = el.InputParent;
             }
 
             el = root.PointerOverElement;
 
             var e = CreateSimpleEvent(InputElement.PointerLeaveEvent, timestamp, el, properties, inputModifiers);
-            if (el!=null && branch!=null && !el.IsAttachedToVisualTree)
+            if (el != null && branch != null && !el.IsAttachedToInputTree())
             {
                 ClearChildrenPointerOver(e,branch,false);
             }
@@ -460,7 +457,7 @@ namespace Avalonia.Input
                 e.Source = el;
                 e.Handled = false;
                 el.RaiseEvent(e);
-                el = (IInputElement)el.VisualParent;
+                el = el.InputParent;
             }            
 
             el = root.PointerOverElement = element;
@@ -471,7 +468,7 @@ namespace Avalonia.Input
                 e.Source = el;
                 e.Handled = false;
                 el.RaiseEvent(e);
-                el = (IInputElement)el.VisualParent;
+                el = el.InputParent;
             }
         }
 

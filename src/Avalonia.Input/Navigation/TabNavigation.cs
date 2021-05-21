@@ -34,13 +34,11 @@ namespace Avalonia.Input.Navigation
                 throw new ArgumentException("Invalid direction: must be Next or Previous.");
             }
 
-            var container = element.GetVisualParent<IInputElement>();
+            var container = element.InputParent;
 
             if (container != null)
             {
-                var mode = KeyboardNavigation.GetTabNavigation((InputElement)container);
-
-                switch (mode)
+                switch (container.TabNavigation)
                 {
                     case KeyboardNavigationMode.Continue:
                         return GetNextInContainer(element, container, direction, outsideElement) ??
@@ -66,7 +64,7 @@ namespace Avalonia.Input.Navigation
         /// <param name="container">The element.</param>
         /// <param name="direction">The direction to search.</param>
         /// <returns>The element or null if not found.##</returns>
-        private static IInputElement GetFocusableDescendant(IInputElement container, NavigationDirection direction)
+        private static IInputElement? GetFocusableDescendant(IInputElement container, NavigationDirection direction)
         {
             return direction == NavigationDirection.Next ?
                 GetFocusableDescendants(container, direction).FirstOrDefault() :
@@ -82,18 +80,18 @@ namespace Avalonia.Input.Navigation
         private static IEnumerable<IInputElement> GetFocusableDescendants(IInputElement element,
             NavigationDirection direction)
         {
-            var mode = KeyboardNavigation.GetTabNavigation((InputElement)element);
+            var mode = element.TabNavigation;
 
             if (mode == KeyboardNavigationMode.None)
             {
                 yield break;
             }
 
-            var children = element.GetVisualChildren().OfType<IInputElement>();
+            var children = element.InputChildren;
 
             if (mode == KeyboardNavigationMode.Once)
             {
-                var active = KeyboardNavigation.GetTabOnceActiveElement((InputElement)element);
+                var active = element.TabOnceActiveElement;
 
                 if (active != null)
                 {
@@ -116,7 +114,7 @@ namespace Avalonia.Input.Navigation
                 }
                 else
                 {
-                    if (child.CanFocus() && KeyboardNavigation.GetIsTabStop((InputElement)child))
+                    if (child.CanFocus() && child.IsTabFocusable)
                     {
                         yield return child;
                     }
@@ -125,10 +123,7 @@ namespace Avalonia.Input.Navigation
                     {
                         foreach (var descendant in GetFocusableDescendants(child, direction))
                         {
-                            if (KeyboardNavigation.GetIsTabStop((InputElement)descendant))
-                            {
-                                yield return descendant;
-                            }
+                            yield return descendant;
                         }
                     }
                 }
@@ -151,7 +146,7 @@ namespace Avalonia.Input.Navigation
             NavigationDirection direction,
             bool outsideElement)
         {
-            IInputElement? e = element;
+            var e = element;
 
             if (direction == NavigationDirection.Next && !outsideElement)
             {
@@ -163,47 +158,38 @@ namespace Avalonia.Input.Navigation
                 }
             }
 
-            if (container != null)
+            // TODO: Do a spatial search here if the container doesn't implement
+            // INavigableContainer.
+            if (container is INavigableContainer navigable)
             {
-                var navigable = container as INavigableContainer;
+                while (e != null)
+                {
+                    e = navigable.GetControl(direction, e, false);
 
+                    if (e != null && e.CanFocus() && e.IsTabFocusable)
+                    {
+                        break;
+                    }
+                }
+            }
+            else
+            {
                 // TODO: Do a spatial search here if the container doesn't implement
                 // INavigableContainer.
-                if (navigable != null)
-                {
-                    while (e != null)
-                    {
-                        e = navigable.GetControl(direction, e, false);
-
-                        if (e != null && 
-                            e.CanFocus() &&
-                            KeyboardNavigation.GetIsTabStop((InputElement)e))
-                        {
-                            break;
-                        }
-                    }
-                }
-                else
-                {
-                    // TODO: Do a spatial search here if the container doesn't implement
-                    // INavigableContainer.
-                    e = null;
-                }
-
-                if (e != null && direction == NavigationDirection.Previous)
-                {
-                    var descendant = GetFocusableDescendants(e, direction).LastOrDefault();
-
-                    if (descendant != null)
-                    {
-                        return descendant;
-                    }
-                }
-
-                return e;
+                e = null;
             }
 
-            return null;
+            if (e != null && direction == NavigationDirection.Previous)
+            {
+                var descendant = GetFocusableDescendants(e, direction).LastOrDefault();
+
+                if (descendant != null)
+                {
+                    return descendant;
+                }
+            }
+
+            return e;
         }
 
         /// <summary>
@@ -218,21 +204,19 @@ namespace Avalonia.Input.Navigation
             IInputElement container,
             NavigationDirection direction)
         {
-            var parent = container.GetVisualParent<IInputElement>();
-            IInputElement? next = null;
+            var parent = container.InputParent;
+            IInputElement? next;
 
             if (parent != null)
             {
                 if (direction == NavigationDirection.Previous &&
                     parent.CanFocus() && 
-                    KeyboardNavigation.GetIsTabStop((InputElement) parent))
+                    parent.IsTabFocusable)
                 {
                     return parent;
                 }
 
-                var allSiblings = parent.GetVisualChildren()
-                    .OfType<IInputElement>()
-                    .Where(FocusExtensions.CanFocusDescendants);
+                var allSiblings = parent.InputChildren.Where(FocusExtensions.CanFocusDescendants);
                 var siblings = direction == NavigationDirection.Next ?
                     allSiblings.SkipWhile(x => x != container).Skip(1) :
                     allSiblings.TakeWhile(x => x != container).Reverse();
@@ -245,7 +229,7 @@ namespace Avalonia.Input.Navigation
                         return customNext.next;
                     }
 
-                    if (sibling.CanFocus() && KeyboardNavigation.GetIsTabStop((InputElement) sibling))
+                    if (sibling.CanFocus() && sibling.IsTabFocusable)
                     {
                         return sibling;
                     }

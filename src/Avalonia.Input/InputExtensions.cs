@@ -12,65 +12,148 @@ namespace Avalonia.Input
     /// </summary>
     public static class InputExtensions
     {
-        private static readonly Func<IVisual, bool> s_hitTestDelegate = IsHitTestVisible;
 
-        /// <summary>
-        /// Returns the active input elements at a point on an <see cref="IInputElement"/>.
-        /// </summary>
-        /// <param name="element">The element to test.</param>
-        /// <param name="p">The point on <paramref name="element"/>.</param>
-        /// <returns>
-        /// The active input elements found at the point, ordered topmost first.
-        /// </returns>
-        public static IEnumerable<IInputElement> GetInputElementsAt(this IInputElement element, Point p)
+        private static readonly Func<IVisual, bool> s_hitTestDelegate = v => v is IInputElement
         {
-            element = element ?? throw new ArgumentNullException(nameof(element));
+            IsHitTestVisible: true, IsEffectivelyEnabled: true
+        };
 
-            return element.GetVisualsAt(p, s_hitTestDelegate).Cast<IInputElement>();
+        public static IVisual? GetClosestVisual(this IInputElement? element)
+        {
+            var e = element;
+            while (e != null)
+            {
+                if (e is IVisual visual)
+                {
+                    return visual;
+                }
+
+                e = e.InputParent;
+            }
+
+            return null;
         }
 
         /// <summary>
         /// Returns the topmost active input element at a point on an <see cref="IInputElement"/>.
         /// </summary>
-        /// <param name="element">The element to test.</param>
-        /// <param name="p">The point on <paramref name="element"/>.</param>
+        /// <param name="element">The element to hit test on.</param>
+        /// <param name="p">The point on element.</param>
         /// <returns>The topmost <see cref="IInputElement"/> at the specified position.</returns>
         public static IInputElement? InputHitTest(this IInputElement element, Point p)
         {
-            element = element ?? throw new ArgumentNullException(nameof(element));
-
-            return element.GetVisualAt(p, s_hitTestDelegate) as IInputElement;
+            var inputElement = element.GetClosestVisual()?.GetVisualAt(p, s_hitTestDelegate) as IInputElement;
+            // The visual under the cursor might be a container for further input elements
+            // that are themselves not visuals
+            if (inputElement is IContentInputHost contentHost)
+            {
+                return contentHost.InputHitTest(p);
+            }
+            return inputElement;
         }
 
         /// <summary>
-        /// Returns the topmost active input element at a point on an <see cref="IInputElement"/>.
+        /// Returns the topmost active input element at a point on an <see cref="IInputElement"/>,
+        /// but only considers input elements that satisfy the given filter.
         /// </summary>
-        /// <param name="element">The element to test.</param>
-        /// <param name="p">The point on <paramref name="element"/>.</param>
-        /// <param name="filter">
-        /// A filter predicate. If the predicate returns false then the visual and all its
-        /// children will be excluded from the results.
-        /// </param>
+        /// <param name="element">The element to hit test on.</param>
+        /// <param name="p">The point on element.</param>
+        /// <param name="filter">Only input elements satisfying this filter will be considered,
+        /// including any parent nodes</param>
         /// <returns>The topmost <see cref="IInputElement"/> at the specified position.</returns>
-        public static IInputElement? InputHitTest(
-            this IInputElement element,
-            Point p,
-            Func<IVisual, bool> filter)
+        public static IInputElement? InputHitTest(this IInputElement element, Point p, Func<IInputElement, bool> filter)
+        {
+            var inputElement = element.GetClosestVisual()?.GetVisualAt(p, x =>
+            {
+                return s_hitTestDelegate(x) && x is IInputElement e && filter(e);
+            }) as IInputElement;
+
+            // The visual under the cursor might be a container for further input elements
+            // that are themselves not visuals, hence this recursive call
+            if (inputElement is IContentInputHost contentHost)
+            {
+                return contentHost.InputHitTest(p);
+            }
+            return inputElement;
+        }
+
+        /// <summary>
+        /// Enumerates an <see cref="IInputElement"/> and its ancestors in the input tree.
+        /// </summary>
+        /// <param name="element">The input element.</param>
+        /// <returns>The element and its ancestors.</returns>
+        public static IEnumerable<IInputElement> GetSelfAndInputAncestors(this IInputElement element)
         {
             element = element ?? throw new ArgumentNullException(nameof(element));
-            filter = filter ?? throw new ArgumentNullException(nameof(filter));
 
-            return element.GetVisualAt(p, x => s_hitTestDelegate(x) && filter(x)) as IInputElement;
+            yield return element;
+
+            foreach (var ancestor in element.GetInputAncestors())
+            {
+                yield return ancestor;
+            }
         }
 
-        private static bool IsHitTestVisible(IVisual visual)
+        /// <summary>
+        /// Enumerates an <see cref="IInputElement"/>'s ancestors in the input tree.
+        /// </summary>
+        /// <param name="element">The input element.</param>
+        /// <returns>The element's ancestors.</returns>
+        public static IEnumerable<IInputElement> GetInputAncestors(this IInputElement? element)
         {
-            var element = visual as IInputElement;
-            return element != null &&
-                   element.IsVisible &&
-                   element.IsHitTestVisible &&
-                   element.IsEffectivelyEnabled &&
-                   element.IsAttachedToVisualTree;
+            element = element ?? throw new ArgumentNullException(nameof(element));
+
+            var parent = element.InputParent;
+            while (parent != null)
+            {
+                yield return parent;
+                parent = parent.InputParent;
+            }
         }
+
+        /// <summary>
+        /// Tests whether an <see cref="IInputElement"/> is an ancestor of another input element.
+        /// </summary>
+        /// <param name="element">The input element.</param>
+        /// <param name="target">The potential descendant.</param>
+        /// <returns>
+        /// True if <paramref name="element"/> is an ancestor of <paramref name="target"/>;
+        /// otherwise false.
+        /// </returns>
+        public static bool IsInputAncestorOf(this IInputElement element, IInputElement? target)
+        {
+            var current = target?.InputParent;
+
+            while (current != null)
+            {
+                if (current == element)
+                {
+                    return true;
+                }
+
+                current = current.InputParent;
+            }
+
+            return false;
+        }
+
+        public static bool IsClosestVisualVisible(this IInputElement element)
+        {
+            return element.GetClosestVisual()?.IsVisible == true;
+        }
+
+        public static bool IsClosestVisualEffectivelyVisible(this IInputElement element)
+        {
+            return element.GetClosestVisual()?.IsEffectivelyVisible == true;
+        }
+
+        /// <summary>
+        /// Checks if the closest visual control of the input element is attached to the visual tree.
+        /// </summary>
+        public static bool IsAttachedToInputTree(this IInputElement element)
+        {
+            return element.GetClosestVisual()?.IsAttachedToVisualTree == true;
+        }
+
     }
 }

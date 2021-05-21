@@ -195,8 +195,6 @@ namespace Avalonia.Input
         /// </summary>
         static InputElement()
         {
-            IsEnabledProperty.Changed.Subscribe(IsEnabledChanged);
-
             GotFocusEvent.AddClassHandler<InputElement>((x, e) => x.OnGotFocus(e));
             LostFocusEvent.AddClassHandler<InputElement>((x, e) => x.OnLostFocus(e));
             KeyDownEvent.AddClassHandler<InputElement>((x, e) => x.OnKeyDown(e));
@@ -406,6 +404,15 @@ namespace Avalonia.Input
             private set { SetAndRaise(IsFocusedProperty, ref _isFocused, value); }
         }
 
+        /// <inheritdoc/>
+        public bool IsTabFocusable => KeyboardNavigation.GetIsTabStop(this);
+
+        /// <inheritdoc/>
+        public KeyboardNavigationMode TabNavigation => KeyboardNavigation.GetTabNavigation(this);
+
+        /// <inheritdoc/>
+        public IInputElement? TabOnceActiveElement => KeyboardNavigation.GetTabOnceActiveElement(this);
+
         /// <summary>
         /// Gets or sets a value indicating whether the control is considered for hit testing.
         /// </summary>
@@ -601,6 +608,10 @@ namespace Avalonia.Input
             {
                 PseudoClasses.Set(":focus-within", _isKeyboardFocusWithin);
             }
+            else if (change.Property == IsEnabledProperty)
+            {
+                UpdateIsEffectivelyEnabled();
+            }
         }
 
         /// <summary>
@@ -610,11 +621,6 @@ namespace Avalonia.Input
         protected void UpdateIsEffectivelyEnabled()
         {
             UpdateIsEffectivelyEnabled(this.GetVisualParent<InputElement>());
-        }
-
-        private static void IsEnabledChanged(AvaloniaPropertyChangedEventArgs e)
-        {
-            ((InputElement)e.Sender).UpdateIsEffectivelyEnabled();
         }
 
         /// <summary>
@@ -671,6 +677,69 @@ namespace Avalonia.Input
             if (isPointerOver.HasValue)
             {
                 PseudoClasses.Set(":pointerover", isPointerOver.Value);
+            }
+        }
+
+        /// <inheritdoc/>
+        public IInputRoot? InputRoot
+        {
+            get
+            {
+                if (((IVisual) this).IsAttachedToVisualTree)
+                {
+                    return VisualRoot as IInputRoot;
+                }
+                else
+                {
+                    return null;
+                }
+            }
+        }
+
+        // Returns the closest IInputElement ancestor in the visual tree
+        public IInputElement? InputParent
+        {
+            get
+            {
+                var parent = ((IVisual)this).VisualParent;
+                while (parent != null)
+                {
+                    if (parent is IInputElement inputElement)
+                    {
+                        return inputElement;
+                    }
+                    parent = parent.VisualParent;
+                }
+
+                return null;
+            }
+        }
+
+        /// <inheritdoc/>
+        public virtual IEnumerable<IInputElement> InputChildren
+        {
+            get
+            {
+                // TODO This might (or will) allocate
+                foreach (var child in VisualChildren)
+                {
+                    if (child is IInputElement inputElement)
+                    {
+                        yield return inputElement;
+                    }
+                }
+            }
+        }
+
+        /// <inheritdoc/>
+        bool IInputElement.IsHitTestVisible
+        {
+            get
+            {
+                IVisual visual = this;
+                return IsHitTestVisible
+                       && visual.IsVisible
+                       && visual.IsAttachedToVisualTree;
             }
         }
     }

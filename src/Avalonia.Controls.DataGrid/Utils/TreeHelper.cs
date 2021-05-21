@@ -54,7 +54,7 @@ namespace Avalonia.Controls.Utils
         /// <returns>True if the currently focused element is within the visual tree of the parent</returns>
         internal static bool ContainsFocusedElement(this IVisual element)
         {
-            return (element == null) ? false : element.ContainsChild(FocusManager.Instance.Current);
+            return element?.ContainsChild(FocusManager.Instance.Current?.GetClosestVisual()) ?? false;
         }
     }
 }

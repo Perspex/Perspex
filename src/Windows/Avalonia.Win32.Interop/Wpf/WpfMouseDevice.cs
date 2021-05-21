@@ -29,7 +29,7 @@ namespace Avalonia.Win32.Interop.Wpf
                 {
                     System.Windows.Input.Mouse.Capture(null);
                 }
-                else if ((control.GetVisualRoot() as EmbeddableControlRoot)?.PlatformImpl != _impl)
+                else if ((control.GetClosestVisual()?.GetVisualRoot() as EmbeddableControlRoot)?.PlatformImpl != _impl)
                     throw new ArgumentException("Visual belongs to unknown toplevel");
                 else
                     System.Windows.Input.Mouse.Capture(_impl);

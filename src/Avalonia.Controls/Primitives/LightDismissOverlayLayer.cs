@@ -50,14 +50,16 @@ namespace Avalonia.Controls.Primitives
 
         public bool HitTest(Point point)
         {
-            if (InputPassThroughElement is object)
+            var passThroughVisual = InputPassThroughElement?.GetClosestVisual();
+
+            if (passThroughVisual != null)
             {
                 var p = point.Transform(this.TransformToVisual(VisualRoot)!.Value);
                 var hit = VisualRoot.GetVisualAt(p, x => x != this);
 
-                if (hit is object)
+                if (hit != null)
                 {
-                    return !InputPassThroughElement.IsVisualAncestorOf(hit);
+                    return !passThroughVisual.IsVisualAncestorOf(hit);
                 }
             }
 

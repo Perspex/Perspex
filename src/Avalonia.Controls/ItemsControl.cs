@@ -299,13 +299,13 @@ namespace Avalonia.Controls
                     return;
                 }
 
-                IVisual current = focus.Current;
+                var current = focus.Current;
 
                 while (current != null)
                 {
-                    if (current.VisualParent == container && current is IInputElement inputElement)
+                    if (current.InputParent == container)
                     {
-                        IInputElement next = GetNextControl(container, direction.Value, inputElement, false);
+                        var next = GetNextControl(container, direction.Value, current, false);
 
                         if (next != null)
                         {
@@ -316,7 +316,7 @@ namespace Avalonia.Controls
                         break;
                     }
 
-                    current = current.VisualParent;
+                    current = current.InputParent;
                 }
             }
 
@@ -495,7 +495,7 @@ namespace Avalonia.Controls
                 if (result != null &&
                     result.Focusable &&
                     result.IsEffectivelyEnabled &&
-                    result.IsEffectivelyVisible)
+                    result.IsClosestVisualEffectivelyVisible())
                 {
                     return result;
                 }

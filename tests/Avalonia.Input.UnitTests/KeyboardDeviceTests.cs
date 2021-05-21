@@ -1,4 +1,5 @@
-﻿using Avalonia.Input.Raw;
+﻿using System.Collections.Generic;
+using Avalonia.Input.Raw;
 using Avalonia.Interactivity;
 using Moq;
 using Xunit;
@@ -12,6 +13,7 @@ namespace Avalonia.Input.UnitTests
         {
             var target = new KeyboardDevice();
             var root = new Mock<IInputRoot>();
+            root.Setup(foo => foo.KeyBindings).Returns(new List<KeyBinding>());
 
             target.ProcessRawEvent(
                 new RawKeyEventArgs(
@@ -30,6 +32,7 @@ namespace Avalonia.Input.UnitTests
         {
             var target = new KeyboardDevice();
             var focused = new Mock<IInputElement>();
+            focused.Setup(foo => foo.KeyBindings).Returns(new List<KeyBinding>());
             var root = Mock.Of<IInputRoot>();
 
             target.SetFocusedElement(
@@ -70,6 +73,7 @@ namespace Avalonia.Input.UnitTests
         {
             var target = new KeyboardDevice();
             var focused = new Mock<IInputElement>();
+            focused.Setup(foo => foo.KeyBindings).Returns(new List<KeyBinding>());
             var root = Mock.Of<IInputRoot>();
 
             target.SetFocusedElement(

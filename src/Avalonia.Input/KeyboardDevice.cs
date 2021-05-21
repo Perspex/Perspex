@@ -34,53 +34,48 @@ namespace Avalonia.Input
             private set
             {
                 _focusedElement = value;
+                _focusedRoot = _focusedElement?.InputRoot;
 
-                if (_focusedElement != null && _focusedElement.IsAttachedToVisualTree)
-                {
-                    _focusedRoot = _focusedElement.VisualRoot as IInputRoot;
-                }
-                else
-                {
-                    _focusedRoot = null;
-                }
-                
                 RaisePropertyChanged();
                 _textInputManager.SetFocusedElement(value);
             }
         }
 
-        private void ClearFocusWithinAncestors(IInputElement? element)
+        private void ClearFocusWithinInclusiveAncestors(IInputElement? element)
         {
             var el = element;
             
             while (el != null)
             {
-                if (el is InputElement ie)
-                {
-                    ie.IsKeyboardFocusWithin = false;
-                }
-
-                el = (IInputElement)el.VisualParent;
+                SetIsKeyboardFocusWithin(el, false);
+                el = el.InputParent;
             }
         }
-        
-        private void ClearFocusWithin(IInputElement element, bool clearRoot)
+
+        // Clears IsKeyboardFocusWithin on descendants of the given element, but
+        // not on the given element itself.
+        private void ClearFocusWithinBelow(IInputElement element)
         {
-            foreach (var visual in element.VisualChildren)
+            foreach (var child in element.InputChildren)
             {
-                if (visual is IInputElement el && el.IsKeyboardFocusWithin)
+                if (child.IsKeyboardFocusWithin)
                 {
-                    ClearFocusWithin(el, true);
-                    break;
+                    ClearFocusWithinBelow(child);
+                    SetIsKeyboardFocusWithin(child, false);
+                    break; // Assuming only one child can have the keyboard focus
                 }
             }
-            
-            if (clearRoot)
+        }
+
+        private void SetIsKeyboardFocusWithin(IInputElement node, bool value)
+        {
+            if (node is InputElement element)
             {
-                if (element is InputElement ie)
-                {
-                    ie.IsKeyboardFocusWithin = false;
-                }
+                element.IsKeyboardFocusWithin = value;
+            }
+            else if (node is ContentInputElement contentElement)
+            {
+                contentElement.IsKeyboardFocusWithin = value;
             }
         }
 
@@ -88,10 +83,12 @@ namespace Avalonia.Input
         {
             if (newElement == null && oldElement != null)
             {
-                ClearFocusWithinAncestors(oldElement);
+                ClearFocusWithinInclusiveAncestors(oldElement);
                 return;
             }
-            
+
+            // Find the first ancestor of the new focus element that already
+            // had focus in its subtree.
             IInputElement? branch = null;
 
             var el = newElement;
@@ -104,43 +101,41 @@ namespace Avalonia.Input
                     break;
                 }
 
-                el = el.VisualParent as IInputElement;
+                el = el.InputParent;
             }
 
-            el = oldElement;
-
-            if (el != null && branch != null)
+            // Clear any existing IsFocusWithin flags beneath the element
+            // that will still maintain that flag after moving focus
+            if (oldElement != null && branch != null)
             {
-                ClearFocusWithin(branch, false);
+                ClearFocusWithinBelow(branch);
             }
 
+            // Start marking every inclusive-ancestor of the new focus element
+            // as having focus within, up until the element that aleady had it.
             el = newElement;
-            
             while (el != null && el != branch)
             {
-                if (el is InputElement ie)
-                {
-                    ie.IsKeyboardFocusWithin = true;
-                }
+                SetIsKeyboardFocusWithin(el, true);
 
-                el = el.VisualParent as IInputElement;
+                el = el.InputParent;
             }
         }
         
         private void ClearChildrenFocusWithin(IInputElement element, bool clearRoot)
         {
-            foreach (var visual in element.VisualChildren)
+            foreach (var child in element.InputChildren)
             {
-                if (visual is IInputElement el && el.IsKeyboardFocusWithin)
+                if (child.IsKeyboardFocusWithin)
                 {
-                    ClearChildrenFocusWithin(el, true);
+                    ClearChildrenFocusWithin(child, true);
                     break;
                 }
             }
             
-            if (clearRoot && element is InputElement ie)
+            if (clearRoot)
             {
-                ie.IsKeyboardFocusWithin = false;
+                SetIsKeyboardFocusWithin(element, false);
             }
         }
 
@@ -151,28 +146,32 @@ namespace Avalonia.Input
         {
             if (element != FocusedElement)
             {
-                var interactive = FocusedElement as IInteractive;
-
+                // If the focus is moving from one focus root to another (i.e. between windows)
+                // Clear the focus in the old focus root entirely. This is also the case
+                // If the previously focused element is no longer in the same focus root
+                // as it was when it was focused (i.e. it was hidden and lost focus because of that)
                 if (FocusedElement != null && 
-                    (!FocusedElement.IsAttachedToVisualTree ||
-                     _focusedRoot != element?.VisualRoot as IInputRoot) &&
+                    (_focusedRoot != FocusedElement.InputRoot ||
+                     _focusedRoot != element?.InputRoot) &&
                     _focusedRoot != null)
                 {
                     ClearChildrenFocusWithin(_focusedRoot, true);
                 }
-                
+
+                // Now set the focus within along the ancestors of the new focus
+                // element, if possible maintaining it for common ancestors of
+                // the new and old focus element.
                 SetIsFocusWithin(FocusedElement, element);
-                
+
+                var previouslyFocused = FocusedElement;
                 FocusedElement = element;
 
-                interactive?.RaiseEvent(new RoutedEventArgs
+                previouslyFocused?.RaiseEvent(new RoutedEventArgs
                 {
                     RoutedEvent = InputElement.LostFocusEvent,
                 });
 
-                interactive = element as IInteractive;
-
-                interactive?.RaiseEvent(new GotFocusEventArgs
+                element?.RaiseEvent(new GotFocusEventArgs
                 {
                     RoutedEvent = InputElement.GotFocusEvent,
                     NavigationMethod = method,
@@ -212,18 +211,17 @@ namespace Avalonia.Input
                             Source = element,
                         };
 
-                        IVisual currentHandler = element;
+                        var currentHandler = element;
                         while (currentHandler != null && !ev.Handled && keyInput.Type == RawKeyEventType.KeyDown)
                         {
-                            var bindings = (currentHandler as IInputElement)?.KeyBindings;
-                            if (bindings != null)
-                                foreach (var binding in bindings)
-                                {
-                                    if (ev.Handled)
-                                        break;
-                                    binding.TryHandle(ev);
-                                }
-                            currentHandler = currentHandler.VisualParent;
+                            var bindings = currentHandler.KeyBindings;
+                            foreach (var binding in bindings)
+                            {
+                                if (ev.Handled)
+                                    break;
+                                binding.TryHandle(ev);
+                            }
+                            currentHandler = currentHandler.InputParent;
                         }
 
                         element.RaiseEvent(ev);

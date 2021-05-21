@@ -175,7 +175,7 @@ namespace Avalonia.Input
         /// <param name="e">The event args.</param>
         protected virtual void OnKeyDown(object sender, KeyEventArgs e)
         {
-            bool menuIsOpen = MainMenu?.IsOpen == true;
+            var menuIsOpen = MainMenu?.IsOpen == true;
 
             if (e.KeyModifiers.HasAllFlags(KeyModifiers.Alt) || menuIsOpen)
             {
@@ -183,13 +183,13 @@ namespace Avalonia.Input
                 // find all controls who have registered that access key.
                 var text = e.Key.ToString().ToUpper();
                 var matches = _registered
-                    .Where(x => x.Item1 == text && x.Item2.IsEffectivelyVisible)
+                    .Where(x => x.Item1 == text && x.Item2.IsClosestVisualEffectivelyVisible())
                     .Select(x => x.Item2);
 
-                // If the menu is open, only match controls in the menu's visual tree.
+                // If the menu is open, only match controls in the menu's input tree.
                 if (menuIsOpen)
                 {
-                    matches = matches.Where(x => MainMenu.IsVisualAncestorOf(x));
+                    matches = matches.Where(x => MainMenu!.InputElement.IsInputAncestorOf(x));
                 }
 
                 var match = matches.FirstOrDefault();

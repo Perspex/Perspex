@@ -151,9 +151,7 @@ namespace Avalonia.Controls.Presenters
             Virtualizer = ItemVirtualizer.Create(this);
             _scrollInvalidated?.Invoke(this, EventArgs.Empty);
 
-            KeyboardNavigation.SetTabNavigation(
-                (InputElement)Panel,
-                KeyboardNavigation.GetTabNavigation(this));
+            KeyboardNavigation.SetTabNavigation(Panel, TabNavigation);
         }
 
         protected override void ItemsChanged(NotifyCollectionChangedEventArgs e)

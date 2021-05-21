@@ -3817,7 +3817,8 @@ namespace Avalonia.Controls
             {
                 bool focusLeftDataGrid = true;
                 bool dataGridWillReceiveRoutedEvent = true;
-                IVisual focusedObject = FocusManager.Instance.Current;
+                // We can use the closest visual here because the grid's parents are all visuals themselves
+                var focusedObject = FocusManager.Instance.Current?.GetClosestVisual();
 
                 while (focusedObject != null)
                 {

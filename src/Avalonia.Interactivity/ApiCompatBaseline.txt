@@ -1,0 +1,3 @@
+Compat issues with assembly Avalonia.Interactivity:
+MembersMustExist : Member 'protected Avalonia.Interactivity.EventRoute Avalonia.Interactivity.Interactive.BuildEventRoute(Avalonia.Interactivity.RoutedEvent)' does not exist in the implementation but it does exist in the contract.
+Total Issues: 1

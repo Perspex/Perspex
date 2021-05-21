@@ -10,6 +10,11 @@ namespace Avalonia.Input
     public interface IMainMenu : IVisual
     {
         /// <summary>
+        /// The root of the menu's input element descendants. This will usually be the menu itself.
+        /// </summary>
+        IInputElement InputElement { get; }
+
+        /// <summary>
         /// Gets a value indicating whether the menu is open.
         /// </summary>
         bool IsOpen { get; }

@@ -266,6 +266,12 @@ namespace Avalonia.Controls
         }
 
         /// <inheritdoc/>
+        public Point PointToClient(PixelPoint point) => ((IRenderRoot)this).PointToClient(point);
+
+        /// <inheritdoc/>
+        public PixelPoint PointToScreen(Point point) => ((IRenderRoot)this).PointToScreen(point);
+
+        /// <inheritdoc/>
         IMouseDevice IInputRoot.MouseDevice => PlatformImpl?.MouseDevice;
 
         void IWeakSubscriber<ResourcesChangedEventArgs>.OnEvent(object sender, ResourcesChangedEventArgs e)
@@ -483,7 +489,7 @@ namespace Avalonia.Controls
 
         void PlatformImpl_LostFocus()
         {
-            var focused = (IVisual)FocusManager.Instance.Current;
+            var focused = FocusManager.Instance.Current?.GetClosestVisual();
             if (focused == null)
                 return;
             while (focused.VisualParent != null)

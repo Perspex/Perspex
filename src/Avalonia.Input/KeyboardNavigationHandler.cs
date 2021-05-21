@@ -48,7 +48,7 @@ namespace Avalonia.Input
         {
             element = element ?? throw new ArgumentNullException(nameof(element));
 
-            var customHandler = element.GetSelfAndVisualAncestors()
+            var customHandler = element.GetSelfAndInputAncestors()
                 .OfType<ICustomKeyboardNavigation>()
                 .FirstOrDefault();
 

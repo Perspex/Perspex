@@ -23,8 +23,8 @@ namespace Avalonia.Input
         {
             if (control1 == null || control2 == null)
                 return null;
-            var seen = new HashSet<IInputElement>(control1.GetSelfAndVisualAncestors().OfType<IInputElement>());
-            return control2.GetSelfAndVisualAncestors().OfType<IInputElement>().FirstOrDefault(seen.Contains);
+            var seen = new HashSet<IInputElement>(control1.GetSelfAndInputAncestors());
+            return control2.GetSelfAndInputAncestors().FirstOrDefault(seen.Contains);
         }
 
         protected virtual void PlatformCapture(IInputElement? element)
@@ -34,15 +34,19 @@ namespace Avalonia.Input
         
         public void Capture(IInputElement? control)
         {
-            if (Captured != null)
-                Captured.DetachedFromVisualTree -= OnCaptureDetached;
+            var closestVisual = Captured?.GetClosestVisual();
+            if (closestVisual != null)
+            {
+                closestVisual.DetachedFromVisualTree -= OnCaptureDetached;
+            }
+
             var oldCapture = Captured;
             Captured = control;
             PlatformCapture(control);
             if (oldCapture != null)
             {
                 var commonParent = FindCommonParent(control, oldCapture);
-                foreach (var notifyTarget in oldCapture.GetSelfAndVisualAncestors().OfType<IInputElement>())
+                foreach (var notifyTarget in oldCapture.GetSelfAndInputAncestors())
                 {
                     if (notifyTarget == commonParent)
                         break;
@@ -50,8 +54,11 @@ namespace Avalonia.Input
                 }
             }
 
-            if (Captured != null)
-                Captured.DetachedFromVisualTree += OnCaptureDetached;
+            closestVisual = Captured?.GetClosestVisual();
+            if (closestVisual != null)
+            {
+                closestVisual.DetachedFromVisualTree += OnCaptureDetached;
+            }
         }
 
         IInputElement GetNextCapture(IVisual parent)

@@ -57,5 +57,55 @@ namespace Avalonia.Interactivity
                 routes,
                 handledEventsToo));
         }
+
+        /// <summary>
+        /// Builds an event route for a routed event.
+        /// </summary>
+        /// <param name="interactive">The interactive element to start building the route at.</param>
+        /// <param name="e">The routed event.</param>
+        /// <returns>An <see cref="EventRoute"/> describing the route.</returns>
+        /// <remarks>
+        /// Usually, calling <see cref="IInteractive.RaiseEvent(RoutedEventArgs)"/> is sufficent to raise a routed
+        /// event, however there are situations in which the construction of the event args is expensive
+        /// and should be avoided if there are no handlers for an event. In these cases you can call
+        /// this method to build the event route and check the <see cref="EventRoute.HasHandlers"/>
+        /// property to see if there are any handlers registered on the route. If there are, call
+        /// <see cref="EventRoute.RaiseEvent(IInteractive, RoutedEventArgs)"/> to raise the event.
+        /// </remarks>
+        public static EventRoute BuildEventRoute(this IInteractive interactive, RoutedEvent e)
+        {
+            e = e ?? throw new ArgumentNullException(nameof(e));
+
+            var result = new EventRoute(e);
+            var hasClassHandlers = e.HasRaisedSubscriptions;
+
+            if (e.RoutingStrategies.HasAllFlags(RoutingStrategies.Bubble) ||
+                e.RoutingStrategies.HasAllFlags(RoutingStrategies.Tunnel))
+            {
+                IInteractive? element = interactive;
+
+                while (element != null)
+                {
+                    if (hasClassHandlers)
+                    {
+                        result.AddClassHandler(element);
+                    }
+
+                    element.AddToEventRoute(e, result);
+                    element = element.InteractiveParent;
+                }
+            }
+            else
+            {
+                if (hasClassHandlers)
+                {
+                    result.AddClassHandler(interactive);
+                }
+
+                interactive.AddToEventRoute(e, result);
+            }
+
+            return result;
+        }
     }
 }

@@ -84,7 +84,7 @@ namespace Avalonia.Input
                     }
                 }
 
-                if (Scope is object)
+                if (Scope != null)
                 {
                     // Couldn't find a focus scope, clear focus.
                     SetFocusedElement(Scope, null);
@@ -156,7 +156,7 @@ namespace Avalonia.Input
         /// </summary>
         /// <param name="e">The element.</param>
         /// <returns>True if the element can be focused.</returns>
-        private static bool CanFocus(IInputElement e) => e.Focusable && e.IsEffectivelyEnabled && e.IsVisible;
+        private static bool CanFocus(IInputElement e) => e.Focusable && e.IsEffectivelyEnabled && e.IsClosestVisualVisible();
 
         /// <summary>
         /// Gets the focus scope ancestors of the specified control, traversing popups.
@@ -165,18 +165,16 @@ namespace Avalonia.Input
         /// <returns>The focus scopes.</returns>
         private static IEnumerable<IFocusScope> GetFocusScopeAncestors(IInputElement control)
         {
-            IInputElement? c = control;
+            var c = control;
 
             while (c != null)
             {
-                var scope = c as IFocusScope;
-
-                if (scope != null && c.VisualRoot?.IsVisible == true)
+                if (c is IFocusScope scope && (!(c is IVisual visual) || visual.VisualRoot?.IsVisible == true))
                 {
                     yield return scope;
                 }
 
-                c = c.GetVisualParent<IInputElement>() ??
+                c = c.InputParent ??
                     ((c as IHostedVisualTreeRoot)?.Host as IInputElement);
             }
         }
@@ -193,18 +191,18 @@ namespace Avalonia.Input
 
             if (sender == e.Source && ev.GetCurrentPoint(visual).Properties.IsLeftButtonPressed)
             {
-                IVisual? element = ev.Pointer?.Captured ?? e.Source as IInputElement;
+                var element = ev.Pointer?.Captured ?? e.Source as IInputElement;
 
                 while (element != null)
                 {
-                    if (element is IInputElement inputElement && CanFocus(inputElement))
+                    if (CanFocus(element))
                     {
-                        Instance?.Focus(inputElement, NavigationMethod.Pointer, ev.KeyModifiers);
+                        Instance?.Focus(element, NavigationMethod.Pointer, ev.KeyModifiers);
 
                         break;
                     }
                     
-                    element = element.VisualParent;
+                    element = element.InputParent;
                 }
             }
         }

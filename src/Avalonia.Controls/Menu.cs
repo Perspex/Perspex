@@ -92,5 +92,9 @@ namespace Avalonia.Controls
                 inputRoot.AccessKeyHandler.MainMenu = this;
             }
         }
+
+        /// <inheritdoc/>
+        public IInputElement InputElement => this;
+
     }
 }

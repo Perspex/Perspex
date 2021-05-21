@@ -1453,7 +1453,7 @@ namespace Avalonia.Controls
         /// otherwise, false.</returns>
         protected bool HasFocus()
         {
-            IVisual focused = FocusManager.Instance.Current;
+            var focused = FocusManager.Instance.Current;
 
             while (focused != null)
             {
@@ -1464,7 +1464,7 @@ namespace Avalonia.Controls
 
                 // This helps deal with popups that may not be in the same
                 // visual tree
-                IVisual parent = focused.GetVisualParent();
+                var parent = focused.InputParent;
                 if (parent == null)
                 {
                     // Try the logical parent.

@@ -759,7 +759,7 @@ namespace Avalonia.Controls.Primitives
                 Mark(i, false);
             }
 
-            var route = BuildEventRoute(SelectionChangedEvent);
+            var route = this.BuildEventRoute(SelectionChangedEvent);
 
             if (route.HasHandlers)
             {

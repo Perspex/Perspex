@@ -703,7 +703,9 @@ namespace Avalonia.Controls
 
             if (child != null)
             {
-                var parent = child.VisualParent;
+                // We can use the closest visual and ignore content elements here since
+                // only visuals can be direct children of this object
+                var parent = child.GetClosestVisual()?.VisualParent;
                 var owner = _owner;
 
                 // Find out if the focused element belongs to one of our direct
@@ -721,8 +723,7 @@ namespace Avalonia.Controls
                         break;
                     }
 
-                    child = parent as IInputElement;
-                    parent = child.VisualParent;
+                    parent = parent.VisualParent;
                 }
             }
 

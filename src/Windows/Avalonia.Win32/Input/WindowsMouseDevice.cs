@@ -21,7 +21,7 @@ namespace Avalonia.Win32.Input
 
             protected override void PlatformCapture(IInputElement element)
             {
-                var hwnd = ((element?.GetVisualRoot() as TopLevel)?.PlatformImpl as WindowImpl)
+                var hwnd = ((element?.GetClosestVisual()?.GetVisualRoot() as TopLevel)?.PlatformImpl as WindowImpl)
                     ?.Handle.Handle;
 
                 if (hwnd.HasValue && hwnd != IntPtr.Zero)

@@ -6,6 +6,6 @@ namespace Avalonia.Input
     /// </summary>
     public interface ICustomKeyboardNavigation
     {
-        (bool handled, IInputElement next) GetNext(IInputElement element, NavigationDirection direction);
+        (bool handled, IInputElement? next) GetNext(IInputElement element, NavigationDirection direction);
     }
 }

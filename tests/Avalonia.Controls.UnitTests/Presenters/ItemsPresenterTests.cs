@@ -300,7 +300,7 @@ namespace Avalonia.Controls.UnitTests.Presenters
 
             target.ApplyTemplate();
 
-            Assert.Equal(KeyboardNavigationMode.Once, KeyboardNavigation.GetTabNavigation((InputElement)target.Panel));
+            Assert.Equal(KeyboardNavigationMode.Once, target.Panel.TabNavigation);
         }
 
         [Fact]
@@ -311,7 +311,7 @@ namespace Avalonia.Controls.UnitTests.Presenters
             KeyboardNavigation.SetTabNavigation(target, KeyboardNavigationMode.Cycle);
             target.ApplyTemplate();
 
-            Assert.Equal(KeyboardNavigationMode.Cycle, KeyboardNavigation.GetTabNavigation((InputElement)target.Panel));
+            Assert.Equal(KeyboardNavigationMode.Cycle, target.Panel.TabNavigation);
         }
 
         [Fact]

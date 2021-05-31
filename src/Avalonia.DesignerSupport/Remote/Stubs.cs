@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reactive.Disposables;
 using System.Threading.Tasks;
+using Avalonia.Automation.Peers;
+using Avalonia.Automation.Platform;
 using Avalonia.Controls;
 using Avalonia.Controls.Platform;
 using Avalonia.Controls.Primitives.PopupPositioning;
@@ -38,6 +40,7 @@ namespace Avalonia.DesignerSupport.Remote
         public Action<PixelPoint> PositionChanged { get; set; }
         public WindowState WindowState { get; set; }
         public Action<WindowState> WindowStateChanged { get; set; }
+        public Func<IAutomationNode, AutomationPeer> AutomationStarted { get; set; }
 
         public Action<WindowTransparencyLevel> TransparencyLevelChanged { get; set; }        
 

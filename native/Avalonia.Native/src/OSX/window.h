@@ -39,6 +39,7 @@ class WindowBaseImpl;
 struct INSWindowHolder
 {
     virtual AvnWindow* _Nonnull GetNSWindow () = 0;
+    virtual AvnView* _Nonnull GetNSView () = 0;
 };
 
 struct IWindowStateChanged

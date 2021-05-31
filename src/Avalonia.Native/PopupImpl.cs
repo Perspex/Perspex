@@ -7,7 +7,6 @@ namespace Avalonia.Native
 {
     class PopupImpl : WindowBaseImpl, IPopupImpl
     {
-        private readonly IAvaloniaNativeFactory _factory;
         private readonly AvaloniaNativePlatformOptions _opts;
         private readonly AvaloniaNativePlatformOpenGlInterface _glFeature;
         private readonly IWindowBaseImpl _parent;
@@ -15,9 +14,8 @@ namespace Avalonia.Native
         public PopupImpl(IAvaloniaNativeFactory factory,
             AvaloniaNativePlatformOptions opts,
             AvaloniaNativePlatformOpenGlInterface glFeature,
-            IWindowBaseImpl parent) : base(opts, glFeature)
+            IWindowBaseImpl parent) : base(factory, opts, glFeature)
         {
-            _factory = factory;
             _opts = opts;
             _glFeature = glFeature;
             _parent = parent;

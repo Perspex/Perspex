@@ -14,6 +14,8 @@ using Avalonia.Data;
 using Avalonia.Layout;
 using Avalonia.Utilities;
 using Avalonia.Controls.Metadata;
+using Avalonia.Automation.Peers;
+using Avalonia.Automation.Platform;
 
 namespace Avalonia.Controls
 {
@@ -925,6 +927,11 @@ namespace Avalonia.Controls
                 }
                 e.Pointer.Capture(null);
             }
+        }
+
+        protected override AutomationPeer OnCreateAutomationPeer(IAutomationNodeFactory factory)
+        {
+            return new TextBoxAutomationPeer(factory, this);
         }
 
         protected override void UpdateDataValidation<T>(AvaloniaProperty<T> property, BindingValue<T> value)

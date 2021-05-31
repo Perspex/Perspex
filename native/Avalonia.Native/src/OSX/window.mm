@@ -5,14 +5,25 @@
 #include "menu.h"
 #include <OpenGL/gl.h>
 #include "rendertarget.h"
+#include "AvnString.h"
+#include "automation.h"
 
-class WindowBaseImpl : public virtual ComSingleObject<IAvnWindowBase, &IID_IAvnWindowBase>, public INSWindowHolder
+class WindowBaseImpl : public virtual ComObject,
+    public virtual IAvnWindowBase,
+    public virtual IAvnAutomationNode,
+    public INSWindowHolder,
+    public INSAccessibilityHolder
 {
 private:
     NSCursor* cursor;
 
 public:
     FORWARD_IUNKNOWN()
+    BEGIN_INTERFACE_MAP()
+    INTERFACE_MAP_ENTRY(IAvnWindowBase, IID_IAvnWindowBase)
+    INTERFACE_MAP_ENTRY(IAvnAutomationNode, IID_IAvnAutomationNode)
+    END_INTERFACE_MAP()
+
     virtual ~WindowBaseImpl()
     {
         View = NULL;
@@ -101,6 +112,16 @@ public:
     }
     
     virtual AvnWindow* GetNSWindow() override
+    {
+        return Window;
+    }
+
+    virtual AvnView* GetNSView() override
+    {
+        return View;
+    }
+
+    virtual NSObject* GetNSAccessibility() override
     {
         return Window;
     }
@@ -488,6 +509,25 @@ public:
         return S_OK;
     }
 
+    virtual void ChildrenChanged() override
+    {
+        NSAccessibilityPostNotification(Window, NSAccessibilityLayoutChangedNotification);
+    }
+
+    virtual void PropertyChanged(AvnAutomationProperty property) override
+    {
+    }
+    
+    virtual void FocusChanged(IAvnAutomationPeer* peer) override
+    {
+        auto element = GetAccessibilityElement(peer);
+        
+        if (element != nullptr)
+        {
+            NSAccessibilityPostNotification(element, NSAccessibilityFocusedUIElementChangedNotification);
+        }
+    }
+    
 protected:
     virtual NSWindowStyleMask GetStyle()
     {
@@ -1846,6 +1886,8 @@ NSArray* AllLoopModes = [NSArray arrayWithObjects: NSDefaultRunLoopMode, NSEvent
     bool _isExtended;
     AvnMenu* _menu;
     double _lastScaling;
+    IAvnAutomationPeer* _automationPeer;
+    NSMutableArray* _automationChildren;
 }
 
 -(void) setIsExtended:(bool)value;
@@ -2218,6 +2260,76 @@ NSArray* AllLoopModes = [NSArray arrayWithObjects: NSDefaultRunLoopMode, NSEvent
         _parent->BaseEvents->PositionChanged(position);
     }
 }
+
+- (BOOL)isAccessibilityElement
+{
+    [self getAutomationPeer];
+    return YES;
+}
+
+- (NSString *)accessibilityIdentifier
+{
+    auto peer = [self getAutomationPeer];
+    return GetNSStringAndRelease(peer->GetAutomationId());
+}
+
+- (NSArray *)accessibilityChildren
+{
+    auto peer = [self getAutomationPeer];
+    
+    if (_automationChildren == nullptr)
+    {
+        _automationChildren = (NSMutableArray*)[super accessibilityChildren];
+
+        auto childPeers = peer->GetChildren();
+        auto childCount = childPeers != nullptr ? childPeers->GetCount() : 0;
+
+        if (childCount > 0)
+        {
+            for (int i = 0; i < childCount; ++i)
+            {
+                IAvnAutomationPeer* child;
+                
+                if (childPeers->Get(i, &child) == S_OK)
+                {
+                    auto element = GetAccessibilityElement(child);
+                    [_automationChildren addObject:element];
+                }
+            }
+        }
+    }
+    
+    return _automationChildren;
+}
+
+- (id)accessibilityHitTest:(NSPoint)point
+{
+    point = [self convertPointFromScreen:point];
+    auto p = [_parent->View translateLocalPoint:ToAvnPoint(point)];
+    auto peer = [self getAutomationPeer];
+    auto hit = peer->RootProvider_GetPeerFromPoint(p);
+    return GetAccessibilityElement(hit);
+}
+
+- (id)accessibilityFocusedUIElement
+{
+    auto peer = [self getAutomationPeer];
+    
+    if (peer->IsRootProvider())
+    {
+        return GetAccessibilityElement(peer->RootProvider_GetFocus());
+    }
+    
+    return [super accessibilityFocusedUIElement];
+}
+
+- (IAvnAutomationPeer*) getAutomationPeer
+{
+    if (_automationPeer == nullptr)
+        _automationPeer = _parent->BaseEvents->AutomationStarted(_parent);
+    return _automationPeer;
+}
+
 @end
 
 class PopupImpl : public virtual WindowBaseImpl, public IAvnPopup

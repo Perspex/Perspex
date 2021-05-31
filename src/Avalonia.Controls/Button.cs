@@ -1,6 +1,8 @@
 using System;
 using System.Linq;
 using System.Windows.Input;
+using Avalonia.Automation.Peers;
+using Avalonia.Automation.Platform;
 using Avalonia.Controls.Metadata;
 using Avalonia.Controls.Primitives;
 using Avalonia.Data;
@@ -378,6 +380,11 @@ namespace Avalonia.Controls
             }
         }
 
+        protected override AutomationPeer OnCreateAutomationPeer(IAutomationNodeFactory factory)
+        {
+            return new ButtonAutomationPeer(factory, this);
+        }
+
         protected override void UpdateDataValidation<T>(AvaloniaProperty<T> property, BindingValue<T> value)
         {
             base.UpdateDataValidation(property, value);
@@ -393,6 +400,8 @@ namespace Avalonia.Controls
                 }
             }
         }
+
+        internal void PerformClick() => OnClick();
 
         /// <summary>
         /// Called when the <see cref="Command"/> property changes.

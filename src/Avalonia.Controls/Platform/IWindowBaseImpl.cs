@@ -1,4 +1,6 @@
 using System;
+using Avalonia.Automation.Peers;
+using Avalonia.Automation.Platform;
 
 namespace Avalonia.Platform
 {
@@ -43,6 +45,11 @@ namespace Avalonia.Platform
         /// Gets or sets a method called when the window is activated (receives focus).
         /// </summary>
         Action Activated { get; set; }
+
+        /// <summary>
+        /// Gets or sets a method called when automation is started on the window.
+        /// </summary>
+        Func<IAutomationNode, AutomationPeer> AutomationStarted { get; set; }
 
         /// <summary>
         /// Gets the platform window handle.

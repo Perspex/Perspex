@@ -1,6 +1,8 @@
 using System.ComponentModel;
 using System.Linq;
 using Avalonia.Collections;
+using Avalonia.Automation.Peers;
+using Avalonia.Automation.Platform;
 using Avalonia.Controls.Generators;
 using Avalonia.Controls.Presenters;
 using Avalonia.Controls.Primitives;
@@ -229,6 +231,11 @@ namespace Avalonia.Controls
                     e.Handled = UpdateSelectionFromEventSource(e.Source);
                 }
             }
+        }
+
+        protected override AutomationPeer OnCreateAutomationPeer(IAutomationNodeFactory factory)
+        {
+            return new TabControlAutomationPeer(factory, this);
         }
     }
 }

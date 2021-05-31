@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Reactive.Disposables;
+using Avalonia.Automation.Peers;
+using Avalonia.Automation.Platform;
 using Avalonia.Controls;
 using Avalonia.Controls.Remote.Server;
 using Avalonia.Input;
@@ -45,6 +47,7 @@ namespace Avalonia.DesignerSupport.Remote
         public IPlatformHandle Handle { get; }
         public WindowState WindowState { get; set; }
         public Action<WindowState> WindowStateChanged { get; set; }
+        public Func<IAutomationNode, AutomationPeer> AutomationStarted { get; set; }
         public Size MaxAutoSizeHint { get; } = new Size(4096, 4096);
 
         protected override void OnMessage(IAvaloniaRemoteTransportConnection transport, object obj)

@@ -1,3 +1,5 @@
+using Avalonia.Automation.Peers;
+using Avalonia.Automation.Platform;
 using Avalonia.Controls.Platform;
 using Avalonia.Controls.Primitives;
 using Avalonia.Controls.Templates;
@@ -91,6 +93,11 @@ namespace Avalonia.Controls
             {
                 inputRoot.AccessKeyHandler.MainMenu = this;
             }
+        }
+
+        protected override AutomationPeer OnCreateAutomationPeer(IAutomationNodeFactory factory)
+        {
+            return new MenuAutomationPeer(factory, this);
         }
     }
 }

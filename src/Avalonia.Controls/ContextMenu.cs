@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using Avalonia.Automation.Peers;
+using Avalonia.Automation.Platform;
 using Avalonia.Controls.Generators;
 using Avalonia.Controls.Platform;
 using Avalonia.Controls.Primitives;
@@ -302,6 +304,11 @@ namespace Avalonia.Controls
         protected override IItemContainerGenerator CreateItemContainerGenerator()
         {
             return new MenuItemContainerGenerator(this);
+        }
+
+        protected override AutomationPeer OnCreateAutomationPeer(IAutomationNodeFactory factory)
+        {
+            return new ContextMenuAutomationPeer(factory, this);
         }
 
         private void Open(Control control, Control placementTarget)

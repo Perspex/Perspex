@@ -1,0 +1,68 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="IntegrationTestApp.MainWindow"
+        Title="IntegrationTestApp">
+  <DockPanel>
+    <Menu DockPanel.Dock="Top">
+      <MenuItem Name="FileMenu" Header="_File">
+        <MenuItem Name="OpenMenu" Header="_Open..." InputGesture="Ctrl+O"/>
+      </MenuItem>
+    </Menu>
+    <TabControl TabStripPlacement="Left" Name="MainTabs">
+      <TabItem Header="Automation">
+        <StackPanel>
+          <TextBlock Name="TextBlockWithName">TextBlockWithName</TextBlock>
+          <TextBlock Name="NotTheAutomationId" AutomationProperties.AutomationId="TextBlockWithNameAndAutomationId">
+            TextBlockWithNameAndAutomationId
+          </TextBlock>
+          <TextBlock Name="TextBlockAsLabel">Label for TextBox</TextBlock>
+          <TextBox Name="LabeledByTextBox" AutomationProperties.LabeledBy="{Binding #TextBlockAsLabel}">
+            Foo
+          </TextBox>
+        </StackPanel>
+      </TabItem>
+      <TabItem Header="Button">
+        <StackPanel>
+          <Button Name="DisabledButton" IsEnabled="False">
+            Disabled Button
+          </Button>
+          <Button Name="BasicButton">
+            Basic Button
+          </Button>
+          <Button Name="ButtonWithTextBlock">
+            <TextBlock>Button with TextBlock</TextBlock>
+          </Button>
+          <Button Name="ButtonWithAcceleratorKey" HotKey="Ctrl+B">Button with Accelerator Key</Button>
+        </StackPanel>
+      </TabItem>
+
+      <TabItem Header="CheckBox">
+        <StackPanel>
+          <CheckBox Name="UncheckedCheckBox">Unchecked</CheckBox>
+          <CheckBox Name="CheckedCheckBox" IsChecked="True">Checked</CheckBox>
+          <CheckBox Name="ThreeStateCheckBox" IsThreeState="True" IsChecked="{x:Null}">ThreeState</CheckBox>
+        </StackPanel>
+      </TabItem>
+
+      <TabItem Header="ComboBox">
+        <StackPanel>
+          <ComboBox Name="UnselectedComboBox">
+            <ComboBoxItem>Foo</ComboBoxItem>
+            <ComboBoxItem>Bar</ComboBoxItem>
+          </ComboBox>
+          <ComboBox Name="SelectedIndex0ComboBox" SelectedIndex="0">
+            <ComboBoxItem>Foo</ComboBoxItem>
+            <ComboBoxItem>Bar</ComboBoxItem>
+          </ComboBox>
+          <ComboBox Name="SelectedIndex1ComboBox" SelectedIndex="1">
+            <ComboBoxItem>Foo</ComboBoxItem>
+            <ComboBoxItem>Bar</ComboBoxItem>
+          </ComboBox>
+        </StackPanel>
+      </TabItem>
+    </TabControl>
+  </DockPanel>
+</Window>

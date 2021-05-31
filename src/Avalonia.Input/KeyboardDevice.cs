@@ -24,30 +24,7 @@ namespace Avalonia.Input
         // the source of truth about the input focus is in KeyboardDevice
         private readonly TextInputMethodManager _textInputManager = new TextInputMethodManager();
 
-        public IInputElement? FocusedElement
-        {
-            get
-            {
-                return _focusedElement;
-            }
-
-            private set
-            {
-                _focusedElement = value;
-
-                if (_focusedElement != null && _focusedElement.IsAttachedToVisualTree)
-                {
-                    _focusedRoot = _focusedElement.VisualRoot as IInputRoot;
-                }
-                else
-                {
-                    _focusedRoot = null;
-                }
-                
-                RaisePropertyChanged();
-                _textInputManager.SetFocusedElement(value);
-            }
-        }
+        public IInputElement? FocusedElement => _focusedElement;
 
         private void ClearFocusWithinAncestors(IInputElement? element)
         {
@@ -162,8 +139,8 @@ namespace Avalonia.Input
                 }
                 
                 SetIsFocusWithin(FocusedElement, element);
-                
-                FocusedElement = element;
+                _focusedElement = element;
+                _focusedRoot = _focusedElement?.VisualRoot as IInputRoot;
 
                 interactive?.RaiseEvent(new RoutedEventArgs
                 {
@@ -178,6 +155,9 @@ namespace Avalonia.Input
                     NavigationMethod = method,
                     KeyModifiers = keyModifiers,
                 });
+
+                _textInputManager.SetFocusedElement(element);
+                RaisePropertyChanged(nameof(FocusedElement));
             }
         }
 

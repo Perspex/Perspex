@@ -491,6 +491,7 @@ namespace Avalonia.Controls.UnitTests.Primitives
             using (CreateServicesWithFocus())
             {
                 var window = PreparedWindow();
+                window.Focusable = true;
 
                 var tb = new TextBox();
                 var p = new Popup

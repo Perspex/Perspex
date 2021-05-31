@@ -9,6 +9,7 @@ using Avalonia.Metadata;
 [assembly: InternalsVisibleTo("Avalonia.DesignerSupport")]
 #endif
 [assembly: XmlnsDefinition("https://github.com/avaloniaui", "Avalonia")]
+[assembly: XmlnsDefinition("https://github.com/avaloniaui", "Avalonia.Automation")]
 [assembly: XmlnsDefinition("https://github.com/avaloniaui", "Avalonia.Controls")]
 [assembly: XmlnsDefinition("https://github.com/avaloniaui", "Avalonia.Controls.Embedding")]
 [assembly: XmlnsDefinition("https://github.com/avaloniaui", "Avalonia.Controls.Presenters")]

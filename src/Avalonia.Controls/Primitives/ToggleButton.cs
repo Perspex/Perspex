@@ -1,4 +1,6 @@
 using System;
+using Avalonia.Automation.Peers;
+using Avalonia.Automation.Platform;
 using Avalonia.Controls.Metadata;
 using Avalonia.Data;
 using Avalonia.Interactivity;
@@ -167,6 +169,11 @@ namespace Avalonia.Controls.Primitives
         protected virtual void OnIndeterminate(RoutedEventArgs e)
         {
             RaiseEvent(e);
+        }
+
+        protected override AutomationPeer OnCreateAutomationPeer(IAutomationNodeFactory factory)
+        {
+            return new ToggleButtonAutomationPeer(factory, this);
         }
 
         private void OnIsCheckedChanged(AvaloniaPropertyChangedEventArgs e)

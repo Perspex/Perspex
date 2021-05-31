@@ -1,6 +1,7 @@
 //This file will contain actual IID structures
 #define COM_GUIDS_MATERIALIZE
 #include "common.h"
+#include "window.h"
 
 static bool s_generateDefaultAppMenuItems = true;
 static NSString* s_appTitle = @"Avalonia";
@@ -259,6 +260,12 @@ public:
         return S_OK;
     }
     
+    virtual HRESULT CreateAutomationNode (IAvnAutomationPeer* peer, IAvnAutomationNode** ppv) override
+    {
+        *ppv = ::CreateAutomationNode(peer);
+        return S_OK;
+    }
+    
     virtual HRESULT SetAppMenu (IAvnMenu* appMenu) override
     {
         ::SetAppMenu(s_appTitle, appMenu);
@@ -293,6 +300,15 @@ NSPoint ToNSPoint (AvnPoint p)
     result.y = p.Y;
     
     return result;
+}
+
+NSRect ToNSRect (AvnRect r)
+{
+    return NSRect
+    {
+        NSPoint { r.X, r.Y },
+        NSSize { r.Width, r.Height }
+    };
 }
 
 AvnPoint ToAvnPoint (NSPoint p)

@@ -86,5 +86,30 @@ namespace Avalonia.Input.UnitTests
 
             focused.Verify(x => x.RaiseEvent(It.IsAny<TextInputEventArgs>()));
         }
+
+        [Fact]
+        public void Control_Focus_Should_Be_Set_Before_FocusedElement_Raises_PropertyChanged()
+        {
+            var target = new KeyboardDevice();
+            var focused = new Mock<IInputElement>();
+            var root = Mock.Of<IInputRoot>();
+            var raised = 0;
+
+            target.PropertyChanged += (s, e) =>
+            {
+                if (e.PropertyName == nameof(target.FocusedElement))
+                {
+                    focused.Verify(x => x.RaiseEvent(It.IsAny<GotFocusEventArgs>()));
+                    ++raised;
+                }
+            };
+
+            target.SetFocusedElement(
+                focused.Object,
+                NavigationMethod.Unspecified,
+                KeyModifiers.None);
+
+            Assert.Equal(1, raised);
+        }
     }
 }

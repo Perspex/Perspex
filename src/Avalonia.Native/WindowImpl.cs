@@ -13,7 +13,6 @@ namespace Avalonia.Native
 {
     internal class WindowImpl : WindowBaseImpl, IWindowImpl, ITopLevelImplWithNativeMenuExporter
     {
-        private readonly IAvaloniaNativeFactory _factory;
         private readonly AvaloniaNativePlatformOptions _opts;
         private readonly AvaloniaNativePlatformOpenGlInterface _glFeature;
         IAvnWindow _native;
@@ -22,9 +21,8 @@ namespace Avalonia.Native
         
 
         internal WindowImpl(IAvaloniaNativeFactory factory, AvaloniaNativePlatformOptions opts,
-            AvaloniaNativePlatformOpenGlInterface glFeature) : base(opts, glFeature)
+            AvaloniaNativePlatformOpenGlInterface glFeature) : base(factory, opts, glFeature)
         {
-            _factory = factory;
             _opts = opts;
             _glFeature = glFeature;
             _doubleClickHelper = new DoubleClickHelper();

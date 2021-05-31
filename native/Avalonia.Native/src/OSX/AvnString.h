@@ -14,4 +14,5 @@ extern IAvnStringArray* CreateAvnStringArray(NSArray<NSString*>* array);
 extern IAvnStringArray* CreateAvnStringArray(NSArray<NSURL*>* array);
 extern IAvnStringArray* CreateAvnStringArray(NSString* string);
 extern IAvnString* CreateByteArray(void* data, int len);
+extern NSString* GetNSStringAndRelease(IAvnString* s);
 #endif /* AvnString_h */

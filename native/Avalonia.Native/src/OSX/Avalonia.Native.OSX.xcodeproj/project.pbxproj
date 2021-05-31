@@ -29,6 +29,8 @@
 		AB661C1E2148230F00291242 /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AB661C1D2148230F00291242 /* AppKit.framework */; };
 		AB661C202148286E00291242 /* window.mm in Sources */ = {isa = PBXBuildFile; fileRef = AB661C1F2148286E00291242 /* window.mm */; };
 		AB8F7D6B21482D7F0057DBA5 /* platformthreading.mm in Sources */ = {isa = PBXBuildFile; fileRef = AB8F7D6A21482D7F0057DBA5 /* platformthreading.mm */; };
+		BC11A5BE2608D58F0017BAD0 /* automation.h in Headers */ = {isa = PBXBuildFile; fileRef = BC11A5BC2608D58F0017BAD0 /* automation.h */; };
+		BC11A5BF2608D58F0017BAD0 /* automation.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC11A5BD2608D58F0017BAD0 /* automation.mm */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -61,6 +63,8 @@
 		AB661C212148288600291242 /* common.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = common.h; sourceTree = "<group>"; };
 		AB7A61EF2147C815003C5833 /* libAvalonia.Native.OSX.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libAvalonia.Native.OSX.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		AB8F7D6A21482D7F0057DBA5 /* platformthreading.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = platformthreading.mm; sourceTree = "<group>"; };
+		BC11A5BC2608D58F0017BAD0 /* automation.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = automation.h; sourceTree = "<group>"; };
+		BC11A5BD2608D58F0017BAD0 /* automation.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = automation.mm; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -94,6 +98,8 @@
 		AB7A61E62147C814003C5833 = {
 			isa = PBXGroup;
 			children = (
+				BC11A5BC2608D58F0017BAD0 /* automation.h */,
+				BC11A5BD2608D58F0017BAD0 /* automation.mm */,
 				1A1852DB23E05814008F0DED /* deadlock.mm */,
 				1A002B9D232135EE00021753 /* app.mm */,
 				37DDA9B121933371002E132B /* AvnString.h */,
@@ -138,6 +144,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				37155CE4233C00EB0034DCE9 /* menu.h in Headers */,
+				BC11A5BE2608D58F0017BAD0 /* automation.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -207,6 +214,7 @@
 				AB8F7D6B21482D7F0057DBA5 /* platformthreading.mm in Sources */,
 				1A3E5EA823E9E83B00EDE661 /* rendertarget.mm in Sources */,
 				1A3E5EAE23E9FB1300EDE661 /* cgl.mm in Sources */,
+				BC11A5BF2608D58F0017BAD0 /* automation.mm in Sources */,
 				37E2330F21583241000CB7E2 /* KeyTransform.mm in Sources */,
 				520624B322973F4100C4DCEF /* menu.mm in Sources */,
 				37A517B32159597E00FBA241 /* Screens.mm in Sources */,

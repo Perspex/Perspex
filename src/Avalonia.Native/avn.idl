@@ -218,6 +218,14 @@ enum SystemDecorations {
     SystemDecorationsFull = 2,
 }
 
+enum AvnAutomationProperty
+{
+    AutomationPeer_BoundingRectangle,
+    AutomationPeer_ClassName,
+    AutomationPeer_Name,
+    RangeValueProvider_Value,
+}
+
 struct AvnSize
 {
     double Width, Height;
@@ -400,6 +408,50 @@ enum AvnExtendClientAreaChromeHints
     AvnDefaultChrome = AvnPreferSystemChrome,
 }
 
+enum AvnAutomationControlType
+{
+    AutomationButton,
+    AutomationCalendar,
+    AutomationCheckBox,
+    AutomationComboBox,
+    AutomationComboBoxItem,
+    AutomationEdit,
+    AutomationHyperlink,
+    AutomationImage,
+    AutomationListItem,
+    AutomationList,
+    AutomationMenu,
+    AutomationMenuBar,
+    AutomationMenuItem,
+    AutomationProgressBar,
+    AutomationRadioButton,
+    AutomationScrollBar,
+    AutomationSlider,
+    AutomationSpinner,
+    AutomationStatusBar,
+    AutomationTab,
+    AutomationTabItem,
+    AutomationText,
+    AutomationToolBar,
+    AutomationToolTip,
+    AutomationTree,
+    AutomationTreeItem,
+    AutomationCustom,
+    AutomationGroup,
+    AutomationThumb,
+    AutomationDataGrid,
+    AutomationDataItem,
+    AutomationDocument,
+    AutomationSplitButton,
+    AutomationWindow,
+    AutomationPane,
+    AutomationHeader,
+    AutomationHeaderItem,
+    AutomationTable,
+    AutomationTitleBar,
+    AutomationSeparator,
+}
+
 [uuid(809c652e-7396-11d2-9771-00a0c9b4d50c)]
 interface IAvaloniaNativeFactory : IUnknown
 {
@@ -418,6 +470,7 @@ interface IAvaloniaNativeFactory : IUnknown
      HRESULT CreateMenu(IAvnMenuEvents* cb, IAvnMenu** ppv);
      HRESULT CreateMenuItem(IAvnMenuItem** ppv);
      HRESULT CreateMenuItemSeparator(IAvnMenuItem** ppv);
+     HRESULT CreateAutomationNode(IAvnAutomationPeer* peer, IAvnAutomationNode** ppv);
 }
 
 [uuid(233e094f-9b9f-44a3-9a6e-6948bbdd9fb1)]
@@ -506,6 +559,7 @@ interface IAvnWindowBaseEvents : IUnknown
      AvnDragDropEffects DragEvent(AvnDragEventType type, AvnPoint position,
                                          AvnInputModifiers modifiers, AvnDragDropEffects effects,
                                          IAvnClipboard* clipboard, [intptr]void* dataObjectHandle);
+     IAvnAutomationPeer* AutomationStarted(IAvnAutomationNode* node);
 }
 
 [uuid(1ae178ee-1fcc-447f-b6dd-b7bb727f934c)]
@@ -732,4 +786,73 @@ interface IAvnNativeControlHostTopLevelAttachment : IUnknown
 interface IAvnApplicationEvents : IUnknown
 {
      void FilesOpened (IAvnStringArray* urls);
+}
+
+[uuid(b87016f3-7eec-41de-b385-07844c268dc4)]
+interface IAvnAutomationPeer : IUnknown
+{
+     IAvnAutomationNode* GetNode();
+     IAvnString* GetAcceleratorKey();
+     IAvnString* GetAccessKey();
+     AvnAutomationControlType GetAutomationControlType();
+     IAvnString* GetAutomationId();
+     AvnRect GetBoundingRectangle();
+     IAvnAutomationPeerArray* GetChildren();
+     IAvnString* GetClassName();
+     IAvnAutomationPeer* GetLabeledBy();
+     IAvnString* GetName();
+     IAvnAutomationPeer* GetParent();
+     bool HasKeyboardFocus();
+     bool IsContentElement();
+     bool IsControlElement();
+     bool IsEnabled();
+     bool IsKeyboardFocusable();
+     void SetFocus();
+     bool ShowContextMenu();
+
+     IAvnAutomationPeer* GetRootPeer();
+     
+     bool IsRootProvider();
+     IAvnAutomationPeer* RootProvider_GetFocus();
+     IAvnAutomationPeer* RootProvider_GetPeerFromPoint(AvnPoint point);
+     
+     bool IsExpandCollapseProvider();
+     bool ExpandCollapseProvider_GetIsExpanded();
+     bool ExpandCollapseProvider_GetShowsMenu();
+     void ExpandCollapseProvider_Expand();
+     void ExpandCollapseProvider_Collapse();
+     
+     bool IsInvokeProvider();
+     void InvokeProvider_Invoke();
+     
+     bool IsRangeValueProvider();
+     double RangeValueProvider_GetValue();
+     double RangeValueProvider_GetMinimum();
+     double RangeValueProvider_GetMaximum();
+     double RangeValueProvider_GetSmallChange();
+     double RangeValueProvider_GetLargeChange();
+     void RangeValueProvider_SetValue(double value);
+     
+     bool IsToggleProvider();
+     int ToggleProvider_GetToggleState();
+     void ToggleProvider_Toggle();
+     
+     bool IsValueProvider();
+     IAvnString* ValueProvider_GetValue();
+     void ValueProvider_SetValue(char* value);
+}
+
+[uuid(b00af5da-78af-4b33-bfff-4ce13a6239a9)]
+interface IAvnAutomationPeerArray : IUnknown
+{
+     uint GetCount();
+     HRESULT Get(uint index, IAvnAutomationPeer**ppv);
+}
+
+[uuid(004dc40b-e435-49dc-bac5-6272ee35382a)]
+interface IAvnAutomationNode : IUnknown
+{
+    void ChildrenChanged();
+    void PropertyChanged(AvnAutomationProperty property);
+    void FocusChanged(IAvnAutomationPeer* peer);
 }

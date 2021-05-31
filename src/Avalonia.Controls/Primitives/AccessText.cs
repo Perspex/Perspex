@@ -1,4 +1,6 @@
 using System;
+using Avalonia.Automation.Peers;
+using Avalonia.Automation.Platform;
 using Avalonia.Input;
 using Avalonia.Media;
 using Avalonia.Media.TextFormatting;
@@ -79,7 +81,7 @@ namespace Avalonia.Controls.Primitives
         /// <inheritdoc/>
         protected override TextLayout CreateTextLayout(Size constraint, string text)
         {
-            return base.CreateTextLayout(constraint, StripAccessKey(text));
+            return base.CreateTextLayout(constraint, RemoveAccessKeyMarker(text));
         }
 
         /// <inheritdoc/>
@@ -106,23 +108,40 @@ namespace Avalonia.Controls.Primitives
             }
         }
 
-        /// <summary>
-        /// Returns a string with the first underscore stripped.
-        /// </summary>
-        /// <param name="text">The text.</param>
-        /// <returns>The text with the first underscore stripped.</returns>
-        private string StripAccessKey(string text)
+        protected override AutomationPeer OnCreateAutomationPeer(IAutomationNodeFactory factory)
         {
-            var position = text.IndexOf('_');
+            return new NoneAutomationPeer(factory, this);
+        }
 
-            if (position == -1)
+        internal static string RemoveAccessKeyMarker(string text)
+        {
+            if (!string.IsNullOrEmpty(text))
             {
-                return text;
+                var accessKeyMarker = "_";
+                var doubleAccessKeyMarker = accessKeyMarker + accessKeyMarker;
+                int index = FindAccessKeyMarker(text);
+                if (index >= 0 && index < text.Length - 1)
+                    text = text.Remove(index, 1);
+                text = text.Replace(doubleAccessKeyMarker, accessKeyMarker);
             }
-            else
+            return text;
+        }
+
+        private static int FindAccessKeyMarker(string text)
+        {
+            var length = text.Length;
+            var startIndex = 0;
+            while (startIndex < length)
             {
-                return text.Substring(0, position) + text.Substring(position + 1);
+                int index = text.IndexOf('_', startIndex);
+                if (index == -1)
+                    return -1;
+                if (index + 1 < length && text[index + 1] != '_')
+                    return index;
+                startIndex = index + 2;
             }
+
+            return -1;
         }
 
         /// <summary>

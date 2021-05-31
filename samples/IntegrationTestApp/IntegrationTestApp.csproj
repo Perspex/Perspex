@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+  <Import Project="..\..\build\BuildTargets.targets" />
+  <Import Project="..\..\build\SampleApp.props" />
+  <Import Project="..\..\build\ReferenceCoreLibraries.props" />
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Avalonia.Diagnostics\Avalonia.Diagnostics.csproj" />
+  </ItemGroup>
+</Project>

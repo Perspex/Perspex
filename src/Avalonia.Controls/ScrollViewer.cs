@@ -1,5 +1,7 @@
 using System;
 using System.Reactive.Linq;
+using Avalonia.Automation.Peers;
+using Avalonia.Automation.Platform;
 using Avalonia.Controls.Presenters;
 using Avalonia.Controls.Primitives;
 using Avalonia.Input;
@@ -686,6 +688,11 @@ namespace Avalonia.Controls
             _scrollBarExpandSubscription?.Dispose();
 
             _scrollBarExpandSubscription = SubscribeToScrollBars(e);
+        }
+
+        protected override AutomationPeer OnCreateAutomationPeer(IAutomationNodeFactory factory)
+        {
+            return new ScrollViewerAutomationPeer(factory, this);
         }
 
         private IDisposable SubscribeToScrollBars(TemplateAppliedEventArgs e)

@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using Avalonia.Automation.Peers;
+using Avalonia.Automation.Platform;
 using Avalonia.Controls;
 using Avalonia.Controls.Platform.Surfaces;
 using Avalonia.Controls.Primitives.PopupPositioning;
@@ -142,6 +144,7 @@ namespace Avalonia.Headless
         public IScreenImpl Screen { get; } = new HeadlessScreensStub();
         public WindowState WindowState { get; set; }
         public Action<WindowState> WindowStateChanged { get; set; }
+        public Func<IAutomationNode, AutomationPeer> AutomationStarted { get; set; }
         public void SetTitle(string title)
         {
 

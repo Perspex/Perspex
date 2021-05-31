@@ -137,7 +137,7 @@ space_within_single_line_array_initializer_braces = true
 csharp_wrap_before_ternary_opsigns = false
 
 # Xaml files
-[*.xaml]
+[*.{xaml,axaml}]
 indent_size = 2
 
 # Xml project files

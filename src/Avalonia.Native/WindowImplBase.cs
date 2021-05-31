@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
+using Avalonia.Automation.Peers;
+using Avalonia.Automation.Platform;
 using Avalonia.Controls;
 using Avalonia.Controls.Platform;
 using Avalonia.Controls.Platform.Surfaces;
@@ -46,6 +48,7 @@ namespace Avalonia.Native
     internal abstract class WindowBaseImpl : IWindowBaseImpl,
         IFramebufferPlatformSurface, ITopLevelImplWithNativeControlHost
     {
+        protected readonly IAvaloniaNativeFactory _factory;
         protected IInputRoot _inputRoot;
         IAvnWindowBase _native;
         private object _syncRoot = new object();
@@ -60,9 +63,14 @@ namespace Avalonia.Native
         private GlPlatformSurface _glSurface;
         private NativeControlHostImpl _nativeControlHost;
         private IGlContext _glContext;
+        private IAutomationNode _automationNode;
+        private AvnAutomationPeer _automationPeer;
+        private Func<IAutomationNode, AutomationPeer> _automationStarted;
 
-        internal WindowBaseImpl(AvaloniaNativePlatformOptions opts, AvaloniaNativePlatformOpenGlInterface glFeature)
+        internal WindowBaseImpl(IAvaloniaNativeFactory factory, AvaloniaNativePlatformOptions opts,
+            AvaloniaNativePlatformOpenGlInterface glFeature)
         {
+            _factory = factory;
             _gpu = opts.UseGpu && glFeature != null;
             _deferredRendering = opts.UseDeferredRendering;
 
@@ -89,6 +97,8 @@ namespace Avalonia.Native
 
             Resize(new Size(monitor.WorkingArea.Width * 0.75d, monitor.WorkingArea.Height * 0.7d));
         }
+
+        public IAvnWindowBase Native => _native;
 
         public Size ClientSize 
         {
@@ -202,7 +212,6 @@ namespace Avalonia.Native
                 return _parent.RawTextInputEvent(timeStamp, text).AsComBool();
             }
 
-
             void IAvnWindowBaseEvents.ScalingChanged(double scaling)
             {
                 _parent._savedScaling = scaling;
@@ -242,8 +251,10 @@ namespace Avalonia.Native
                     return (AvnDragDropEffects)args.Effects;
                 }
             }
-        }
 
+            public IAvnAutomationPeer AutomationStarted(IAvnAutomationNode node) => _parent.HandleAutomationStarted(node);
+        }
+       
         public void Activate()
         {
             _native.Activate();
@@ -464,5 +475,38 @@ namespace Avalonia.Native
         public AcrylicPlatformCompensationLevels AcrylicCompensationLevels { get; } = new AcrylicPlatformCompensationLevels(1, 0, 0);
 
         public IPlatformHandle Handle { get; private set; }
+
+        public Func<IAutomationNode, AutomationPeer> AutomationStarted
+        {
+            get => _automationStarted;
+            set
+            {
+                _automationStarted = value;
+                
+                // We've already received an AutomationStarted event, but the Window/PopupRoot wasn't initialized.
+                // Now it is, so notify it and store the automation peer for the next time the OS invokes an a11y
+                // query.
+                if (value is object && _automationNode is object) 
+                    _automationPeer = new AvnAutomationPeer(_automationStarted.Invoke(_automationNode));
+            }
+        }
+
+        private AvnAutomationPeer HandleAutomationStarted(IAvnAutomationNode node)
+        {
+            if (_automationPeer is object)
+                return _automationPeer;
+            
+            var factory = AutomationNodeFactory.GetInstance(_factory);
+            _automationNode = new AutomationNode(factory, node);
+
+            // If automation is started during platform window creation we don't yet have a Window/PopupRoot
+            // control to notify. In this case we'll notify them when AutomationStarted gets set. We can safely
+            // return null here because the peer isn't actually needed at this point and will be re-queried the next
+            // time it's needed. 
+            if (AutomationStarted is null)
+                return null;
+                
+            return _automationPeer = new AvnAutomationPeer(AutomationStarted(_automationNode));
+        }
     }
 }

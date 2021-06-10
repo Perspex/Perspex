@@ -18,11 +18,10 @@ namespace Avalonia.Diagnostics.ViewModels
     {
         private readonly IVisual _control;
         private readonly IDictionary<object, List<PropertyViewModel>> _propertyIndex;
-        private AvaloniaPropertyViewModel _selectedProperty;
-        private string _styleFilter;
+        private AvaloniaPropertyViewModel? _selectedProperty;
         private bool _snapshotStyles;
         private bool _showInactiveStyles;
-        private string _styleStatus;
+        private string? _styleStatus;
 
         public ControlDetailsViewModel(TreePageViewModel treePage, IVisual control)
         {
@@ -84,7 +83,8 @@ namespace Avalonia.Diagnostics.ViewModels
                     {
                         foreach (var setter in style.Setters)
                         {
-                            if (setter is Setter regularSetter)
+                            if (setter is Setter regularSetter
+                                && regularSetter.Property != null)
                             {
                                 var setterValue = regularSetter.Value;
 
@@ -116,13 +116,14 @@ namespace Avalonia.Diagnostics.ViewModels
             }
         }
 
-        private (object resourceKey, bool isDynamic)? GetResourceInfo(object value)
+        private (object resourceKey, bool isDynamic)? GetResourceInfo(object? value)
         {
             if (value is StaticResourceExtension staticResource)
             {
                 return (staticResource.ResourceKey, false);
             }
-            else if (value is DynamicResourceExtension dynamicResource)
+            else if (value is DynamicResourceExtension dynamicResource
+                && dynamicResource.ResourceKey != null)
             {
                 return (dynamicResource.ResourceKey, true);
             }
@@ -138,16 +139,10 @@ namespace Avalonia.Diagnostics.ViewModels
 
         public ObservableCollection<PseudoClassViewModel> PseudoClasses { get; }
 
-        public AvaloniaPropertyViewModel SelectedProperty
+        public AvaloniaPropertyViewModel? SelectedProperty
         {
             get => _selectedProperty;
             set => RaiseAndSetIfChanged(ref _selectedProperty, value);
-        }
-
-        public string StyleFilter
-        {
-            get => _styleFilter;
-            set => RaiseAndSetIfChanged(ref _styleFilter, value);
         }
 
         public bool SnapshotStyles
@@ -162,7 +157,7 @@ namespace Avalonia.Diagnostics.ViewModels
             set => RaiseAndSetIfChanged(ref _showInactiveStyles, value);
         }
 
-        public string StyleStatus
+        public string? StyleStatus
         {
             get => _styleStatus;
             set => RaiseAndSetIfChanged(ref _styleStatus, value);
@@ -174,11 +169,7 @@ namespace Avalonia.Diagnostics.ViewModels
         {
             base.OnPropertyChanged(e);
 
-            if (e.PropertyName == nameof(StyleFilter))
-            {
-                UpdateStyleFilters();
-            }
-            else if (e.PropertyName == nameof(SnapshotStyles))
+            if (e.PropertyName == nameof(SnapshotStyles))
             {
                 if (!SnapshotStyles)
                 {
@@ -187,19 +178,15 @@ namespace Avalonia.Diagnostics.ViewModels
             }
         }
 
-        private void UpdateStyleFilters()
+        public void UpdateStyleFilters()
         {
-            var filter = StyleFilter;
-            bool hasFilter = !string.IsNullOrEmpty(filter);
-
             foreach (var style in AppliedStyles)
             {
                 var hasVisibleSetter = false;
 
                 foreach (var setter in style.Setters)
                 {
-                    setter.IsVisible =
-                        !hasFilter || setter.Name.IndexOf(filter, StringComparison.OrdinalIgnoreCase) >= 0;
+                    setter.IsVisible = TreePage.SettersFilter.Filter(setter.Name);
 
                     hasVisibleSetter |= setter.IsVisible;
                 }
@@ -263,7 +250,7 @@ namespace Avalonia.Diagnostics.ViewModels
                 .Select(x => new ClrPropertyViewModel(o, x));
         }
 
-        private void ControlPropertyChanged(object sender, AvaloniaPropertyChangedEventArgs e)
+        private void ControlPropertyChanged(object? sender, AvaloniaPropertyChangedEventArgs e)
         {
             if (_propertyIndex.TryGetValue(e.Property, out var properties))
             {
@@ -276,9 +263,10 @@ namespace Avalonia.Diagnostics.ViewModels
             Layout.ControlPropertyChanged(sender, e);
         }
 
-        private void ControlPropertyChanged(object sender, PropertyChangedEventArgs e)
+        private void ControlPropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
-            if (_propertyIndex.TryGetValue(e.PropertyName, out var properties))
+            if (e.PropertyName != null
+                && _propertyIndex.TryGetValue(e.PropertyName, out var properties))
             {
                 foreach (var property in properties)
                 {
@@ -292,7 +280,7 @@ namespace Avalonia.Diagnostics.ViewModels
             }
         }
 
-        private void OnClassesChanged(object sender, NotifyCollectionChangedEventArgs e)
+        private void OnClassesChanged(object? sender, NotifyCollectionChangedEventArgs e)
         {
             if (!SnapshotStyles)
             {
@@ -357,27 +345,17 @@ namespace Avalonia.Diagnostics.ViewModels
 
         private bool FilterProperty(object arg)
         {
-            if (!string.IsNullOrWhiteSpace(TreePage.PropertyFilter) && arg is PropertyViewModel property)
-            {
-                if (TreePage.UseRegexFilter)
-                {
-                    return TreePage.FilterRegex?.IsMatch(property.Name) ?? true;
-                }
-
-                return property.Name.IndexOf(TreePage.PropertyFilter, StringComparison.OrdinalIgnoreCase) != -1;
-            }
-
-            return true;
+            return !(arg is PropertyViewModel property) || TreePage.PropertiesFilter.Filter(property.Name);
         }
 
         private class PropertyComparer : IComparer<PropertyViewModel>
         {
             public static PropertyComparer Instance { get; } = new PropertyComparer();
 
-            public int Compare(PropertyViewModel x, PropertyViewModel y)
+            public int Compare(PropertyViewModel? x, PropertyViewModel? y)
             {
-                var groupX = GroupIndex(x.Group);
-                var groupY = GroupIndex(y.Group);
+                var groupX = GroupIndex(x?.Group);
+                var groupY = GroupIndex(y?.Group);
 
                 if (groupX != groupY)
                 {
@@ -385,11 +363,11 @@ namespace Avalonia.Diagnostics.ViewModels
                 }
                 else
                 {
-                    return string.CompareOrdinal(x.Name, y.Name);
+                    return string.CompareOrdinal(x?.Name, y?.Name);
                 }
             }
 
-            private int GroupIndex(string group)
+            private int GroupIndex(string? group)
             {
                 switch (group)
                 {

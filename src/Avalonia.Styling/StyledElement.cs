@@ -300,7 +300,7 @@ namespace Avalonia
         bool IStyleHost.IsStylesInitialized => _styles != null;
 
         /// <inheritdoc/>
-        IStyleHost? IStyleHost.StylingParent => (IStyleHost)InheritanceParent;
+        IStyleHost? IStyleHost.StylingParent => (IStyleHost?)InheritanceParent;
 
         /// <inheritdoc/>
         public virtual void BeginInit()
@@ -470,7 +470,7 @@ namespace Avalonia
         /// Sets the styled element's inheritance parent.
         /// </summary>
         /// <param name="parent">The parent.</param>
-        void ISetInheritanceParent.SetParent(IAvaloniaObject parent)
+        void ISetInheritanceParent.SetParent(IAvaloniaObject? parent)
         {
             InheritanceParent = parent;
         }

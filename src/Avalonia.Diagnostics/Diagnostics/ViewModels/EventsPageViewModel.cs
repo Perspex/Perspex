@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Linq;
 using Avalonia.Controls;
 using Avalonia.Diagnostics.Models;
@@ -23,9 +22,8 @@ namespace Avalonia.Diagnostics.ViewModels
         };
 
         private readonly MainViewModel _mainViewModel;
-        private string _eventTypeFilter;
-        private FiredEvent _selectedEvent;
-        private EventTreeNodeBase _selectedNode;
+        private FiredEvent? _selectedEvent;
+        private EventTreeNodeBase? _selectedNode;
 
         public EventsPageViewModel(MainViewModel mainViewModel)
         {
@@ -37,6 +35,9 @@ namespace Avalonia.Diagnostics.ViewModels
                 .Select(g => new EventOwnerTreeNode(g.Key, g, this))
                 .ToArray();
 
+            EventsFilter = new FilterViewModel();
+            EventsFilter.RefreshFilter += (s, e) => UpdateEventFilters();
+
             EnableDefault();
         }
 
@@ -46,23 +47,19 @@ namespace Avalonia.Diagnostics.ViewModels
 
         public ObservableCollection<FiredEvent> RecordedEvents { get; } = new ObservableCollection<FiredEvent>();
 
-        public FiredEvent SelectedEvent
+        public FiredEvent? SelectedEvent
         {
             get => _selectedEvent;
             set => RaiseAndSetIfChanged(ref _selectedEvent, value);
         }
 
-        public EventTreeNodeBase SelectedNode
+        public EventTreeNodeBase? SelectedNode
         {
             get => _selectedNode;
             set => RaiseAndSetIfChanged(ref _selectedNode, value);
         }
 
-        public string EventTypeFilter
-        {
-            get => _eventTypeFilter;
-            set => RaiseAndSetIfChanged(ref _eventTypeFilter, value);
-        }
+        public FilterViewModel EventsFilter { get; }
 
         public void Clear()
         {
@@ -101,7 +98,7 @@ namespace Avalonia.Diagnostics.ViewModels
                 }
             }
 
-            static EventTreeNodeBase FindNode(EventTreeNodeBase node, RoutedEvent eventType)
+            static EventTreeNodeBase? FindNode(EventTreeNodeBase node, RoutedEvent eventType)
             {
                 if (node is EventTreeNode eventNode && eventNode.Event == eventType)
                 {
@@ -122,16 +119,6 @@ namespace Avalonia.Diagnostics.ViewModels
                 }
 
                 return null;
-            }
-        }
-
-        protected override void OnPropertyChanged(PropertyChangedEventArgs e)
-        {
-            base.OnPropertyChanged(e);
-
-            if (e.PropertyName == nameof(EventTypeFilter))
-            {
-                UpdateEventFilters();
             }
         }
 
@@ -161,9 +148,6 @@ namespace Avalonia.Diagnostics.ViewModels
 
         private void UpdateEventFilters()
         {
-            var filter = EventTypeFilter;
-            bool hasFilter = !string.IsNullOrEmpty(filter);
-
             foreach (var node in Nodes)
             {
                 FilterNode(node, false);
@@ -171,7 +155,7 @@ namespace Avalonia.Diagnostics.ViewModels
 
             bool FilterNode(EventTreeNodeBase node, bool isParentVisible)
             {
-                bool matchesFilter = !hasFilter || node.Text.IndexOf(filter, StringComparison.OrdinalIgnoreCase) >= 0;
+                bool matchesFilter = EventsFilter.Filter(node.Text);
                 bool hasVisibleChild = false;
 
                 if (node.Children != null)

@@ -9,17 +9,18 @@ using Avalonia.VisualTree;
 
 namespace Avalonia.Diagnostics.ViewModels
 {
-    internal class TreeNode : ViewModelBase, IDisposable
+    internal abstract class TreeNode : ViewModelBase, IDisposable
     {
-        private IDisposable _classesSubscription;
+        private IDisposable? _classesSubscription;
         private string _classes;
         private bool _isExpanded;
 
-        public TreeNode(IVisual visual, TreeNode parent)
+        public TreeNode(IVisual visual, TreeNode? parent)
         {
             Parent = parent;
             Type = visual.GetType().Name;
             Visual = visual;
+            _classes = string.Empty;
 
             if (visual is IControl control)
             {
@@ -51,10 +52,9 @@ namespace Avalonia.Diagnostics.ViewModels
             }
         }
 
-        public TreeNodeCollection Children
+        public abstract TreeNodeCollection Children
         {
             get;
-            protected set;
         }
 
         public string Classes
@@ -63,7 +63,7 @@ namespace Avalonia.Diagnostics.ViewModels
             private set { RaiseAndSetIfChanged(ref _classes, value); }
         }
 
-        public string ElementName
+        public string? ElementName
         {
             get;
         }
@@ -79,7 +79,7 @@ namespace Avalonia.Diagnostics.ViewModels
             set { RaiseAndSetIfChanged(ref _isExpanded, value); }
         }
 
-        public TreeNode Parent
+        public TreeNode? Parent
         {
             get;
         }
@@ -92,7 +92,7 @@ namespace Avalonia.Diagnostics.ViewModels
 
         public void Dispose()
         {
-            _classesSubscription.Dispose();
+            _classesSubscription?.Dispose();
             Children.Dispose();
         }
 

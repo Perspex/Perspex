@@ -8,6 +8,9 @@ using Avalonia.VisualTree;
 
 namespace Avalonia.Controls
 {
+    /// <summary>
+    /// Represents a button that allows a user to select a single option from a group of options.
+    /// </summary>
     public class RadioButton : ToggleButton
     {
         private class RadioButtonGroupManager

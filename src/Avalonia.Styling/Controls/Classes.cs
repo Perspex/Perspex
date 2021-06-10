@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using Avalonia.Collections;
 
+#nullable enable
+
 namespace Avalonia.Controls
 {
     /// <summary>
@@ -90,7 +92,7 @@ namespace Avalonia.Controls
         }
 
         /// <summary>
-        /// Remvoes all non-pseudoclasses from the collection.
+        /// Removes all non-pseudoclasses from the collection.
         /// </summary>
         public override void Clear()
         {
@@ -135,7 +137,7 @@ namespace Avalonia.Controls
         /// </remarks>
         public override void InsertRange(int index, IEnumerable<string> names)
         {
-            var c = new List<string>();
+            List<string>? toInsert = null;
 
             foreach (var name in names)
             {
@@ -143,11 +145,16 @@ namespace Avalonia.Controls
 
                 if (!Contains(name))
                 {
-                    c.Add(name);
+                    toInsert ??= new List<string>();
+
+                    toInsert.Add(name);
                 }
             }
 
-            base.InsertRange(index, c);
+            if (toInsert != null)
+            {
+                base.InsertRange(index, toInsert);
+            }
         }
 
         /// <summary>
@@ -176,19 +183,21 @@ namespace Avalonia.Controls
         /// </remarks>
         public override void RemoveAll(IEnumerable<string> names)
         {
-            var c = new List<string>();
+            List<string>? toRemove = null;
 
             foreach (var name in names)
             {
                 ThrowIfPseudoclass(name, "removed");
 
-                if (Contains(name))
-                {
-                    c.Add(name);
-                }
+                toRemove ??= new List<string>();
+
+                toRemove.Add(name);
             }
 
-            base.RemoveAll(c);
+            if (toRemove != null)
+            {
+                base.RemoveAll(toRemove);
+            }
         }
 
         /// <summary>
@@ -223,7 +232,7 @@ namespace Avalonia.Controls
         /// <param name="source">The new contents of the collection.</param>
         public void Replace(IList<string> source)
         {
-            var toRemove = new List<string>();
+            List<string>? toRemove = null;
 
             foreach (var name in source)
             {
@@ -234,11 +243,17 @@ namespace Avalonia.Controls
             {
                 if (!name.StartsWith(":"))
                 {
+                    toRemove ??= new List<string>();
+
                     toRemove.Add(name);
                 }
             }
 
-            base.RemoveAll(toRemove);
+            if (toRemove != null)
+            {
+                base.RemoveAll(toRemove);
+            }
+
             base.AddRange(source);
         }
 

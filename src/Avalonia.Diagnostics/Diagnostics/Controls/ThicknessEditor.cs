@@ -1,29 +1,17 @@
 using Avalonia.Controls;
 using Avalonia.Data;
-using Avalonia.Data.Converters;
 using Avalonia.Media;
 
-namespace Avalonia.Diagnostics.Views
+namespace Avalonia.Diagnostics.Controls
 {
-    internal static class Converters
-    {
-        public static IValueConverter HasConstraintConverter =
-            new FuncValueConverter<object, TextDecorationCollection>(ConvertToDecoration);
-
-        private static TextDecorationCollection ConvertToDecoration(object arg)
-        {
-            return arg != null ? TextDecorations.Underline : null;
-        }
-    }
-
     internal class ThicknessEditor : ContentControl
     {
         public static readonly DirectProperty<ThicknessEditor, Thickness> ThicknessProperty =
             AvaloniaProperty.RegisterDirect<ThicknessEditor, Thickness>(nameof(Thickness), o => o.Thickness,
                 (o, v) => o.Thickness = v, defaultBindingMode: BindingMode.TwoWay);
 
-        public static readonly DirectProperty<ThicknessEditor, string> HeaderProperty =
-            AvaloniaProperty.RegisterDirect<ThicknessEditor, string>(nameof(Header), o => o.Header,
+        public static readonly DirectProperty<ThicknessEditor, string?> HeaderProperty =
+            AvaloniaProperty.RegisterDirect<ThicknessEditor, string?>(nameof(Header), o => o.Header,
                 (o, v) => o.Header = v);
 
         public static readonly DirectProperty<ThicknessEditor, bool> IsPresentProperty =
@@ -44,15 +32,16 @@ namespace Avalonia.Diagnostics.Views
             AvaloniaProperty.RegisterDirect<ThicknessEditor, double>(nameof(Bottom), o => o.Bottom,
                 (o, v) => o.Bottom = v);
 
-        
+        public static readonly StyledProperty<IBrush> HighlightProperty =
+            AvaloniaProperty.Register<ThicknessEditor, IBrush>(nameof(Highlight));
+
         private Thickness _thickness;
-        private string _header;
+        private string? _header;
         private bool _isPresent = true;
         private double _left;
         private double _top;
         private double _right;
         private double _bottom;
-
         private bool _isUpdatingThickness;
 
         public Thickness Thickness
@@ -61,7 +50,7 @@ namespace Avalonia.Diagnostics.Views
             set => SetAndRaise(ThicknessProperty, ref _thickness, value);
         }
 
-        public string Header
+        public string? Header
         {
             get => _header;
             set => SetAndRaise(HeaderProperty, ref _header, value);
@@ -95,6 +84,12 @@ namespace Avalonia.Diagnostics.Views
         {
             get => _bottom;
             set => SetAndRaise(BottomProperty, ref _bottom, value);
+        }
+
+        public IBrush Highlight
+        {
+            get => GetValue(HighlightProperty);
+            set => SetValue(HighlightProperty, value);
         }
 
         protected override void OnPropertyChanged<T>(AvaloniaPropertyChangedEventArgs<T> change)

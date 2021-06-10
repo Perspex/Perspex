@@ -1,5 +1,6 @@
 ﻿using System;
 using Avalonia.Media;
+using Avalonia.Media.Immutable;
 using Avalonia.Platform;
 using Avalonia.Utilities;
 
@@ -114,9 +115,9 @@ namespace Avalonia.Controls.Utils
                 var borderThickness = _borderThickness.Top;
                 IPen pen = null;
 
-                if (borderThickness > 0)
+                if (borderBrush != null && borderThickness > 0)
                 {
-                    pen = new Pen(borderBrush, borderThickness);
+                    pen = new ImmutablePen(borderBrush.ToImmutable(), borderThickness);
                 }
 
                 var rect = new Rect(_size);

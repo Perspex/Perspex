@@ -2,90 +2,30 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:conv="clr-namespace:Avalonia.Diagnostics.Converters"
              xmlns:local="clr-namespace:Avalonia.Diagnostics.Views"
+             xmlns:controls="clr-namespace:Avalonia.Diagnostics.Controls"
              xmlns:vm="clr-namespace:Avalonia.Diagnostics.ViewModels"
              x:Class="Avalonia.Diagnostics.Views.ControlDetailsView"
              x:Name="Main">
 
   <UserControl.Resources>
-    <SolidColorBrush x:Key="ThicknessBorderBrush" Color="#666666" />
-    <SolidColorBrush x:Key="SizeGuidelineBrush" Color="#333333" />
-    <SolidColorBrush x:Key="MarginBackgroundBrush" Color="#D78965" />
-    <SolidColorBrush x:Key="BorderBackgroundBrush" Color="#E3C381" />
-    <SolidColorBrush x:Key="PaddingBackgroundBrush" Color="#B8C47F" />
-    <SolidColorBrush x:Key="SizeBackgroundBrush" Color="#88B2BD" />
     <conv:BoolToOpacityConverter x:Key="BoolToOpacity" Opacity="0.6"/>
   </UserControl.Resources>
 
-  <UserControl.Styles>
-    <Style Selector="local|ThicknessEditor">
-      <Setter Property="HorizontalContentAlignment" Value="Center" />
-      <Setter Property="VerticalContentAlignment" Value="Center" />
-      <Setter Property="BorderThickness" Value="1" />
-      <Setter Property="BorderBrush" Value="{StaticResource ThicknessBorderBrush}" />
-      <Setter Property="Template">
-        <ControlTemplate>
-          <Border
-            Background="{TemplateBinding Background}"
-            BorderBrush="{TemplateBinding BorderBrush}"
-            BorderThickness="{TemplateBinding BorderThickness}">
-            <Grid RowDefinitions="Auto,*,Auto" ColumnDefinitions="Auto,*,Auto">
-              <Grid.Styles>
-                <Style Selector="TextBox.thickness-edit">
-                  <Setter Property="Background" Value="Transparent" />
-                  <Setter Property="BorderThickness" Value="0" />
-                  <Setter Property="Margin" Value="2" />
-                  <Setter Property="HorizontalAlignment" Value="Stretch" />
-                  <Setter Property="VerticalAlignment" Value="Stretch" />
-                  <Setter Property="HorizontalContentAlignment" Value="Center" />
-                  <Setter Property="VerticalContentAlignment" Value="Center" />
-                  <Setter Property="(ScrollViewer.HorizontalScrollBarVisibility)" Value="Disabled" />
-                  <Setter Property="(ScrollViewer.VerticalScrollBarVisibility)" Value="Disabled" />
-                  <Setter Property="IsVisible" Value="{Binding $parent[local:ThicknessEditor].IsPresent}" />
-                </Style>
-              </Grid.Styles>
-              <TextBlock IsVisible="{TemplateBinding IsPresent}" Margin="4,0,0,0" Text="{TemplateBinding Header}" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" />
-              <TextBox Grid.Row="1" Grid.Column="0" Text="{Binding Left, RelativeSource={RelativeSource TemplatedParent}}" Classes="thickness-edit" />
-              <TextBox x:Name="Right"  Grid.Row="0" Grid.Column="1" Text="{Binding Top, RelativeSource={RelativeSource TemplatedParent}}" Classes="thickness-edit" />
-              <TextBox Grid.Row="1" Grid.Column="2" Text="{Binding Right, RelativeSource={RelativeSource TemplatedParent}}"  Classes="thickness-edit" />
-              <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding Bottom, RelativeSource={RelativeSource TemplatedParent}}" Classes="thickness-edit" />
-              <ContentPresenter Grid.Row="1" Grid.Column="1"
-                Name="PART_ContentPresenter"
-                                ContentTemplate="{TemplateBinding ContentTemplate}"
-                                Content="{TemplateBinding Content}"
-                                Padding="{TemplateBinding Padding}"
-                                VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
-                                HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}" />
-            </Grid>
-          </Border>
+  <Grid ColumnDefinitions="*,Auto,320">
 
-        </ControlTemplate>
-      </Setter>
-    </Style>
-    <Style Selector="local|ThicknessEditor[IsPresent=False]">
-      <Setter Property="BorderThickness" Value="0" />
-    </Style>
-  </UserControl.Styles>
+    <Grid Grid.Column="0" RowDefinitions="Auto,*">
 
-  <Grid ColumnDefinitions="*,Auto,280">
-
-    <Grid Grid.Column="0" ColumnDefinitions="*,Auto,Auto,Auto" RowDefinitions="Auto,*">
-
-      <TextBox Grid.Row="0" 
-               Grid.Column="0"
-               BorderThickness="0"
-               Text="{Binding TreePage.PropertyFilter}"
-               Watermark="Filter properties" />
-
-      <CheckBox Grid.Row="0"
-                Grid.Column="1"
-                Margin="0,0,4,0"
-                Content="Regex"
-                IsChecked="{Binding TreePage.UseRegexFilter}" />
-
+      <controls:FilterTextBox Grid.Row="0"
+                              BorderThickness="0"
+                              DataContext="{Binding TreePage.PropertiesFilter}"
+                              Text="{Binding FilterString}"
+                              Watermark="Filter properties"
+                              UseCaseSensitiveFilter="{Binding UseCaseSensitiveFilter}"
+                              UseWholeWordFilter="{Binding UseWholeWordFilter}"
+                              UseRegexFilter="{Binding UseRegexFilter}" />
+      
       <DataGrid Items="{Binding PropertiesView}"
                 Grid.Row="1"
-                Grid.Column="0"
-                Grid.ColumnSpan="2"
                 BorderThickness="0"
                 RowBackground="Transparent"
                 SelectedItem="{Binding SelectedProperty, Mode=TwoWay}"
@@ -108,164 +48,139 @@
 
     <GridSplitter Grid.Column="1" />
 
-    <Grid Grid.Column="2" RowDefinitions="Auto,*, Auto,*,Auto" >
-      <TextBlock Grid.Row="0" Text="Layout Visualizer" Margin="4" />
-      
-      <Grid Grid.Row="1" x:Name="LayoutRoot" Margin="8,0,8,8" RowDefinitions="Auto,Auto" ColumnDefinitions="Auto,Auto">
+    <Grid Grid.Column="2" RowDefinitions="*,Auto,*" >
 
-        <Border x:Name="VerticalSize" Grid.Row="0" Grid.Column="1" >
-          <TextBlock VerticalAlignment="Center" FontWeight="Bold"
-                     TextDecorations="{Binding Layout.HeightConstraint, Converter={x:Static local:Converters.HasConstraintConverter}}"
-                     Text="{Binding Layout.Height}"
-                     ToolTip.Tip="{Binding Layout.HeightConstraint}" />
-        </Border>
-        
-        <Border x:Name="HorizontalSize" Grid.Row="1" Grid.Column="0" >
-          <TextBlock HorizontalAlignment="Center" FontWeight="Bold" 
-                     TextDecorations="{Binding Layout.WidthConstraint, Converter={x:Static local:Converters.HasConstraintConverter}}"
-                     Text="{Binding Layout.Width}" 
-                     ToolTip.Tip="{Binding Layout.WidthConstraint}" />
-        </Border>
-        
-        <local:ThicknessEditor Grid.Row="0" Grid.Column="0" Header="margin" VerticalAlignment="Top" HorizontalAlignment="Center" Background="{StaticResource MarginBackgroundBrush}" Thickness="{Binding Layout.MarginThickness}">
-          <local:ThicknessEditor x:Name="BorderArea" Header="border" Background="{StaticResource BorderBackgroundBrush}" Thickness="{Binding Layout.BorderThickness}" IsPresent="{Binding Layout.HasBorder}">
-            <local:ThicknessEditor x:Name="PaddingArea" Header="padding" Background="{StaticResource PaddingBackgroundBrush}" Thickness="{Binding Layout.PaddingThickness}" IsPresent="{Binding Layout.HasPadding}">
-              <Border x:Name="ContentArea" BorderThickness="1" BorderBrush="{StaticResource ThicknessBorderBrush}" MinWidth="100" MinHeight="16" Background="{StaticResource SizeBackgroundBrush}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
-                <TextBlock Margin="2" HorizontalAlignment="Center" VerticalAlignment="Center" Text="content" />
-              </Border>
-            </local:ThicknessEditor>
-          </local:ThicknessEditor>
-        </local:ThicknessEditor>
-
-        <Canvas Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" Grid.ColumnSpan="2">
-          <Canvas.Styles>
-            <Style Selector="Rectangle">
-              <Setter Property="StrokeDashArray" Value="1,3" />
-              <Setter Property="Stroke" Value="{StaticResource SizeGuidelineBrush}" />
-              <Setter Property="StrokeThickness" Value="1" />
-            </Style>
-          </Canvas.Styles>
-          <Rectangle x:Name="HorizontalSizeBegin" />
-          <Rectangle x:Name="HorizontalSizeEnd" />
-          <Rectangle x:Name="VerticalSizeBegin" />
-          <Rectangle x:Name="VerticalSizeEnd" />
-        </Canvas>
+      <Grid RowDefinitions="Auto,*" Grid.Row="0">
+        <TextBlock FontWeight="Bold" Grid.Row="0" Text="Layout Visualizer" Margin="4" />
+        <local:LayoutExplorerView Grid.Row="1" DataContext="{Binding Layout}" />
       </Grid>
 
-      <Grid Grid.Row="2" Margin="4" RowDefinitions="Auto,Auto">
+      <GridSplitter Grid.Row="1" />
 
-        <Grid Grid.Row="0" Margin="2" ColumnDefinitions="Auto,*,Auto,Auto">
-          <TextBlock FontWeight="Bold" Grid.Column="0" Text="{Binding StyleStatus}" VerticalAlignment="Center" />
-          <CheckBox Margin="2,0,0,0" Grid.Column="2" Content="Show inactive" IsChecked="{Binding ShowInactiveStyles}" ToolTip.Tip="Show styles that are currently inactive" />
-          <ToggleButton Margin="2,0,0,0" Grid.Column="3" ToolTip.Tip="Snapshot current styles (Alt+S/Alt+D to enable/disable within debugged window)" Content="Snapshot" IsChecked="{Binding SnapshotStyles}" />
+      <Grid RowDefinitions="Auto,*,Auto" Grid.Row="2">
+
+        <Grid Grid.Row="0" Margin="4" RowDefinitions="Auto,Auto">
+
+          <Grid Grid.Row="0" Margin="2" ColumnDefinitions="Auto,*,Auto,Auto">
+            <TextBlock FontWeight="Bold" Grid.Column="0" Text="{Binding StyleStatus}" VerticalAlignment="Center" />
+            <CheckBox Margin="2,0,0,0" Grid.Column="2" Content="Show inactive" IsChecked="{Binding ShowInactiveStyles}" ToolTip.Tip="Show styles that are currently inactive" />
+            <ToggleButton Margin="2,0,0,0" Grid.Column="3" ToolTip.Tip="Snapshot current styles (Alt+S/Alt+D to enable/disable within debugged window)" Content="Snapshot" IsChecked="{Binding SnapshotStyles}" />
+          </Grid>
+
+          <controls:FilterTextBox Grid.Row="1" Margin="2" Grid.Column="0"
+                                  DataContext="{Binding TreePage.SettersFilter}"
+                                  Text="{Binding FilterString}"
+                                  Watermark="Filter setters"
+                                  UseCaseSensitiveFilter="{Binding UseCaseSensitiveFilter}"
+                                  UseWholeWordFilter="{Binding UseWholeWordFilter}"
+                                  UseRegexFilter="{Binding UseRegexFilter}" />
         </Grid>
 
-        <TextBox Grid.Row="1" Margin="2" Grid.Column="0" Watermark="Filter" Text="{Binding StyleFilter}" />
-      </Grid>
-
-        <ScrollViewer Grid.Row="3" HorizontalScrollBarVisibility="Disabled">
-        <ItemsControl Items="{Binding AppliedStyles}" >
-          <ItemsControl.ItemTemplate>
-            <DataTemplate>
-              <Border BorderThickness="0,0,0,1" BorderBrush="#6C6C6C" Opacity="{Binding IsActive, Converter={StaticResource BoolToOpacity}}">
-                <Border.IsVisible>
-                  <MultiBinding Converter="{x:Static BoolConverters.And}">
-                    <MultiBinding Converter="{x:Static BoolConverters.Or}" >
-                      <Binding Path="IsActive" />
-                      <Binding Path="#Main.DataContext.ShowInactiveStyles" />
+        <ScrollViewer Grid.Row="1" HorizontalScrollBarVisibility="Disabled">
+          <ItemsControl Items="{Binding AppliedStyles}" >
+            <ItemsControl.ItemTemplate>
+              <DataTemplate>
+                <Border BorderThickness="0,0,0,1" BorderBrush="#6C6C6C" Opacity="{Binding IsActive, Converter={StaticResource BoolToOpacity}}">
+                  <Border.IsVisible>
+                    <MultiBinding Converter="{x:Static BoolConverters.And}">
+                      <MultiBinding Converter="{x:Static BoolConverters.Or}" >
+                        <Binding Path="IsActive" />
+                        <Binding Path="#Main.DataContext.ShowInactiveStyles" />
+                      </MultiBinding>
+                      <Binding Path="IsVisible" />
                     </MultiBinding>
-                    <Binding Path="IsVisible" />
-                  </MultiBinding>
-                </Border.IsVisible>
-                <Expander IsExpanded="True" Margin="0" Padding="8,0" ContentTransition="{x:Null}" >
-                  <Expander.Header>
-                    <TextBlock Grid.Row="0" Text="{Binding Name}" />
-                  </Expander.Header>
+                  </Border.IsVisible>
+                  <Expander IsExpanded="True" Margin="0" Padding="8,0" ContentTransition="{x:Null}" >
+                    <Expander.Header>
+                      <TextBlock Grid.Row="0" Text="{Binding Name}" />
+                    </Expander.Header>
 
-                  <ItemsControl Margin="20,0,0,0" Grid.Row="1" Items="{Binding Setters}">
-                    <ItemsControl.DataTemplates>
+                    <ItemsControl Margin="20,0,0,0" Grid.Row="1" Items="{Binding Setters}">
+                      <ItemsControl.DataTemplates>
 
-                      <DataTemplate DataType="IBrush">
-                        <StackPanel Orientation="Horizontal" Spacing="2">
-                          <Border BorderThickness="1" BorderBrush="Black" Background="{Binding}" Width="8" Height="8"/>
-                          <TextBlock Text="{Binding}" />
-                        </StackPanel>
-                      </DataTemplate>
-
-                      <DataTemplate DataType="Color">
-                        <StackPanel Orientation="Horizontal" Spacing="2">
-                          <Border BorderThickness="1" BorderBrush="Black" Width="8" Height="8">
-                            <Border.Background>
-                              <SolidColorBrush Color="{Binding}" />
-                            </Border.Background>
-                          </Border>
-                          <TextBlock Text="{Binding}" />
-                        </StackPanel>
-                      </DataTemplate>
-
-                      <DataTemplate DataType="vm:ResourceSetterViewModel">
-                        <Panel Opacity="{Binding IsActive, Converter={StaticResource BoolToOpacity}}" IsVisible="{Binding IsVisible}" HorizontalAlignment="Left">
-                          <Panel.ContextMenu>
-                            <ContextMenu>
-                              <MenuItem Header="Copy property name" Command="{Binding CopyPropertyName} "/>
-                              <MenuItem Header="Copy value" Command="{Binding CopyValue} "/>
-                              <MenuItem Header="Copy resource key" Command="{Binding CopyResourceKey}" />
-                            </ContextMenu>
-                          </Panel.ContextMenu>
-                          <StackPanel Orientation="Horizontal" Spacing="2" HorizontalAlignment="Left">
-                            <TextBlock Text="{Binding Name}" FontWeight="SemiBold" />
-                            <TextBlock Text=":" />
-                            <ContentControl Content="{Binding Value}"/>
-                            <TextBlock>(</TextBlock>
-                            <Ellipse Height="8" Width="8" VerticalAlignment="Center" Fill="{Binding Tint}"/>
-                            <TextBlock FontStyle="Italic" Text="{Binding Key}" />
-                            <TextBlock>)</TextBlock>
-                          </StackPanel>
-                          <Rectangle Height="1" Fill="#6C6C6C" IsVisible="{Binding !IsActive}" />
-                        </Panel>
-                      </DataTemplate>
-
-                      <DataTemplate DataType="vm:SetterViewModel">
-                        <Panel Opacity="{Binding IsActive, Converter={StaticResource BoolToOpacity}}" IsVisible="{Binding IsVisible}" HorizontalAlignment="Left">
-                          <Panel.ContextMenu>
-                            <ContextMenu>
-                              <MenuItem Header="Copy property name" Command="{Binding CopyPropertyName} "/>
-                              <MenuItem Header="Copy value" Command="{Binding CopyValue} "/>
-                            </ContextMenu>
-                          </Panel.ContextMenu>
+                        <DataTemplate DataType="IBrush">
                           <StackPanel Orientation="Horizontal" Spacing="2">
-                            <TextBlock Text="{Binding Name}" FontWeight="SemiBold" />
-                            <TextBlock Text=":" />
-                            <ContentControl Content="{Binding Value}"/>
+                            <Border BorderThickness="1" BorderBrush="Black" Background="{Binding}" Width="8" Height="8"/>
+                            <TextBlock Text="{Binding}" />
                           </StackPanel>
-                          <Rectangle Height="1" Fill="#6C6C6C" VerticalAlignment="Center" IsVisible="{Binding !IsActive}" />
-                        </Panel>
-                      </DataTemplate>
+                        </DataTemplate>
 
-                    </ItemsControl.DataTemplates>
-                  </ItemsControl>
+                        <DataTemplate DataType="Color">
+                          <StackPanel Orientation="Horizontal" Spacing="2">
+                            <Border BorderThickness="1" BorderBrush="Black" Width="8" Height="8">
+                              <Border.Background>
+                                <SolidColorBrush Color="{Binding}" />
+                              </Border.Background>
+                            </Border>
+                            <TextBlock Text="{Binding}" />
+                          </StackPanel>
+                        </DataTemplate>
 
-                </Expander>
-              </Border>
-            </DataTemplate>
-          </ItemsControl.ItemTemplate>
-        </ItemsControl>
-      </ScrollViewer>
+                        <DataTemplate DataType="vm:ResourceSetterViewModel">
+                          <Panel Opacity="{Binding IsActive, Converter={StaticResource BoolToOpacity}}" IsVisible="{Binding IsVisible}" HorizontalAlignment="Left">
+                            <Panel.ContextMenu>
+                              <ContextMenu>
+                                <MenuItem Header="Copy property name" Command="{Binding CopyPropertyName} "/>
+                                <MenuItem Header="Copy value" Command="{Binding CopyValue} "/>
+                                <MenuItem Header="Copy resource key" Command="{Binding CopyResourceKey}" />
+                              </ContextMenu>
+                            </Panel.ContextMenu>
+                            <StackPanel Orientation="Horizontal" Spacing="2" HorizontalAlignment="Left">
+                              <TextBlock Text="{Binding Name}" FontWeight="SemiBold" />
+                              <TextBlock Text=":" />
+                              <ContentControl Content="{Binding Value}"/>
+                              <TextBlock>(</TextBlock>
+                              <Ellipse Height="8" Width="8" VerticalAlignment="Center" Fill="{Binding Tint}"/>
+                              <TextBlock FontStyle="Italic" Text="{Binding Key}" />
+                              <TextBlock>)</TextBlock>
+                            </StackPanel>
+                            <Rectangle Height="1" Fill="#6C6C6C" IsVisible="{Binding !IsActive}" />
+                          </Panel>
+                        </DataTemplate>
 
-      <Expander Header="Pseudo Classes" Grid.Row="4">
-        <ItemsControl Items="{Binding PseudoClasses}">
-          <ItemsControl.ItemsPanel>
-            <ItemsPanelTemplate>
-              <WrapPanel />
-            </ItemsPanelTemplate>
-          </ItemsControl.ItemsPanel>
-          <ItemsControl.ItemTemplate>
-            <DataTemplate>
-              <CheckBox Margin="2" Content="{Binding Name}" IsChecked="{Binding IsActive, Mode=TwoWay}" />
-            </DataTemplate>
-          </ItemsControl.ItemTemplate>
-        </ItemsControl>
-      </Expander>
+                        <DataTemplate DataType="vm:SetterViewModel">
+                          <Panel Opacity="{Binding IsActive, Converter={StaticResource BoolToOpacity}}" IsVisible="{Binding IsVisible}" HorizontalAlignment="Left">
+                            <Panel.ContextMenu>
+                              <ContextMenu>
+                                <MenuItem Header="Copy property name" Command="{Binding CopyPropertyName} "/>
+                                <MenuItem Header="Copy value" Command="{Binding CopyValue} "/>
+                              </ContextMenu>
+                            </Panel.ContextMenu>
+                            <StackPanel Orientation="Horizontal" Spacing="2">
+                              <TextBlock Text="{Binding Name}" FontWeight="SemiBold" />
+                              <TextBlock Text=":" />
+                              <ContentControl Content="{Binding Value}"/>
+                            </StackPanel>
+                            <Rectangle Height="1" Fill="#6C6C6C" VerticalAlignment="Center" IsVisible="{Binding !IsActive}" />
+                          </Panel>
+                        </DataTemplate>
+
+                      </ItemsControl.DataTemplates>
+                    </ItemsControl>
+
+                  </Expander>
+                </Border>
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+        </ScrollViewer>
+
+        <Expander Header="Pseudo Classes" Grid.Row="2">
+          <ItemsControl Items="{Binding PseudoClasses}">
+            <ItemsControl.ItemsPanel>
+              <ItemsPanelTemplate>
+                <WrapPanel />
+              </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+              <DataTemplate>
+                <CheckBox Margin="2" Content="{Binding Name}" IsChecked="{Binding IsActive, Mode=TwoWay}" />
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+        </Expander>
+
+      </Grid>
 
     </Grid>
   </Grid>

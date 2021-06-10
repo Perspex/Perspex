@@ -6,6 +6,7 @@ using Avalonia.Metadata;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
 using Avalonia.Layout;
+using Avalonia.Media.Immutable;
 
 namespace Avalonia.Controls.Presenters
 {
@@ -360,32 +361,31 @@ namespace Avalonia.Controls.Presenters
 
             RenderInternal(context);
 
-            if (selectionStart == selectionEnd)
+            if (selectionStart == selectionEnd && _caretBlink)
             {
-                var caretBrush = CaretBrush;
+                var caretBrush = CaretBrush?.ToImmutable();
 
                 if (caretBrush is null)
                 {
-                    var backgroundColor = (Background as SolidColorBrush)?.Color;
+                    var backgroundColor = (Background as ISolidColorBrush)?.Color;
                     if (backgroundColor.HasValue)
                     {
                         byte red = (byte)~(backgroundColor.Value.R);
                         byte green = (byte)~(backgroundColor.Value.G);
                         byte blue = (byte)~(backgroundColor.Value.B);
 
-                        caretBrush = new SolidColorBrush(Color.FromRgb(red, green, blue));
+                        caretBrush = new ImmutableSolidColorBrush(Color.FromRgb(red, green, blue));
                     }
                     else
+                    {
                         caretBrush = Brushes.Black;
+                    }
                 }
 
-                if (_caretBlink)
-                {
-                    var (p1, p2) = GetCaretPoints();
-                    context.DrawLine(
-                        new Pen(caretBrush, 1),
-                        p1, p2);
-                }
+                var (p1, p2) = GetCaretPoints();
+                context.DrawLine(
+                    new ImmutablePen(caretBrush, 1),
+                    p1, p2);
             }
         }
 

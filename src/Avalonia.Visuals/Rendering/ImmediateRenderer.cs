@@ -225,7 +225,7 @@ namespace Avalonia.Rendering
 
             if (filter?.Invoke(visual) != false)
             {
-                bool containsPoint = false;
+                bool containsPoint;
 
                 if (visual is ICustomSimpleHitTest custom)
                 {

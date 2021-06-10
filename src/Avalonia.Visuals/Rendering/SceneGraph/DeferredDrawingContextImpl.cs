@@ -408,9 +408,12 @@ namespace Avalonia.Rendering.SceneGraph
 
                 var dirty = Owner.Layers.GetOrAdd(Owner._node.LayerRoot).Dirty;
 
-                foreach (var operation in Owner._node.DrawOperations)
+                var drawOperations = Owner._node.DrawOperations;
+                var drawOperationsCount = drawOperations.Count;
+
+                for (var i = 0; i < drawOperationsCount; i++)
                 {
-                    dirty.Add(operation.Item.Bounds);
+                    dirty.Add(drawOperations[i].Item.Bounds);
                 }
 
                 Owner._node = Node;

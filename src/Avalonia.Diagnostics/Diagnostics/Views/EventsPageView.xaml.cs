@@ -53,7 +53,7 @@ namespace Avalonia.Diagnostics.Views
             }
         }
 
-        private void OnRecordedEventsChanged(object sender, NotifyCollectionChangedEventArgs e)
+        private void OnRecordedEventsChanged(object? sender, NotifyCollectionChangedEventArgs e)
         {
             if (sender is ObservableCollection<FiredEvent> events)
             {

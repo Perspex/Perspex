@@ -201,7 +201,7 @@ namespace Avalonia.Controls
         {
             base.OnLostFocus(e);
 
-            if (_focusAdorner != null)
+            if (_focusAdorner?.Parent != null)
             {
                 var adornerLayer = (IPanel)_focusAdorner.Parent;
                 adornerLayer.Children.Remove(_focusAdorner);

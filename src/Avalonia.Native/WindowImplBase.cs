@@ -414,9 +414,7 @@ namespace Avalonia.Native
 
         public Action<RawInputEventArgs> Input { get; set; }
 
-        Action<double> ScalingChanged { get; set; }
-
-        Action<double> ITopLevelImpl.ScalingChanged { get; set; }
+        public Action<double> ScalingChanged { get; set; }
 
         public Action<WindowTransparencyLevel> TransparencyLevelChanged { get; set; }
 

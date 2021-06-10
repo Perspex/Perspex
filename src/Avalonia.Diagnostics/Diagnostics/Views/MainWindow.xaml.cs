@@ -15,7 +15,7 @@ namespace Avalonia.Diagnostics.Views
     internal class MainWindow : Window, IStyleHost
     {
         private readonly IDisposable _keySubscription;
-        private TopLevel _root;
+        private TopLevel? _root;
 
         public MainWindow()
         {
@@ -26,7 +26,7 @@ namespace Avalonia.Diagnostics.Views
                 .Subscribe(RawKeyDown);
         }
 
-        public TopLevel Root
+        public TopLevel? Root
         {
             get => _root;
             set
@@ -43,7 +43,7 @@ namespace Avalonia.Diagnostics.Views
                     if (_root != null)
                     {
                         _root.Closed += RootClosed;
-                        DataContext = new MainViewModel(value);
+                        DataContext = new MainViewModel(_root);
                     }
                     else
                     {
@@ -53,15 +53,20 @@ namespace Avalonia.Diagnostics.Views
             }
         }
 
-        IStyleHost IStyleHost.StylingParent => null;
+        IStyleHost? IStyleHost.StylingParent => null;
 
         protected override void OnClosed(EventArgs e)
         {
             base.OnClosed(e);
             _keySubscription.Dispose();
-            _root.Closed -= RootClosed;
-            _root = null;
-            ((MainViewModel)DataContext)?.Dispose();
+
+            if (_root != null)
+            {
+                _root.Closed -= RootClosed;
+                _root = null;
+            }
+
+            ((MainViewModel?)DataContext)?.Dispose();
         }
 
         private void InitializeComponent()
@@ -71,12 +76,20 @@ namespace Avalonia.Diagnostics.Views
 
         private void RawKeyDown(RawKeyEventArgs e)
         {
+            var vm = (MainViewModel?)DataContext;
+            if (vm is null)
+            {
+                return;
+            }
+
             const RawInputModifiers modifiers = RawInputModifiers.Control | RawInputModifiers.Shift;
 
             if (e.Modifiers == modifiers)
             {
+#pragma warning disable CS0618 // Type or member is obsolete
                 var point = (Root as IInputRoot)?.MouseDevice?.GetPosition(Root) ?? default;
-                
+#pragma warning restore CS0618 // Type or member is obsolete                
+
                 var control = Root.GetVisualsAt(point, x =>
                     {
                         if (x is AdornerLayer || !x.IsVisible) return false;
@@ -87,7 +100,6 @@ namespace Avalonia.Diagnostics.Views
 
                 if (control != null)
                 {
-                    var vm = (MainViewModel)DataContext;
                     vm.SelectControl((IControl)control);
                 }
             } 
@@ -97,12 +109,11 @@ namespace Avalonia.Diagnostics.Views
                 {
                     var enable = e.Key == Key.S;
 
-                    var vm = (MainViewModel)DataContext;
                     vm.EnableSnapshotStyles(enable);
                 }
             }
         }
 
-        private void RootClosed(object sender, EventArgs e) => Close();
+        private void RootClosed(object? sender, EventArgs e) => Close();
     }
 }

@@ -126,6 +126,27 @@ namespace Avalonia.Skia.UnitTests.Media.TextFormatting
         }
 
         [Fact]
+        public void Should_Produce_A_Single_Fallback_Run()
+        {
+            using (Start())
+            {
+                var defaultProperties = new GenericTextRunProperties(Typeface.Default);
+
+                const string text = "👍 👍 👍 👍";
+                
+                var textSource = new SingleBufferTextSource(text, defaultProperties);
+
+                var formatter = new TextFormatterImpl();
+
+                var textLine =
+                    formatter.FormatLine(textSource, 0, double.PositiveInfinity,
+                        new GenericTextParagraphProperties(defaultProperties));
+
+                Assert.Equal(1, textLine.TextRuns.Count);
+            } 
+        }
+
+        [Fact]
         public void Should_Split_Run_On_Script()
         {
             using (Start())

@@ -11,16 +11,13 @@ namespace Avalonia.Rendering
     /// </summary>
     public interface ICustomSimpleHitTest
     {
+        /// <param name="point">The point to hit test in global coordinate space.</param>
         bool HitTest(Point point);
     }
 
     /// <summary>
     /// Allows customization of hit-testing for all renderers.
     /// </summary>
-    /// <remarks>
-    /// Note that this interface can only used to make a portion of a control non-hittable, it
-    /// cannot expand the hittable area of a control.
-    /// </remarks>
     public interface ICustomHitTest : ICustomSimpleHitTest
     {
     }

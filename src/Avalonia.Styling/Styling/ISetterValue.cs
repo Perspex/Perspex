@@ -1,4 +1,6 @@
-﻿namespace Avalonia.Styling
+﻿#nullable enable
+
+namespace Avalonia.Styling
 {
     /// <summary>
     /// Customizes the behavior of a class when added as a value to an <see cref="ISetter"/>.

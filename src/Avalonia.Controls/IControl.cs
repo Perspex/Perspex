@@ -3,6 +3,8 @@ using Avalonia.Input;
 using Avalonia.Layout;
 using Avalonia.VisualTree;
 
+#nullable enable
+
 namespace Avalonia.Controls
 {
     /// <summary>
@@ -15,6 +17,6 @@ namespace Avalonia.Controls
         INamed,
         IStyledElement
     {
-        new IControl Parent { get; }
+        new IControl? Parent { get; }
     }
 }

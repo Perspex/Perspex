@@ -1,6 +1,8 @@
 using System;
 using Avalonia.Data;
 
+#nullable enable
+
 namespace Avalonia
 {
     /// <summary>
@@ -11,7 +13,7 @@ namespace Avalonia
         /// <summary>
         /// Raised when a <see cref="AvaloniaProperty"/> value changes on this object.
         /// </summary>
-        event EventHandler<AvaloniaPropertyChangedEventArgs> PropertyChanged;
+        event EventHandler<AvaloniaPropertyChangedEventArgs>? PropertyChanged;
 
         /// <summary>
         /// Clears an <see cref="AvaloniaProperty"/>'s local value.
@@ -75,7 +77,10 @@ namespace Avalonia
         /// <param name="property">The property.</param>
         /// <param name="value">The value.</param>
         /// <param name="priority">The priority of the value.</param>
-        IDisposable SetValue<T>(
+        /// <returns>
+        /// An <see cref="IDisposable"/> if setting the property can be undone, otherwise null.
+        /// </returns>
+        IDisposable? SetValue<T>(
             StyledPropertyBase<T> property,
             T value,
             BindingPriority priority = BindingPriority.LocalValue);

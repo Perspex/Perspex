@@ -377,7 +377,7 @@ namespace Avalonia.Input
                 e.Source = element;
                 e.Handled = false;
                 element.RaiseEvent(e);
-                element = (IInputElement)element.VisualParent;
+                element = (IInputElement?)element.VisualParent;
             }
             
             root.PointerOverElement = null;
@@ -444,7 +444,7 @@ namespace Avalonia.Input
                     branch = el;
                     break;
                 }
-                el = (IInputElement)el.VisualParent;
+                el = (IInputElement?)el.VisualParent;
             }
 
             el = root.PointerOverElement;
@@ -460,7 +460,7 @@ namespace Avalonia.Input
                 e.Source = el;
                 e.Handled = false;
                 el.RaiseEvent(e);
-                el = (IInputElement)el.VisualParent;
+                el = (IInputElement?)el.VisualParent;
             }            
 
             el = root.PointerOverElement = element;
@@ -471,7 +471,7 @@ namespace Avalonia.Input
                 e.Source = el;
                 e.Handled = false;
                 el.RaiseEvent(e);
-                el = (IInputElement)el.VisualParent;
+                el = (IInputElement?)el.VisualParent;
             }
         }
 

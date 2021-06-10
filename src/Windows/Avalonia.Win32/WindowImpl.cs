@@ -900,7 +900,7 @@ namespace Avalonia.Win32
                 IntPtr.Zero,
                 rcWindow.left, rcWindow.top,
                 rcClient.Width, rcClient.Height,
-                SetWindowPosFlags.SWP_FRAMECHANGED);
+                SetWindowPosFlags.SWP_FRAMECHANGED | SetWindowPosFlags.SWP_NOACTIVATE);
 
             if (_isClientAreaExtended && WindowState != WindowState.FullScreen)
             {

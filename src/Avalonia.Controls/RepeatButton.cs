@@ -4,6 +4,9 @@ using Avalonia.Threading;
 
 namespace Avalonia.Controls
 {
+    /// <summary>
+    /// Represents a control that raises its <see cref="Button.Click"/> event repeatedly when it is pressed and held.
+    /// </summary>
     public class RepeatButton : Button
     {
         /// <summary>

@@ -668,10 +668,11 @@ namespace Avalonia.Controls
                 
                 Owner = parent;
                 parent?.AddChild(this, false);
-
-                PlatformImpl?.Show(ShowActivated);
-                Renderer?.Start();
+                
                 SetWindowStartupLocation(Owner?.PlatformImpl);
+                
+                PlatformImpl?.Show(ShowActivated);
+                Renderer?.Start();                
             }
             OnOpened(EventArgs.Empty);
         }
@@ -739,6 +740,9 @@ namespace Avalonia.Controls
                 PlatformImpl?.SetParent(owner.PlatformImpl);
                 Owner = owner;
                 owner.AddChild(this, true);
+                
+                SetWindowStartupLocation(owner.PlatformImpl);
+                
                 PlatformImpl?.Show(ShowActivated);
 
                 Renderer?.Start();
@@ -755,8 +759,6 @@ namespace Avalonia.Controls
 
                 OnOpened(EventArgs.Empty);
             }
-
-            SetWindowStartupLocation(owner.PlatformImpl);
 
             return result.Task;
         }

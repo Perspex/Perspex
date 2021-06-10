@@ -1,8 +1,5 @@
-using Avalonia.Metadata;
 using System;
-using System.Reactive.Linq;
-using Avalonia.Animation.Easings;
-using Avalonia.Animation.Utils;
+using System.Runtime.ExceptionServices;
 using Avalonia.Reactive;
 using Avalonia.Utilities;
 
@@ -11,13 +8,13 @@ namespace Avalonia.Animation
     /// <summary>
     /// Handles the timing and lifetime of a <see cref="Transition{T}"/>.
     /// </summary>
-    internal class TransitionInstance : SingleSubscriberObservableBase<double>
+    internal class TransitionInstance : SingleSubscriberObservableBase<double>, IObserver<TimeSpan>
     {
         private IDisposable _timerSubscription;
         private TimeSpan _delay;
         private TimeSpan _duration;
         private readonly IClock _baseClock;
-        private IClock _clock;
+        private TransitionClock _clock;
 
         public TransitionInstance(IClock clock, TimeSpan delay, TimeSpan duration)
         {
@@ -75,9 +72,56 @@ namespace Avalonia.Animation
 
         protected override void Subscribed()
         {
-            _clock = new Clock(_baseClock);
-            _timerSubscription = _clock.Subscribe(TimerTick);
+            _clock = new TransitionClock(_baseClock);
+            _timerSubscription = _clock.Subscribe(this);
             PublishNext(0.0d);
+        }
+
+        void IObserver<TimeSpan>.OnCompleted()
+        {
+            PublishCompleted();
+        }
+
+        void IObserver<TimeSpan>.OnError(Exception error)
+        {
+            PublishError(error);
+        }
+
+        void IObserver<TimeSpan>.OnNext(TimeSpan value)
+        {
+            TimerTick(value);
+        }
+
+        /// <summary>
+        /// TODO: This clock is still fairly expensive due to <see cref="ClockBase"/> implementation.
+        /// </summary>
+        private sealed class TransitionClock : ClockBase, IObserver<TimeSpan>
+        {
+            private readonly IDisposable _parentSubscription;
+
+            public TransitionClock(IClock parent)
+            {
+                _parentSubscription = parent.Subscribe(this);
+            }
+
+            protected override void Stop()
+            {
+                _parentSubscription.Dispose();
+            }
+
+            void IObserver<TimeSpan>.OnNext(TimeSpan value)
+            {
+                Pulse(value);
+            }
+
+            void IObserver<TimeSpan>.OnCompleted()
+            {
+            }
+
+            void IObserver<TimeSpan>.OnError(Exception error)
+            {
+                ExceptionDispatchInfo.Capture(error).Throw();
+            }
         }
     }
 }

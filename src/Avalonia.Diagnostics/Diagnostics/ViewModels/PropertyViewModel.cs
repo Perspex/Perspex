@@ -18,7 +18,7 @@ namespace Avalonia.Diagnostics.ViewModels
         public abstract string Value { get; set; }
         public abstract void Update();
 
-        protected static string ConvertToString(object value)
+        protected static string ConvertToString(object? value)
         {
             if (value is null)
             {
@@ -31,13 +31,13 @@ namespace Avalonia.Diagnostics.ViewModels
             if (!converter.CanConvertTo(typeof(string)) || 
                 converter.GetType() == typeof(CollectionConverter))
             {
-                return value.ToString();
+                return value.ToString() ?? "(null)";
             }
 
             return converter.ConvertToString(value);
         }
 
-        private static object InvokeParse(string s, Type targetType)
+        private static object? InvokeParse(string s, Type targetType)
         {
             var method = targetType.GetMethod("Parse", PublicStatic, null, StringIFormatProviderParameters, null);
 
@@ -56,7 +56,7 @@ namespace Avalonia.Diagnostics.ViewModels
             throw new InvalidCastException("Unable to convert value.");
         }
 
-        protected static object ConvertFromString(string s, Type targetType)
+        protected static object? ConvertFromString(string s, Type targetType)
         {
             var converter = TypeDescriptor.GetConverter(targetType);
 

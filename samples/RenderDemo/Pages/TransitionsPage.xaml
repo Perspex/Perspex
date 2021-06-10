@@ -141,6 +141,39 @@
       <Style Selector="Border.Shadow:pointerover">
         <Setter Property="BoxShadow" Value="inset 30 30 20 30 Green, 20 40 20 10 Red"/>
       </Style>
+
+      <Style Selector="Border.Rect10">
+        <Setter Property="Transitions">
+          <Transitions>
+            <BrushTransition Property="Background" Duration="0:0:0.5" />
+          </Transitions>
+        </Setter>
+        <Setter Property="Background" Value="Red" />
+      </Style>
+
+      <Style Selector="Border.Rect10:pointerover">
+        <Setter Property="Background" Value="Orange" />
+      </Style>
+
+      <Style Selector="Border.Rect11">
+        <Setter Property="Transitions">
+          <Transitions>
+            <BrushTransition Property="Background" Duration="0:0:0.5" />
+          </Transitions>
+        </Setter>
+        <Setter Property="Background" Value="Red" />
+      </Style>
+
+      <Style Selector="Border.Rect11:pointerover">
+        <Setter Property="Background" >
+          <LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,100%">
+            <LinearGradientBrush.GradientStops>
+              <GradientStop Offset="0" Color="Red"/>
+              <GradientStop Offset="1" Color="Blue"/>
+            </LinearGradientBrush.GradientStops>
+          </LinearGradientBrush>
+        </Setter>
+      </Style>
     </Styles>
   </UserControl.Styles>
 
@@ -166,6 +199,9 @@
 
         <Border Classes="Test Shadow" CornerRadius="10" Child="{x:Null}" />
         <Border Classes="Test Shadow" CornerRadius="0 30 60 0" Child="{x:Null}" />
+
+        <Border Classes="Test Rect10" />
+        <Border Classes="Test Rect11" />
       </WrapPanel>
     </StackPanel>
   </Grid>

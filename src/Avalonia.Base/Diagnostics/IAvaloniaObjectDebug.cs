@@ -1,5 +1,7 @@
 using System;
 
+#nullable enable
+
 namespace Avalonia.Diagnostics
 {
     /// <summary>
@@ -14,6 +16,6 @@ namespace Avalonia.Diagnostics
         /// <returns>
         /// The subscribers or null if no subscribers.
         /// </returns>
-        Delegate[] GetPropertyChangedSubscribers();
+        Delegate[]? GetPropertyChangedSubscribers();
     }
 }

@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Reactive.Linq;
-using System.Text;
-using Avalonia.Reactive;
 
 namespace Avalonia.Animation
 {
@@ -10,10 +6,9 @@ namespace Avalonia.Animation
     {
         public static IClock GlobalClock => AvaloniaLocator.Current.GetService<IGlobalClock>();
 
-        private IDisposable _parentSubscription;
+        private readonly IDisposable _parentSubscription;
 
-        public Clock()
-            :this(GlobalClock)
+        public Clock() : this(GlobalClock)
         {
         }
         

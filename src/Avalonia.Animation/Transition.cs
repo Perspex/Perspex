@@ -1,7 +1,5 @@
-using System;
-using System.Reactive.Linq;
+﻿using System;
 using Avalonia.Animation.Easings;
-using Avalonia.Animation.Utils;
 
 namespace Avalonia.Animation
 {

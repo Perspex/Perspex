@@ -27,7 +27,7 @@ namespace Avalonia.Diagnostics.ViewModels
 
                     if (_updateChildren && value != null)
                     {
-                        foreach (var child in Children)
+                        foreach (var child in Children!)
                         {
                             try
                             {

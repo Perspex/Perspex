@@ -7,22 +7,24 @@ namespace Avalonia.Diagnostics.ViewModels
 {
     internal class LogicalTreeNode : TreeNode
     {
-        public LogicalTreeNode(ILogical logical, TreeNode parent)
+        public LogicalTreeNode(ILogical logical, TreeNode? parent)
             : base((Control)logical, parent)
         {
             Children = new LogicalTreeNodeCollection(this, logical);
         }
 
+        public override TreeNodeCollection Children { get; }
+
         public static LogicalTreeNode[] Create(object control)
         {
             var logical = control as ILogical;
-            return logical != null ? new[] { new LogicalTreeNode(logical, null) } : null;
+            return logical != null ? new[] { new LogicalTreeNode(logical, null) } : Array.Empty<LogicalTreeNode>();
         }
 
         internal class LogicalTreeNodeCollection : TreeNodeCollection
         {
             private readonly ILogical _control;
-            private IDisposable _subscription;
+            private IDisposable? _subscription;
 
             public LogicalTreeNodeCollection(TreeNode owner, ILogical control)
                 : base(owner)

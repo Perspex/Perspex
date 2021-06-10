@@ -1,6 +1,7 @@
 using Avalonia.Collections;
 using Avalonia.Layout;
 using Avalonia.Media;
+using Avalonia.Media.Immutable;
 using Avalonia.Utilities;
 
 namespace Avalonia.Controls
@@ -295,7 +296,7 @@ namespace Avalonia.Controls
                 endPoint = pt;
             }
 
-            var pen = new Pen(Fill, 1.0d);
+            var pen = new ImmutablePen(Fill?.ToImmutable(), 1.0d);
 
             // Is it Vertical?
             if (Placement == TickBarPlacement.Left || Placement == TickBarPlacement.Right)

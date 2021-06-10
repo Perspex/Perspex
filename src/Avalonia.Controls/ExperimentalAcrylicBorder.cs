@@ -3,6 +3,7 @@ using Avalonia.Layout;
 using Avalonia.Media;
 using Avalonia.Platform;
 using System;
+using Avalonia.Media.Immutable;
 
 namespace Avalonia.Controls
 {
@@ -90,7 +91,7 @@ namespace Avalonia.Controls
             }
             else
             {
-                _borderRenderHelper.Render(context, Bounds.Size, new Thickness(), CornerRadius, new SolidColorBrush(Material.FallbackColor), null, default);
+                _borderRenderHelper.Render(context, Bounds.Size, new Thickness(), CornerRadius, new ImmutableSolidColorBrush(Material.FallbackColor), null, default);
             }
         }
 

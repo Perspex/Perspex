@@ -1,3 +1,5 @@
+#nullable enable
+
 namespace Avalonia.Controls
 {
     /// <summary>
@@ -14,6 +16,6 @@ namespace Avalonia.Controls
         /// Sets the control's inheritance parent.
         /// </summary>
         /// <param name="parent">The parent.</param>
-        void SetParent(IAvaloniaObject parent);
+        void SetParent(IAvaloniaObject? parent);
     }
 }

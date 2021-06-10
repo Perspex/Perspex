@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace Avalonia.Media.Immutable
 {
@@ -23,7 +24,7 @@ namespace Avalonia.Media.Immutable
             ImmutableDashStyle dashStyle = null,
             PenLineCap lineCap = PenLineCap.Flat,
             PenLineJoin lineJoin = PenLineJoin.Miter,
-            double miterLimit = 10.0) : this(new SolidColorBrush(color), thickness, dashStyle, lineCap, lineJoin, miterLimit)
+            double miterLimit = 10.0) : this(new ImmutableSolidColorBrush(color), thickness, dashStyle, lineCap, lineJoin, miterLimit)
         {
         }
 
@@ -44,6 +45,8 @@ namespace Avalonia.Media.Immutable
             PenLineJoin lineJoin = PenLineJoin.Miter,
             double miterLimit = 10.0)
         {
+            Debug.Assert(!(brush is IMutableBrush));
+
             Brush = brush;
             Thickness = thickness;
             LineCap = lineCap;

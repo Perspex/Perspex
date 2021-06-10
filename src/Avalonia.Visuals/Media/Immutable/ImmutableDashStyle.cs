@@ -10,6 +10,8 @@ namespace Avalonia.Media.Immutable
     /// </summary>
     public class ImmutableDashStyle : IDashStyle, IEquatable<IDashStyle>
     {
+        private readonly double[] _dashes;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="ImmutableDashStyle"/> class.
         /// </summary>
@@ -17,12 +19,12 @@ namespace Avalonia.Media.Immutable
         /// <param name="offset">The dash sequence offset.</param>
         public ImmutableDashStyle(IEnumerable<double> dashes, double offset)
         {
-            Dashes = (IReadOnlyList<double>)dashes?.ToList() ?? Array.Empty<double>();
+            _dashes = dashes?.ToArray() ?? Array.Empty<double>();
             Offset = offset;
         }
 
         /// <inheritdoc/>
-        public IReadOnlyList<double> Dashes { get; }
+        public IReadOnlyList<double> Dashes => _dashes;
 
         /// <inheritdoc/>
         public double Offset { get; }
@@ -56,9 +58,9 @@ namespace Avalonia.Media.Immutable
             var hashCode = 717868523;
             hashCode = hashCode * -1521134295 + Offset.GetHashCode();
 
-            if (Dashes != null)
+            if (_dashes != null)
             {
-                foreach (var i in Dashes)
+                foreach (var i in _dashes)
                 {
                     hashCode = hashCode * -1521134295 + i.GetHashCode();
                 }
@@ -69,7 +71,7 @@ namespace Avalonia.Media.Immutable
 
         private static bool SequenceEqual(IReadOnlyList<double> left, IReadOnlyList<double> right)
         {
-            if (left == right)
+            if (ReferenceEquals(left, right))
             {
                 return true;
             }

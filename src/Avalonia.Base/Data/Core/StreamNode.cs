@@ -20,7 +20,7 @@ namespace Avalonia.Data.Core
 
         protected override void StartListeningCore(WeakReference<object> reference)
         {
-            GetPlugin(reference)?.Start(reference).Subscribe(ValueChanged);
+            _subscription = GetPlugin(reference)?.Start(reference).Subscribe(ValueChanged);
         }
 
         protected override void StopListeningCore()

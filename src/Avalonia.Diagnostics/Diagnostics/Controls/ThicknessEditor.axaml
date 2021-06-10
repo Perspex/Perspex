@@ -1,0 +1,87 @@
+﻿<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:controls="clr-namespace:Avalonia.Diagnostics.Controls">
+
+    <Styles.Resources>
+        <SolidColorBrush x:Key="HighlightBorderBrush" Color="CornflowerBlue" />
+        <SolidColorBrush x:Key="ThicknessBorderBrush" Color="#666666" />
+    </Styles.Resources>
+
+    <Style Selector="controls|ThicknessEditor">
+        <Setter Property="HorizontalContentAlignment" Value="Center" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="BorderBrush" Value="{StaticResource ThicknessBorderBrush}" />
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Panel>
+                    <Rectangle x:Name="PART_Background"
+                               Classes.no-content-pointerover="{Binding !#PART_ContentPresenter.IsPointerOver}" />
+                    <Border
+                        x:Name="PART_Border"
+                        Classes.no-content-pointerover="{Binding !#PART_ContentPresenter.IsPointerOver}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}">
+                        <Grid RowDefinitions="Auto,*,Auto" ColumnDefinitions="Auto,*,Auto">
+                            <Grid.Styles>
+                                <Style Selector="TextBox.thickness-edit">
+                                    <Setter Property="Background" Value="Transparent" />
+                                    <Setter Property="BorderThickness" Value="0" />
+                                    <Setter Property="Margin" Value="2" />
+                                    <Setter Property="HorizontalAlignment" Value="Stretch" />
+                                    <Setter Property="VerticalAlignment" Value="Stretch" />
+                                    <Setter Property="HorizontalContentAlignment" Value="Center" />
+                                    <Setter Property="VerticalContentAlignment" Value="Center" />
+                                    <Setter Property="(ScrollViewer.HorizontalScrollBarVisibility)"
+                                            Value="Disabled" />
+                                    <Setter Property="(ScrollViewer.VerticalScrollBarVisibility)" Value="Disabled" />
+                                    <Setter Property="IsVisible"
+                                            Value="{Binding $parent[controls:ThicknessEditor].IsPresent}" />
+                                </Style>
+                            </Grid.Styles>
+                            <TextBlock IsVisible="{TemplateBinding IsPresent}" Margin="4,0,0,0"
+                                       Text="{TemplateBinding Header}" Grid.Row="0" Grid.Column="0"
+                                       Grid.ColumnSpan="2" />
+                            <TextBox Grid.Row="1" Grid.Column="0"
+                                     Text="{Binding Left, RelativeSource={RelativeSource TemplatedParent}}"
+                                     Classes="thickness-edit" />
+                            <TextBox x:Name="Right" Grid.Row="0" Grid.Column="1"
+                                     Text="{Binding Top, RelativeSource={RelativeSource TemplatedParent}}"
+                                     Classes="thickness-edit" />
+                            <TextBox Grid.Row="1" Grid.Column="2"
+                                     Text="{Binding Right, RelativeSource={RelativeSource TemplatedParent}}"
+                                     Classes="thickness-edit" />
+                            <TextBox Grid.Row="2" Grid.Column="1"
+                                     Text="{Binding Bottom, RelativeSource={RelativeSource TemplatedParent}}"
+                                     Classes="thickness-edit" />
+                            <ContentPresenter Grid.Row="1" Grid.Column="1"
+                                              Name="PART_ContentPresenter"
+                                              ContentTemplate="{TemplateBinding ContentTemplate}"
+                                              Content="{TemplateBinding Content}"
+                                              Padding="{TemplateBinding Padding}"
+                                              VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                                              HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}" />
+                        </Grid>
+                    </Border>
+                </Panel>
+
+            </ControlTemplate>
+        </Setter>
+    </Style>
+
+    <Style Selector="controls|ThicknessEditor[IsPresent=False]">
+        <Setter Property="BorderThickness" Value="0" />
+    </Style>
+
+    <Style Selector="controls|ThicknessEditor /template/ Rectangle#PART_Background">
+        <Setter Property="Fill" Value="{Binding Background, RelativeSource={RelativeSource TemplatedParent}}" />
+    </Style>
+
+    <Style Selector="controls|ThicknessEditor:pointerover /template/ Rectangle#PART_Background.no-content-pointerover">
+        <Setter Property="Fill" Value="{Binding Highlight, RelativeSource={RelativeSource TemplatedParent}}" />
+    </Style>
+
+    <Style Selector="controls|ThicknessEditor:pointerover /template/ Border#PART_Border.no-content-pointerover">
+        <Setter Property="BorderBrush" Value="{StaticResource HighlightBorderBrush}" />
+    </Style>
+</Styles>

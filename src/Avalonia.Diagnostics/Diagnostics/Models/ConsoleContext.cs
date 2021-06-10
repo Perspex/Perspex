@@ -22,8 +22,8 @@ The following commands are available:
 clear(): Clear the output history
 ";
 
-        public dynamic e { get; internal set; }
-        public dynamic root { get; internal set; }
+        public dynamic? e { get; internal set; }
+        public dynamic? root { get; internal set; }
 
         internal static object NoOutput { get; } = new object();
 

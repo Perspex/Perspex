@@ -17,7 +17,7 @@ namespace Avalonia.Diagnostics
 
         private static void PrintVisualTree(IVisual visual, StringBuilder builder, int indent)
         {
-            Control control = visual as Control;
+            Control? control = visual as Control;
 
             builder.Append(Indent(indent - 1));
 

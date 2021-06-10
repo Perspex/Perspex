@@ -1,5 +1,7 @@
 using Avalonia.LogicalTree;
 
+#nullable enable
+
 namespace Avalonia.Controls
 {
     /// <summary>
@@ -14,6 +16,6 @@ namespace Avalonia.Controls
         /// Sets the control's parent.
         /// </summary>
         /// <param name="parent">The parent.</param>
-        void SetParent(ILogical parent);
+        void SetParent(ILogical? parent);
     }
 }

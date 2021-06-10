@@ -1,6 +1,9 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using Avalonia.Controls;
 using Avalonia.Controls.Presenters;
+using Avalonia.Controls.Shapes;
+using Avalonia.Input;
 using Avalonia.Layout;
 using Avalonia.Media;
 using Avalonia.Platform;
@@ -9,8 +12,6 @@ using Avalonia.UnitTests;
 using Avalonia.VisualTree;
 using Moq;
 using Xunit;
-using System;
-using Avalonia.Controls.Shapes;
 
 namespace Avalonia.Visuals.UnitTests.Rendering
 {
@@ -497,6 +498,42 @@ namespace Avalonia.Visuals.UnitTests.Rendering
                 Assert.Equal(new IVisual[] { canvas, border }, result);
 
                 result = root.Renderer.HitTest(new Point(110, 110), root, null);
+                Assert.Empty(result);
+            }
+        }
+
+        [Fact]
+        public void HitTest_Should_Accommodate_ICustomHitTest()
+        {
+            using (TestApplication())
+            {
+                Border border;
+
+                var root = new TestRoot
+                {
+                    Width = 300,
+                    Height = 200,
+                    Child = border = new CustomHitTestBorder
+                    {
+                        Width = 100,
+                        Height = 100,
+                        Background = Brushes.Red,
+                        HorizontalAlignment = HorizontalAlignment.Center,
+                        VerticalAlignment = VerticalAlignment.Center
+                    }
+                }; 
+
+                root.Renderer = new DeferredRenderer(root, null);
+                root.Measure(Size.Infinity);
+                root.Arrange(new Rect(root.DesiredSize));
+
+                var result = root.Renderer.HitTest(new Point(75, 100), root, null);
+                Assert.Equal(new[] { border }, result);
+
+                result = root.Renderer.HitTest(new Point(125, 100), root, null);
+                Assert.Equal(new[] { border }, result);
+
+                result = root.Renderer.HitTest(new Point(175, 100), root, null);
                 Assert.Empty(result);
             }
         }

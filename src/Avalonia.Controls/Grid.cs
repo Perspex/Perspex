@@ -17,7 +17,7 @@ using Avalonia.VisualTree;
 namespace Avalonia.Controls
 {
     /// <summary>
-    /// Grid
+    /// Defines a flexible grid area that consists of columns and rows.
     /// </summary>
     public class Grid : Panel
     {

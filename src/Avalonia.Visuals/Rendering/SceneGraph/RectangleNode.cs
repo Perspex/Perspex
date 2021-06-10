@@ -84,7 +84,7 @@ namespace Avalonia.Rendering.SceneGraph
             return transform == Transform &&
                    Equals(brush, Brush) &&
                    Equals(Pen, pen) &&
-                   Media.BoxShadows.Equals(BoxShadows, boxShadows) &&
+                   BoxShadows.Equals(boxShadows) &&
                    rect.Equals(Rect);
         }
 

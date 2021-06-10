@@ -113,13 +113,13 @@
   </Style>
   
   <Style Selector="Button.textBoxClearButton">
+    <Setter Property="Cursor" Value="Arrow" />
     <Setter Property="Template">
       <Setter.Value>
         <ControlTemplate TargetType="Button">
           <Border x:Name="PART_ButtonLayoutBorder"
                   BorderThickness="{TemplateBinding BorderThickness}" 
-                  Background="Transparent" 
-                  Cursor="Arrow">
+                  Background="Transparent">
             <Path x:Name="PART_GlyphElement"
                   Fill="{DynamicResource ThemeForegroundColor}"
                   Data="{StaticResource TextBoxClearButtonData}"
@@ -146,13 +146,14 @@
               <Setter Property="(ToolTip.Tip)" Value="Show Password" />
             </Style>
           </Panel.Styles>
-          <ToggleButton Classes="passwordBoxRevealButton" Background="Transparent" Cursor="Arrow" IsChecked="{Binding $parent[TextBox].RevealPassword, Mode=TwoWay}" />
+          <ToggleButton Classes="passwordBoxRevealButton" Background="Transparent" IsChecked="{Binding $parent[TextBox].RevealPassword, Mode=TwoWay}" />
         </Panel>
       </Template>
     </Setter>
   </Style>
   
   <Style Selector="ToggleButton.passwordBoxRevealButton">
+    <Setter Property="Cursor" Value="Arrow" />
     <Setter Property="Template">
       <Setter.Value>
         <ControlTemplate TargetType="ToggleButton">

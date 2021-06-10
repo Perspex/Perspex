@@ -8,15 +8,12 @@ namespace Avalonia.Diagnostics.ViewModels
     internal class FiredEvent : ViewModelBase
     {
         private readonly RoutedEventArgs _eventArgs;
-        private EventChainLink _handledBy;
+        private EventChainLink? _handledBy;
 
         public FiredEvent(RoutedEventArgs eventArgs, EventChainLink originator)
         {
-            Contract.Requires<ArgumentNullException>(eventArgs != null);
-            Contract.Requires<ArgumentNullException>(originator != null);
-
-            _eventArgs = eventArgs;
-            Originator = originator;
+            _eventArgs = eventArgs ?? throw new ArgumentNullException(nameof(eventArgs));
+            Originator = originator ?? throw new ArgumentNullException(nameof(originator));
             AddToChain(originator);
         }
 
@@ -25,7 +22,7 @@ namespace Avalonia.Diagnostics.ViewModels
             return e == _eventArgs;
         }
 
-        public RoutedEvent Event => _eventArgs.RoutedEvent;
+        public RoutedEvent Event => _eventArgs.RoutedEvent!;
 
         public bool IsHandled => HandledBy?.Handled == true;
 
@@ -38,7 +35,7 @@ namespace Avalonia.Diagnostics.ViewModels
                 if (IsHandled)
                 {
                     return $"{Event.Name} on {Originator.HandlerName};" + Environment.NewLine +
-                           $"strategies: {Event.RoutingStrategies}; handled by: {HandledBy.HandlerName}";
+                           $"strategies: {Event.RoutingStrategies}; handled by: {HandledBy!.HandlerName}";
                 }
 
                 return $"{Event.Name} on {Originator.HandlerName}; strategies: {Event.RoutingStrategies}";
@@ -47,7 +44,7 @@ namespace Avalonia.Diagnostics.ViewModels
 
         public EventChainLink Originator { get; }
 
-        public EventChainLink HandledBy
+        public EventChainLink? HandledBy
         {
             get => _handledBy;
             set

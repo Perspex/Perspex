@@ -2,6 +2,7 @@
 using Avalonia.Controls.Primitives;
 using Avalonia.Controls.Shapes;
 using Avalonia.Controls.Templates;
+using Avalonia.Data;
 using Avalonia.Interactivity;
 using System;
 using System.Collections.Generic;
@@ -88,7 +89,8 @@ namespace Avalonia.Controls
         /// </summary>
         public static readonly DirectProperty<DatePicker, DateTimeOffset?> SelectedDateProperty =
             AvaloniaProperty.RegisterDirect<DatePicker, DateTimeOffset?>(nameof(SelectedDate), 
-                x => x.SelectedDate, (x, v) => x.SelectedDate = v);
+                x => x.SelectedDate, (x, v) => x.SelectedDate = v,
+                defaultBindingMode: BindingMode.TwoWay);
 
         // Template Items
         private Button _flyoutButton;

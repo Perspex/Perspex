@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using Avalonia.Interactivity;
 using Avalonia.VisualTree;
 
+#nullable enable
+
 namespace Avalonia.Input
 {
     /// <summary>

@@ -19,8 +19,8 @@ namespace Avalonia.Diagnostics
         public bool ShowAsChildWindow { get; set; } = true;
 
         /// <summary>
-        /// Gets or sets the initial size of the DevTools window. The default value is 1024x512.
+        /// Gets or sets the initial size of the DevTools window. The default value is 1280x720.
         /// </summary>
-        public Size Size { get; set; } = new Size(1024, 512);
+        public Size Size { get; set; } = new Size(1280, 720);
     }
 }

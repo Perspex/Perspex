@@ -27,7 +27,11 @@ namespace Avalonia.Diagnostics.Views
 
         public void ToggleConsole()
         {
-            var vm = (MainViewModel)DataContext;
+            var vm = (MainViewModel?)DataContext;
+            if (vm is null)
+            {
+                return;
+            }
 
             if (_consoleHeight == -1)
             {
@@ -54,7 +58,7 @@ namespace Avalonia.Diagnostics.Views
             AvaloniaXamlLoader.Load(this);
         }
 
-        private void PreviewKeyDown(object sender, KeyEventArgs e)
+        private void PreviewKeyDown(object? sender, KeyEventArgs e)
         {
             if (e.Key == Key.Escape)
             {

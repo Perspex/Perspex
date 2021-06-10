@@ -1,6 +1,7 @@
 using System;
 using Avalonia.Collections;
 using Avalonia.Media;
+using Avalonia.Media.Immutable;
 
 #nullable enable
 
@@ -199,8 +200,29 @@ namespace Avalonia.Controls.Shapes
 
             if (geometry != null)
             {
-                var pen = new Pen(Stroke, StrokeThickness, new DashStyle(StrokeDashArray, StrokeDashOffset),
-                     StrokeLineCap, StrokeJoin);
+                var stroke = Stroke;
+
+                ImmutablePen? pen = null;
+
+                if (stroke != null)
+                {
+                    var strokeDashArray = StrokeDashArray;
+
+                    ImmutableDashStyle? dashStyle = null;
+
+                    if (strokeDashArray != null && strokeDashArray.Count > 0)
+                    {
+                        dashStyle = new ImmutableDashStyle(strokeDashArray, StrokeDashOffset);
+                    }
+
+                    pen = new ImmutablePen(
+                        stroke.ToImmutable(),
+                        StrokeThickness,
+                        dashStyle,
+                        StrokeLineCap,
+                        StrokeJoin);
+                }
+
                 context.DrawGeometry(Fill, pen, geometry);
             }
         }

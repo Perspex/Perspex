@@ -7,7 +7,7 @@ namespace Avalonia.Diagnostics.ViewModels
 {
     internal class VisualTreeNode : TreeNode
     {
-        public VisualTreeNode(IVisual visual, TreeNode parent)
+        public VisualTreeNode(IVisual visual, TreeNode? parent)
             : base(visual, parent)
         {
             Children = new VisualTreeNodeCollection(this, visual);
@@ -20,16 +20,18 @@ namespace Avalonia.Diagnostics.ViewModels
 
         public bool IsInTemplate { get; private set; }
 
+        public override TreeNodeCollection Children { get; }
+
         public static VisualTreeNode[] Create(object control)
         {
             var visual = control as IVisual;
-            return visual != null ? new[] { new VisualTreeNode(visual, null) } : null;
+            return visual != null ? new[] { new VisualTreeNode(visual, null) } : Array.Empty<VisualTreeNode>();
         }
 
         internal class VisualTreeNodeCollection : TreeNodeCollection
         {
             private readonly IVisual _control;
-            private IDisposable _subscription;
+            private IDisposable? _subscription;
 
             public VisualTreeNodeCollection(TreeNode owner, IVisual control)
                 : base(owner)

@@ -15,11 +15,12 @@ namespace Avalonia.Diagnostics.ViewModels
         private int _historyIndex = -1;
         private string _input;
         private bool _isVisible;
-        private ScriptState<object> _state;
+        private ScriptState<object>? _state;
 
         public ConsoleViewModel(Action<ConsoleContext> updateContext)
         {
             _context = new ConsoleContext(this);
+            _input = string.Empty;
             _updateContext = updateContext;
         }
 

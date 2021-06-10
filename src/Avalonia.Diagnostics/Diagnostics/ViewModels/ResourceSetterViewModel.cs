@@ -8,7 +8,7 @@ namespace Avalonia.Diagnostics.ViewModels
 
         public IBrush Tint { get; }
 
-        public ResourceSetterViewModel(AvaloniaProperty property, object resourceKey, object resourceValue, bool isDynamic) : base(property, resourceValue)
+        public ResourceSetterViewModel(AvaloniaProperty property, object resourceKey, object? resourceValue, bool isDynamic) : base(property, resourceValue)
         {
             Key = resourceKey;
             Tint = isDynamic ? Brushes.Orange : Brushes.Brown;
@@ -16,12 +16,14 @@ namespace Avalonia.Diagnostics.ViewModels
 
         public void CopyResourceKey()
         {
-            if (Key is null)
+            var textToCopy = Key?.ToString();
+
+            if (textToCopy is null)
             {
                 return;
             }
 
-            CopyToClipboard(Key.ToString());
+            CopyToClipboard(textToCopy);
         }
     }
 }

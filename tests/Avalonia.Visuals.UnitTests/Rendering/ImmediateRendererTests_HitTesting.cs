@@ -413,6 +413,43 @@ namespace Avalonia.Visuals.UnitTests.Rendering
             }
         }
 
+        [Fact]
+        public void HitTest_Should_Accommodate_ICustomHitTest()
+        {
+            using (TestApplication())
+            {
+                Border border;
+
+                var root = new TestRoot
+                {
+                    Width = 300,
+                    Height = 200,
+                    Child = border = new CustomHitTestBorder
+                    {
+                        Width = 100,
+                        Height = 100,
+                        Background = Brushes.Red,
+                        HorizontalAlignment = HorizontalAlignment.Center,
+                        VerticalAlignment = VerticalAlignment.Center
+                    }
+                };
+
+                root.Renderer = new ImmediateRenderer(root);
+                root.Measure(Size.Infinity);
+                root.Arrange(new Rect(root.DesiredSize));
+                root.Renderer.Paint(new Rect(root.ClientSize));
+
+                var result = root.Renderer.HitTest(new Point(75, 100), root, null).First();
+                Assert.Equal(border, result);
+
+                result = root.Renderer.HitTest(new Point(125, 100), root, null).First();
+                Assert.Equal(border, result);
+
+                result = root.Renderer.HitTest(new Point(175, 100), root, null).First();
+                Assert.Equal(root, result);
+            }
+        }
+
         private IDisposable TestApplication()
         {
             return UnitTestApplication.Start(TestServices.MockPlatformRenderInterface);

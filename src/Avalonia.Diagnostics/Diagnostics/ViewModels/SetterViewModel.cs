@@ -11,7 +11,7 @@ namespace Avalonia.Diagnostics.ViewModels
 
         public string Name { get; }
 
-        public object Value { get; }
+        public object? Value { get; }
 
         public bool IsActive
         {
@@ -25,7 +25,7 @@ namespace Avalonia.Diagnostics.ViewModels
             set => RaiseAndSetIfChanged(ref _isVisible, value);
         }
 
-        public SetterViewModel(AvaloniaProperty property, object value)
+        public SetterViewModel(AvaloniaProperty property, object? value)
         {
             Property = property;
             Name = property.Name;
@@ -36,12 +36,14 @@ namespace Avalonia.Diagnostics.ViewModels
 
         public void CopyValue()
         {
-            if (Value is null)
+            var textToCopy = Value?.ToString();
+
+            if (textToCopy is null)
             {
                 return;
             }
 
-            CopyToClipboard(Value.ToString());
+            CopyToClipboard(textToCopy);
         }
 
         public void CopyPropertyName()

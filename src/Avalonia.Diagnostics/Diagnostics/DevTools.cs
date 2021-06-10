@@ -6,8 +6,6 @@ using Avalonia.Diagnostics.Views;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 
-#nullable enable 
-
 namespace Avalonia.Diagnostics
 {
     public static class DevTools
@@ -24,7 +22,7 @@ namespace Avalonia.Diagnostics
 
         public static IDisposable Attach(TopLevel root, DevToolsOptions options)
         {
-            void PreviewKeyDown(object sender, KeyEventArgs e)
+            void PreviewKeyDown(object? sender, KeyEventArgs e)
             {
                 if (options.Gesture.Matches(e))
                 {
@@ -71,10 +69,10 @@ namespace Avalonia.Diagnostics
             return Disposable.Create(() => window?.Close());
         }
 
-        private static void DevToolsClosed(object sender, EventArgs e)
+        private static void DevToolsClosed(object? sender, EventArgs e)
         {
-            var window = (MainWindow)sender;
-            s_open.Remove(window.Root);
+            var window = (MainWindow)sender!;
+            s_open.Remove(window.Root!);
             window.Closed -= DevToolsClosed;
         }
     }

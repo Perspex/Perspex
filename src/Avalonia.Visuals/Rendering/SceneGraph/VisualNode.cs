@@ -358,6 +358,11 @@ namespace Avalonia.Rendering.SceneGraph
 
         internal void TryPreallocateChildren(int count)
         {
+            if (count == 0)
+            {
+                return;
+            }
+
             EnsureChildrenCreated(count);
         }
 
@@ -365,9 +370,12 @@ namespace Avalonia.Rendering.SceneGraph
         {
             var result = new Rect();
 
-            foreach (var operation in DrawOperations)
+            if (_drawOperations != null)
             {
-                result = result.Union(operation.Item.Bounds);
+                foreach (var operation in _drawOperations)
+                {
+                    result = result.Union(operation.Item.Bounds);
+                }
             }
 
             _bounds = result;

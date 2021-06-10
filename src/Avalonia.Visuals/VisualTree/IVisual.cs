@@ -3,6 +3,8 @@ using Avalonia.Collections;
 using Avalonia.Media;
 using Avalonia.Rendering;
 
+#nullable enable
+
 namespace Avalonia.VisualTree
 {
     /// <summary>
@@ -21,12 +23,12 @@ namespace Avalonia.VisualTree
         /// <summary>
         /// Raised when the control is attached to a rooted visual tree.
         /// </summary>
-        event EventHandler<VisualTreeAttachmentEventArgs> AttachedToVisualTree;
+        event EventHandler<VisualTreeAttachmentEventArgs>? AttachedToVisualTree;
 
         /// <summary>
         /// Raised when the control is detached from a rooted visual tree.
         /// </summary>
-        event EventHandler<VisualTreeAttachmentEventArgs> DetachedFromVisualTree;
+        event EventHandler<VisualTreeAttachmentEventArgs>? DetachedFromVisualTree;
 
         /// <summary>
         /// Gets the bounds of the control relative to its parent.
@@ -46,7 +48,7 @@ namespace Avalonia.VisualTree
         /// <summary>
         /// Gets or sets the geometry clip for this visual.
         /// </summary>
-        Geometry Clip { get; set; }
+        Geometry? Clip { get; set; }
 
         /// <summary>
         /// Gets a value indicating whether this control is attached to a visual root.
@@ -71,12 +73,12 @@ namespace Avalonia.VisualTree
         /// <summary>
         /// Gets or sets the opacity mask for the control.
         /// </summary>
-        IBrush OpacityMask { get; set; }
+        IBrush? OpacityMask { get; set; }
 
         /// <summary>
         /// Gets or sets the render transform of the control.
         /// </summary>
-        ITransform RenderTransform { get; set; }
+        ITransform? RenderTransform { get; set; }
 
         /// <summary>
         /// Gets or sets the render transform origin of the control.
@@ -91,12 +93,12 @@ namespace Avalonia.VisualTree
         /// <summary>
         /// Gets the control's parent visual.
         /// </summary>
-        IVisual VisualParent { get; }
+        IVisual? VisualParent { get; }
 
         /// <summary>
         /// Gets the root of the visual tree, if the control is attached to a visual tree.
         /// </summary>
-        IRenderRoot VisualRoot { get; }
+        IRenderRoot? VisualRoot { get; }
 
         /// <summary>
         /// Gets or sets the Z index of the node.

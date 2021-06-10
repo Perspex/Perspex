@@ -109,7 +109,8 @@ namespace Avalonia.Media.TextFormatting
                 GlyphRun.GlyphAdvances.Take(glyphCount),
                 GlyphRun.GlyphOffsets.Take(glyphCount),
                 GlyphRun.Characters.Take(length),
-                GlyphRun.GlyphClusters.Take(glyphCount));
+                GlyphRun.GlyphClusters.Take(glyphCount),
+                GlyphRun.BiDiLevel);
 
             var firstTextRun = new ShapedTextCharacters(firstGlyphRun, Properties);
 
@@ -120,7 +121,8 @@ namespace Avalonia.Media.TextFormatting
                 GlyphRun.GlyphAdvances.Skip(glyphCount),
                 GlyphRun.GlyphOffsets.Skip(glyphCount),
                 GlyphRun.Characters.Skip(length),
-                GlyphRun.GlyphClusters.Skip(glyphCount));
+                GlyphRun.GlyphClusters.Skip(glyphCount),
+                GlyphRun.BiDiLevel);
 
             var secondTextRun = new ShapedTextCharacters(secondGlyphRun, Properties);
 

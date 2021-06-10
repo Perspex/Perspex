@@ -50,7 +50,7 @@ namespace Avalonia.Styling
                 }
                 else
                 {
-                    _subscription = _target.Bind(_directProperty, this);
+                    _subscription = _target.Bind(_directProperty!, this);
                 }
             }
             else
@@ -100,7 +100,7 @@ namespace Avalonia.Styling
                 }
                 else
                 {
-                    _target.ClearValue(_directProperty);
+                    _target.ClearValue(_directProperty!);
                 }
             }
 

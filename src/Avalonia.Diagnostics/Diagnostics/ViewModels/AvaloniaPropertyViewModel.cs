@@ -1,17 +1,17 @@
-using System.ComponentModel;
-using Avalonia.Collections;
-
 namespace Avalonia.Diagnostics.ViewModels
 {
     internal class AvaloniaPropertyViewModel : PropertyViewModel
     {
         private readonly AvaloniaObject _target;
         private string _type;
-        private object _value;
+        private object? _value;
         private string _priority;
         private string _group;
 
+#nullable disable
+        // Remove "nullable disable" after MemberNotNull will work on our CI.
         public AvaloniaPropertyViewModel(AvaloniaObject o, AvaloniaProperty property)
+#nullable restore
         {
             _target = o;
             Property = property;
@@ -19,12 +19,6 @@ namespace Avalonia.Diagnostics.ViewModels
             Name = property.IsAttached ?
                 $"[{property.OwnerType.Name}.{property.Name}]" :
                 property.Name;
-
-            if (property.IsDirect)
-            {
-                _group = "Properties";
-                Priority = "Direct";
-            }
 
             Update();
         }
@@ -34,11 +28,7 @@ namespace Avalonia.Diagnostics.ViewModels
         public override string Name { get; }
         public bool IsAttached => Property.IsAttached;
 
-        public string Priority
-        {
-            get => _priority;
-            private set => RaiseAndSetIfChanged(ref _priority, value);
-        }
+        public string Priority => _priority;
 
         public override string Type => _type;
 
@@ -56,40 +46,37 @@ namespace Avalonia.Diagnostics.ViewModels
             }
         }
 
-        public override string Group
-        {
-            get => _group;
-        }
+        public override string Group => _group;
 
+        // [MemberNotNull(nameof(_type), nameof(_group), nameof(_priority))]
         public override void Update()
         {
             if (Property.IsDirect)
             {
                 RaiseAndSetIfChanged(ref _value, _target.GetValue(Property), nameof(Value));
-                RaiseAndSetIfChanged(ref _type, _value?.GetType().Name, nameof(Type));
+                RaiseAndSetIfChanged(ref _type, _value?.GetType().Name ?? Property.PropertyType.Name, nameof(Type));
+                RaiseAndSetIfChanged(ref _priority, "Direct", nameof(Priority));
+
+                _group = "Properties";
             }
             else
             {
                 var val = _target.GetDiagnostic(Property);
 
                 RaiseAndSetIfChanged(ref _value, val?.Value, nameof(Value));
-                RaiseAndSetIfChanged(ref _type, _value?.GetType().Name, nameof(Type));
+                RaiseAndSetIfChanged(ref _type, _value?.GetType().Name ?? Property.PropertyType.Name, nameof(Type));
 
                 if (val != null)
                 {
-                    SetGroup(IsAttached ? "Attached Properties" : "Properties");
-                    Priority = val.Priority.ToString();
+                    RaiseAndSetIfChanged(ref _priority, val.Priority.ToString(), nameof(Priority));
+                    RaiseAndSetIfChanged(ref _group, IsAttached ? "Attached Properties" : "Properties", nameof(Group));
                 }
                 else
                 {
-                    SetGroup(Priority = "Unset");
+                    RaiseAndSetIfChanged(ref _priority, "Unset", nameof(Priority));
+                    RaiseAndSetIfChanged(ref _group, "Unset", nameof(Group));
                 }
             }
-        }
-
-        private void SetGroup(string group)
-        {
-            RaiseAndSetIfChanged(ref _group, group, nameof(Group));
         }
     }
 }

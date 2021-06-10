@@ -782,7 +782,7 @@ namespace Avalonia.Layout
         }
 
         /// <inheritdoc/>
-        protected sealed override void OnVisualParentChanged(IVisual oldParent, IVisual newParent)
+        protected sealed override void OnVisualParentChanged(IVisual? oldParent, IVisual? newParent)
         {
             LayoutHelper.InvalidateSelfAndChildrenMeasure(this);
 

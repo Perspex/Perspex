@@ -1,0 +1,210 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="Avalonia.Diagnostics.Views.LayoutExplorerView"
+             xmlns:local="clr-namespace:Avalonia.Diagnostics.Views"
+             xmlns:controls="clr-namespace:Avalonia.Diagnostics.Controls"
+             xmlns:converters="clr-namespace:Avalonia.Diagnostics.Converters">
+
+    <UserControl.Resources>
+        <SolidColorBrush x:Key="SizeGuidelineBrush" Color="#333333" />
+        <SolidColorBrush x:Key="MarginBackgroundBrush" Color="#D78965" />
+        <SolidColorBrush x:Key="MarginHighlightBrush" Color="#EA966F" />
+        <SolidColorBrush x:Key="BorderBackgroundBrush" Color="#E3C381" />
+        <SolidColorBrush x:Key="BorderHighlightBrush" Color="#EFCD88" />
+        <SolidColorBrush x:Key="PaddingBackgroundBrush" Color="#B8C47F" />
+        <SolidColorBrush x:Key="PaddingHighlightBrush" Color="#CEDA8E" />
+        <SolidColorBrush x:Key="SizeBackgroundBrush" Color="#88B2BD" />
+        <SolidColorBrush x:Key="SizeHighlightBrush" Color="#9ED0DC" />
+    </UserControl.Resources>
+
+    <Grid RowDefinitions="*,Auto">
+
+        <Viewbox Grid.Row="0" StretchDirection="DownOnly">
+            <Grid x:Name="LayoutRoot" Margin="8,0,8,8" RowDefinitions="Auto,Auto"
+                  ColumnDefinitions="Auto,Auto">
+
+                <Grid.Styles>
+                    <Style Selector="TextBlock.with-constraint">
+                        <Setter Property="TextDecorations" Value="Underline" />
+                    </Style>
+
+                </Grid.Styles>
+
+                <Border x:Name="VerticalSize" Grid.Row="0" Grid.Column="1">
+                    <TextBlock VerticalAlignment="Center" FontWeight="Bold"
+                               Classes.with-constraint="{Binding HeightConstraint, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
+                               Text="{Binding Height}"
+                               ToolTip.Tip="{Binding HeightConstraint}" />
+                </Border>
+
+                <Border x:Name="HorizontalSize" Grid.Row="1" Grid.Column="0">
+                    <TextBlock HorizontalAlignment="Center" FontWeight="Bold"
+                               Classes.with-constraint="{Binding WidthConstraint, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
+                               Text="{Binding Width}"
+                               ToolTip.Tip="{Binding WidthConstraint}" />
+                </Border>
+
+                <controls:ThicknessEditor Grid.Row="0" Grid.Column="0" Header="margin" VerticalAlignment="Top"
+                                          HorizontalAlignment="Center"
+                                          Background="{StaticResource MarginBackgroundBrush}"
+                                          Highlight="{StaticResource MarginHighlightBrush}"
+                                          Thickness="{Binding MarginThickness}">
+                    <controls:ThicknessEditor x:Name="BorderArea" Header="border"
+                                              Background="{StaticResource BorderBackgroundBrush}"
+                                              Highlight="{StaticResource BorderHighlightBrush}"
+                                              Thickness="{Binding BorderThickness}"
+                                              IsPresent="{Binding HasBorder}">
+                        <controls:ThicknessEditor x:Name="PaddingArea" Header="padding"
+                                                  Background="{StaticResource PaddingBackgroundBrush}"
+                                                  Highlight="{StaticResource PaddingHighlightBrush}"
+                                                  Thickness="{Binding PaddingThickness}"
+                                                  IsPresent="{Binding HasPadding}">
+                            <Border x:Name="ContentArea" BorderThickness="1" MinWidth="100" MinHeight="16"
+                                    VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+                                <Border.Styles>
+                                    <Style Selector="Border">
+                                        <Setter Property="Background" Value="{StaticResource SizeBackgroundBrush}" />
+                                        <Setter Property="BorderBrush" Value="{DynamicResource ThicknessBorderBrush}" />
+                                    </Style>
+                                    <Style Selector="Border:pointerover">
+                                        <Setter Property="Background" Value="{StaticResource SizeHighlightBrush}" />
+                                        <Setter Property="BorderBrush" Value="{DynamicResource HighlightBorderBrush}" />
+                                    </Style>
+                                </Border.Styles>
+                                <TextBlock Margin="2" HorizontalAlignment="Center" VerticalAlignment="Center"
+                                           Text="content" />
+                            </Border>
+                        </controls:ThicknessEditor>
+                    </controls:ThicknessEditor>
+                </controls:ThicknessEditor>
+
+                <Canvas Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" Grid.ColumnSpan="2">
+                    <Canvas.Styles>
+                        <Style Selector="Rectangle">
+                            <Setter Property="StrokeDashArray" Value="1,3" />
+                            <Setter Property="Stroke" Value="{StaticResource SizeGuidelineBrush}" />
+                            <Setter Property="StrokeThickness" Value="1" />
+                            <Setter Property="IsHitTestVisible" Value="False" />
+                        </Style>
+                    </Canvas.Styles>
+                    <Rectangle x:Name="HorizontalSizeBegin" />
+                    <Rectangle x:Name="HorizontalSizeEnd" />
+                    <Rectangle x:Name="VerticalSizeBegin" />
+                    <Rectangle x:Name="VerticalSizeEnd" />
+                </Canvas>
+            </Grid>
+        </Viewbox>
+
+        <StackPanel Orientation="Vertical" Grid.Column="0" Grid.Row="1" Spacing="4"
+                    Margin="4" HorizontalAlignment="Stretch">
+
+            <StackPanel.Resources>
+                <converters:EnumToCheckedConverter x:Key="AlignmentConverter" />
+            </StackPanel.Resources>
+
+            <StackPanel.Styles>
+                <Style Selector="RadioButton">
+                    <Setter Property="Template">
+                        <ControlTemplate>
+                            <Border
+                                Background="{TemplateBinding Background}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                Padding="{TemplateBinding Padding}">
+                                <Path x:Name="PART_Path" Fill="Black" Width="16" Height="16" Stretch="Uniform" />
+                            </Border>
+                        </ControlTemplate>
+                    </Setter>
+                </Style>
+
+                <Style Selector="RadioButton">
+                    <Setter Property="Background" Value="WhiteSmoke" />
+                    <Setter Property="Padding" Value="2" />
+                </Style>
+
+                <Style Selector="RadioButton:pointerover">
+                    <Setter Property="Background" Value="{DynamicResource ThemeControlHighlightMidBrush}" />
+                </Style>
+
+                <Style Selector="RadioButton:checked">
+                    <Setter Property="Background" Value="{DynamicResource ThemeAccentBrush4}" />
+                </Style>
+
+            </StackPanel.Styles>
+
+            <DockPanel HorizontalAlignment="Stretch" LastChildFill="True">
+
+                <DockPanel.Styles>
+                    <Style Selector="RadioButton.h-left /template/ Path#PART_Path">
+                        <Setter Property="Data" Value="M22 13V19H6V13H22M6 5V11H16V5H6M2 2V22H4V2H2" />
+                    </Style>
+                    <Style Selector="RadioButton.h-center /template/ Path#PART_Path">
+                        <Setter Property="Data"
+                                Value="M20 19H13V22H11V19H4V13H11V11H7V5H11V2H13V5H17V11H13V13H20V19Z" />
+                    </Style>
+                    <Style Selector="RadioButton.h-right /template/ Path#PART_Path">
+                        <Setter Property="Data" Value="M18 13V19H2V13H18M8 5V11H18V5H8M20 2V22H22V2H20Z" />
+                    </Style>
+                    <Style Selector="RadioButton.h-stretch /template/ Path#PART_Path">
+                        <Setter Property="Data" Value="M4,22H2V2h2V22z M22,2h-2v20h2V2z M13.5,7h-3v10h3V7z" />
+                    </Style>
+                </DockPanel.Styles>
+
+                <Label DockPanel.Dock="Left" Content="Horizontal Alignment" />
+
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                    <RadioButton GroupName="HAlignment" Classes="h-left"
+                                 ToolTip.Tip="Left"
+                                 IsChecked="{Binding HorizontalAlignment, Converter={StaticResource AlignmentConverter}, ConverterParameter={x:Static HorizontalAlignment.Left}}" />
+                    <RadioButton GroupName="HAlignment" Classes="h-center" BorderThickness="0,1,1,1"
+                                 ToolTip.Tip="Center"
+                                 IsChecked="{Binding HorizontalAlignment, Converter={StaticResource AlignmentConverter}, ConverterParameter={x:Static HorizontalAlignment.Center}}" />
+                    <RadioButton GroupName="HAlignment" Classes="h-right" BorderThickness="0,1,1,1"
+                                 ToolTip.Tip="Right"
+                                 IsChecked="{Binding HorizontalAlignment, Converter={StaticResource AlignmentConverter}, ConverterParameter={x:Static HorizontalAlignment.Right}}" />
+                    <RadioButton GroupName="HAlignment" Classes="h-stretch"
+                                 ToolTip.Tip="Stretch"
+                                 IsChecked="{Binding HorizontalAlignment, Converter={StaticResource AlignmentConverter}, ConverterParameter={x:Static HorizontalAlignment.Stretch}}" />
+                </StackPanel>
+
+            </DockPanel>
+
+            <DockPanel HorizontalAlignment="Stretch" LastChildFill="True">
+                <DockPanel.Styles>
+                    <Style Selector="RadioButton.v-top /template/ Path#PART_Path">
+                        <Setter Property="Data" Value="M11 22H5V6H11V22M19 6H13V16H19V6M22 2H2V4H22V2Z" />
+                    </Style>
+                    <Style Selector="RadioButton.v-center /template/ Path#PART_Path">
+                        <Setter Property="Data"
+                                Value="M5 20V13H2V11H5V4H11V11H13V7H19V11H22V13H19V17H13V13H11V20H5Z" />
+                    </Style>
+                    <Style Selector="RadioButton.v-bottom /template/ Path#PART_Path">
+                        <Setter Property="Data" Value="M11 18H5V2H11V18M19 8H13V18H19V8M22 20H2V22H22V20Z" />
+                    </Style>
+                    <Style Selector="RadioButton.v-stretch /template/ Path#PART_Path">
+                        <Setter Property="Data" Value="M22,2v2H2V2H22z M7,10.5v3h10v-3H7z M2,20v2h20v-2H2z" />
+                    </Style>
+                </DockPanel.Styles>
+
+                <Label DockPanel.Dock="Left" Content="Vertical Alignment" />
+
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                    <RadioButton GroupName="VAlignment" Classes="v-top"
+                                 ToolTip.Tip="Top"
+                                 IsChecked="{Binding VerticalAlignment, Converter={StaticResource AlignmentConverter}, ConverterParameter={x:Static VerticalAlignment.Top}}" />
+                    <RadioButton GroupName="VAlignment" Classes="v-center" BorderThickness="0,1,1,1"
+                                 ToolTip.Tip="Center"
+                                 IsChecked="{Binding VerticalAlignment, Converter={StaticResource AlignmentConverter}, ConverterParameter={x:Static VerticalAlignment.Center}}" />
+                    <RadioButton GroupName="VAlignment" Classes="v-bottom" BorderThickness="0,1,1,1"
+                                 ToolTip.Tip="Bottom"
+                                 IsChecked="{Binding VerticalAlignment, Converter={StaticResource AlignmentConverter}, ConverterParameter={x:Static VerticalAlignment.Bottom}}" />
+                    <RadioButton GroupName="VAlignment" Classes="v-stretch"
+                                 ToolTip.Tip="Stretch"
+                                 IsChecked="{Binding VerticalAlignment, Converter={StaticResource AlignmentConverter}, ConverterParameter={x:Static VerticalAlignment.Stretch}}" />
+                </StackPanel>
+
+            </DockPanel>
+        </StackPanel>
+    </Grid>
+
+</UserControl>

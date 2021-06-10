@@ -52,8 +52,7 @@ namespace Avalonia.Controls.Primitives
         {
             if (InputPassThroughElement is object)
             {
-                var p = point.Transform(this.TransformToVisual(VisualRoot)!.Value);
-                var hit = VisualRoot.GetVisualAt(p, x => x != this);
+                var hit = VisualRoot.GetVisualAt(point, x => x != this);
 
                 if (hit is object)
                 {

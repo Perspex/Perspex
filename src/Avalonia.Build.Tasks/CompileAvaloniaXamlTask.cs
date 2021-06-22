@@ -1,9 +1,6 @@
 using System;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Reflection;
-using System.Threading;
 using Microsoft.Build.Framework;
 
 namespace Avalonia.Build.Tasks
@@ -53,7 +50,7 @@ namespace Avalonia.Build.Tasks
             return true;
         }
 
-        string GetPdbPath(string p)
+        private string GetPdbPath(string p)
         {
             var d = Path.GetDirectoryName(p);
             var f = Path.GetFileNameWithoutExtension(p);

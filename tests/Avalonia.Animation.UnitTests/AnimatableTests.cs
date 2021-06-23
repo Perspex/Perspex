@@ -1,8 +1,9 @@
 ﻿using System;
+using System.Reactive.Subjects;
 using Avalonia.Controls;
 using Avalonia.Data;
-using Avalonia.Layout;
 using Avalonia.Media;
+using Avalonia.Media.Transformation;
 using Avalonia.Styling;
 using Avalonia.UnitTests;
 using Moq;
@@ -82,6 +83,112 @@ namespace Avalonia.Animation.UnitTests
                 It.IsAny<IClock>(),
                 1.0,
                 0.5));
+        }
+
+        [Fact]
+        public void TransformOperations_Transition_Ends_FullCycle()
+        {
+            var transition = new TransformOperationsTransition
+            {
+                Duration = TimeSpan.FromMilliseconds(200),
+                Property = Visual.RenderTransformProperty
+            };
+
+            var control = new Control
+            {
+                Transitions = new Transitions { transition },
+            };
+
+            var clock = new MultiTestClock();
+
+            var root = new TestRoot
+            {
+                Clock = clock,
+                Child = control
+            };
+
+            var transform = TransformOperations.Parse("scale(1.05)");
+
+            var binding = new Subject<ITransform>();
+
+            var boundTransform = control.Bind(
+                Visual.RenderTransformProperty,
+                binding);
+
+            binding.OnNext(transform);
+
+            Assert.Equal(Matrix.Identity, control.RenderTransform.Value);
+
+            clock.Pulse(TimeSpan.Zero);
+            clock.Pulse(TimeSpan.FromMilliseconds(200));
+
+            Assert.Equal(transform.Value, control.RenderTransform.Value);
+
+            boundTransform.Dispose();
+
+            clock.Pulse(TimeSpan.Zero);
+            clock.Pulse(TimeSpan.FromMilliseconds(200));
+
+            Assert.Equal(null, control.RenderTransform);
+
+            clock.Pulse(TimeSpan.Zero);
+            clock.Pulse(TimeSpan.FromMilliseconds(200));
+
+            Assert.Equal(null, control.RenderTransform);
+        }
+
+        [Fact]
+        public void TransformOperations_Transition_Ends_HalfCycle()
+        {
+            var transition = new TransformOperationsTransition
+            {
+                Duration = TimeSpan.FromMilliseconds(200),
+                Property = Visual.RenderTransformProperty
+            };
+
+            var control = new Control
+            {
+                Transitions = new Transitions { transition },
+            };
+
+            var clock = new TestClock();
+
+            var root = new TestRoot
+            {
+                Clock = clock,
+                Child = control
+            };
+
+            var transform = TransformOperations.Parse("scale(1.05)");
+
+            var binding = new Subject<ITransform>();
+
+            var boundTransform = control.Bind(
+                Visual.RenderTransformProperty,
+                binding);
+
+            binding.OnNext(transform);
+
+            Assert.Equal(Matrix.Identity, control.RenderTransform.Value);
+
+            clock.Pulse(TimeSpan.Zero);
+            clock.Pulse(TimeSpan.FromMilliseconds(100));
+
+            var intermediateTransform = TransformOperations.Interpolate(transform, TransformOperations.Identity, 0.5);
+
+            Assert.Equal(intermediateTransform.Value, control.RenderTransform.Value);
+
+            boundTransform.Dispose();
+
+            clock.Pulse(TimeSpan.Zero);
+            clock.Pulse(TimeSpan.FromMilliseconds(200));
+
+            Assert.Equal(null, control.RenderTransform);
+
+            clock.Pulse(TimeSpan.Zero);
+            clock.Pulse(TimeSpan.FromMilliseconds(200));
+
+            Assert.Equal(null, control.RenderTransform);
         }
 
         [Fact]

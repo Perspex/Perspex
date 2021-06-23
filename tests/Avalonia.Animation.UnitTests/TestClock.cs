@@ -3,6 +3,11 @@ using System.Collections.Generic;
 
 namespace Avalonia.Animation.UnitTests
 {
+    internal class MultiTestClock : ClockBase
+    {
+        public new void Pulse(TimeSpan systemTime) => base.Pulse(systemTime);
+    }
+
     internal class TestClock : IClock, IDisposable
     {
         private TimeSpan _curTime;

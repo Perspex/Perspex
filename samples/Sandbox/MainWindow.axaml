@@ -1,4 +1,31 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x='http://schemas.microsoft.com/winfx/2006/xaml'
         x:Class="Sandbox.MainWindow">
+
+    <Window.Styles>
+        <Style Selector="Border">
+            <Setter Property="Margin" Value="8" />
+            <!-- <Setter Property="RenderTransform" Value="scale(1)" /> -->
+            <Setter Property="Transitions">
+                <Transitions>
+                    <TransformOperationsTransition Property="RenderTransform" Easing="ExponentialEaseOut"
+                                                   Duration="0:0:0.2" />
+                </Transitions>
+            </Setter>
+        </Style>
+        <Style Selector="Border:pointerover">
+            <Setter Property="RenderTransform" Value="scale(0.95)" />
+        </Style>
+    </Window.Styles>
+
+    <WrapPanel>
+        <Border Width="200" Height="200" Background="Red" />
+        <Border Width="200" Height="200" Background="Red" />
+        <Border Width="200" Height="200" Background="Red" />
+        <Border Width="200" Height="200" Background="Red" />
+        <Border Width="200" Height="200" Background="Red" />
+        <Border Width="200" Height="200" Background="Red" />
+        <Border Width="200" Height="200" Background="Red" />
+    </WrapPanel>
+
 </Window>

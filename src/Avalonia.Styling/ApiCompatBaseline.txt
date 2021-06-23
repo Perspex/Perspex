@@ -1,4 +1,0 @@
-Compat issues with assembly Avalonia.Styling:
-InterfacesShouldHaveSameMembers : Interface member 'public System.Boolean Avalonia.Styling.IStyleInstance.IsActive' is present in the implementation but not in the contract.
-InterfacesShouldHaveSameMembers : Interface member 'public System.Boolean Avalonia.Styling.IStyleInstance.IsActive.get()' is present in the implementation but not in the contract.
-Total Issues: 2

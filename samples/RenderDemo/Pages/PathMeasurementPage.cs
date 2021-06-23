@@ -1,15 +1,9 @@
-using System;
-using System.Diagnostics;
-using System.Drawing.Drawing2D;
-using System.Security.Cryptography;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.LogicalTree;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using Avalonia.Media.Immutable;
-using Avalonia.Threading;
-using Avalonia.Visuals.Media.Imaging;
 
 namespace RenderDemo.Pages
 {

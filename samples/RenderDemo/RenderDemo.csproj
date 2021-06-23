@@ -4,7 +4,7 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="..\..\src\Avalonia.Visuals\Rendering\SceneGraph\LineBoundsHelper.cs" Link="LineBoundsHelper.cs" />
+    <Compile Include="..\..\src\Avalonia.Base\Rendering\SceneGraph\LineBoundsHelper.cs" Link="LineBoundsHelper.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\src\Avalonia.Diagnostics\Avalonia.Diagnostics.csproj" />

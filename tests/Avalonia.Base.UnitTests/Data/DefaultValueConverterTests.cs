@@ -7,7 +7,7 @@ using Avalonia.Data.Converters;
 using Avalonia.Layout;
 using Xunit;
 
-namespace Avalonia.Base.UnitTests.Data.Converters
+namespace Avalonia.Base.UnitTests.Data
 {
     public class DefaultValueConverterTests
     {

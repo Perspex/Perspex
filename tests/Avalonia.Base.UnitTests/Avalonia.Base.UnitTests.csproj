@@ -13,6 +13,11 @@
   <Import Project="..\..\build\Microsoft.Reactive.Testing.props" />
   <Import Project="..\..\build\SharedVersion.props" />
   <ItemGroup>
+    <EmbeddedResource Include="..\Avalonia.RenderTests\**\*.ttf" />
+    <EmbeddedResource Remove="..\Avalonia.RenderTests\Assets\NotoColorEmoji.ttf" />
+    <EmbeddedResource Include="Media\TextFormatting\BreakPairTable.txt" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\..\src\Avalonia.Base\Avalonia.Base.csproj" />
     <ProjectReference Include="..\Avalonia.UnitTests\Avalonia.UnitTests.csproj" />
   </ItemGroup>

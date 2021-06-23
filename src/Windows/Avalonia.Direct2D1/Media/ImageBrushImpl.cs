@@ -9,7 +9,7 @@ namespace Avalonia.Direct2D1.Media
     {
         private readonly OptionalDispose<Bitmap> _bitmap;
 
-        private readonly Visuals.Media.Imaging.BitmapInterpolationMode _bitmapInterpolationMode;
+        private readonly Avalonia.Media.Imaging.BitmapInterpolationMode _bitmapInterpolationMode;
 
         public ImageBrushImpl(
             ITileBrush brush,

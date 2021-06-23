@@ -5,6 +5,9 @@
     <RootNamespace>Avalonia</RootNamespace>
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>    
   </PropertyGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Assets\*.trie" />
+  </ItemGroup>
   <Import Project="..\..\build\Base.props" />
   <Import Project="..\..\build\Binding.props" />
   <Import Project="..\..\build\Rx.props" />

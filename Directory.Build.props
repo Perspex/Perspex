@@ -4,5 +4,6 @@
       <AvaloniaPreviewerNetCoreToolPath>$(MSBuildThisFileDirectory)\src\tools\Avalonia.Designer.HostApp\bin\$(Configuration)\netcoreapp2.0\Avalonia.Designer.HostApp.dll</AvaloniaPreviewerNetCoreToolPath>
       <!-- https://github.com/dotnet/msbuild/issues/2661 -->
       <AddSyntheticProjectReferencesForSolutionDependencies>false</AddSyntheticProjectReferencesForSolutionDependencies>
+      <RunApiCompat>False</RunApiCompat>
   </PropertyGroup>
 </Project>

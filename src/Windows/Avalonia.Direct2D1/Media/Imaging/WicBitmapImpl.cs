@@ -15,21 +15,21 @@ namespace Avalonia.Direct2D1.Media
     {
         private readonly BitmapDecoder _decoder;
 
-        private static BitmapInterpolationMode ConvertInterpolationMode(Avalonia.Visuals.Media.Imaging.BitmapInterpolationMode interpolationMode)
+        private static BitmapInterpolationMode ConvertInterpolationMode(Avalonia.Media.Imaging.BitmapInterpolationMode interpolationMode)
         {
             switch (interpolationMode)
             {
-                case Visuals.Media.Imaging.BitmapInterpolationMode.Default:
+                case Avalonia.Media.Imaging.BitmapInterpolationMode.Default:
                     return BitmapInterpolationMode.Fant;
 
-                case Visuals.Media.Imaging.BitmapInterpolationMode.LowQuality:
+                case Avalonia.Media.Imaging.BitmapInterpolationMode.LowQuality:
                     return BitmapInterpolationMode.NearestNeighbor;
 
-                case Visuals.Media.Imaging.BitmapInterpolationMode.MediumQuality:
+                case Avalonia.Media.Imaging.BitmapInterpolationMode.MediumQuality:
                     return BitmapInterpolationMode.Fant;
 
                 default:
-                case Visuals.Media.Imaging.BitmapInterpolationMode.HighQuality:
+                case Avalonia.Media.Imaging.BitmapInterpolationMode.HighQuality:
                     return BitmapInterpolationMode.HighQualityCubic;
 
             }
@@ -118,7 +118,7 @@ namespace Avalonia.Direct2D1.Media
             }
         }
 
-        public WicBitmapImpl(Stream stream, int decodeSize, bool horizontal, Avalonia.Visuals.Media.Imaging.BitmapInterpolationMode interpolationMode)
+        public WicBitmapImpl(Stream stream, int decodeSize, bool horizontal, Avalonia.Media.Imaging.BitmapInterpolationMode interpolationMode)
         {
             _decoder = new BitmapDecoder(Direct2D1Platform.ImagingFactory, stream, DecodeOptions.CacheOnLoad);
 

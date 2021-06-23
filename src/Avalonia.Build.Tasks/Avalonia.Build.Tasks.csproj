@@ -63,28 +63,28 @@
       <Compile Include="../Avalonia.Base/Utilities/StyleClassParser.cs">
         <Link>Markup/%(RecursiveDir)%(FileName)%(Extension)</Link>
       </Compile>
-      <Compile Include="../Avalonia.Visuals/Thickness.cs">
+      <Compile Include="../Avalonia.Base/Thickness.cs">
         <Link>Markup/%(RecursiveDir)%(FileName)%(Extension)</Link>
       </Compile>
-      <Compile Include="../Avalonia.Visuals/Size.cs">
+      <Compile Include="../Avalonia.Base/Size.cs">
         <Link>Markup/%(RecursiveDir)%(FileName)%(Extension)</Link>
       </Compile>
-      <Compile Include="../Avalonia.Visuals/Vector.cs">
+      <Compile Include="../Avalonia.Base/Vector.cs">
         <Link>Markup/%(RecursiveDir)%(FileName)%(Extension)</Link>
       </Compile>
-      <Compile Include="../Avalonia.Visuals/Point.cs">
+      <Compile Include="../Avalonia.Base/Point.cs">
         <Link>Markup/%(RecursiveDir)%(FileName)%(Extension)</Link>
       </Compile>
-      <Compile Include="../Avalonia.Visuals/Matrix.cs">
+      <Compile Include="../Avalonia.Base/Matrix.cs">
         <Link>Markup/%(RecursiveDir)%(FileName)%(Extension)</Link>
       </Compile>
-      <Compile Include="../Avalonia.Visuals/CornerRadius.cs">
+      <Compile Include="../Avalonia.Base/CornerRadius.cs">
         <Link>Markup/%(RecursiveDir)%(FileName)%(Extension)</Link>
       </Compile>
-      <Compile Include="../Avalonia.Visuals/Media/Color.cs">
+      <Compile Include="../Avalonia.Base/Media/Color.cs">
         <Link>Markup/%(RecursiveDir)%(FileName)%(Extension)</Link>
       </Compile>
-      <Compile Include="../Avalonia.Visuals/Media/KnownColors.cs">
+      <Compile Include="../Avalonia.Base/Media/KnownColors.cs">
         <Link>Markup/%(RecursiveDir)%(FileName)%(Extension)</Link>
       </Compile>
       <Compile Include="../Avalonia.Controls/GridLength.cs">

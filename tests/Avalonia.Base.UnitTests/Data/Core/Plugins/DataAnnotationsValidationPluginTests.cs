@@ -7,7 +7,7 @@ using Avalonia.Data.Core.Plugins;
 using Avalonia.UnitTests;
 using Xunit;
 
-namespace Avalonia.Markup.UnitTests.Data.Plugins
+namespace Avalonia.Base.UnitTests.Data.Core.Plugins
 {
     public class DataAnnotationsValidationPluginTests : IClassFixture<InvariantCultureFixture>
     {

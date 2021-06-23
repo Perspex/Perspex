@@ -5,7 +5,6 @@ using Avalonia.LogicalTree;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using Avalonia.Threading;
-using Avalonia.Visuals.Media.Imaging;
 
 namespace RenderDemo.Pages
 {

@@ -2,12 +2,9 @@ using System;
 using System.IO;
 using System.Runtime.InteropServices;
 using Avalonia.Controls.Platform.Surfaces;
-using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
-using Avalonia.Utilities;
-using Avalonia.Visuals.Media.Imaging;
-using static Avalonia.X11.XLib;
+
 namespace Avalonia.X11
 {
     class X11IconLoader : IPlatformIconLoader

@@ -430,7 +430,7 @@ interface IAvnString : IUnknown
 [uuid(e5aca675-02b7-4129-aa79-d6e417210bda)]
 interface IAvnWindowBase : IUnknown
 {
-     HRESULT Show(bool activate);
+     HRESULT Show(bool activate, bool isDialog);
      HRESULT Hide();
      HRESULT Close();
      HRESULT Activate();

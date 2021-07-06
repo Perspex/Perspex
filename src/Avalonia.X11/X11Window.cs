@@ -808,7 +808,7 @@ namespace Avalonia.X11
                 XSetTransientForHint(_x11.Display, _handle, parent.Handle.Handle);
         }
 
-        public void Show(bool activate)
+        public void Show(bool activate, bool isDialog)
         {
             _wasMappedAtLeastOnce = true;
             XMapWindow(_x11.Display, _handle);

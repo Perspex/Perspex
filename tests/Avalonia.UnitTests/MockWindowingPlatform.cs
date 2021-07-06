@@ -58,7 +58,7 @@ namespace Avalonia.UnitTests
                 windowImpl.Object.Resized?.Invoke(clientSize);
             });
 
-            windowImpl.Setup(x => x.Show(true)).Callback(() =>
+            windowImpl.Setup(x => x.Show(true, It.IsAny<bool>())).Callback(() =>
             {
                 windowImpl.Object.Activated?.Invoke();
             });

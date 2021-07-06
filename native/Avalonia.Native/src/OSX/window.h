@@ -34,6 +34,7 @@ class WindowBaseImpl;
 -(double) getScaling;
 -(double) getExtendedTitleBarHeight;
 -(void) setIsExtended:(bool)value;
+-(bool) isDialog;
 @end
 
 struct INSWindowHolder

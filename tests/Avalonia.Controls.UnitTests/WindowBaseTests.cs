@@ -137,7 +137,7 @@ namespace Avalonia.Controls.UnitTests
                 var target = new TestWindowBase(windowImpl.Object);
                 target.IsVisible = true;
 
-                windowImpl.Verify(x => x.Show(true));
+                windowImpl.Verify(x => x.Show(true, false));
             }
         }
 

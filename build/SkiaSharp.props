@@ -1,6 +1,6 @@
 ﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <PackageReference Include="SkiaSharp" Version="2.80.2" />
+    <PackageReference Include="SkiaSharp" Version="2.88.0-preview.7" />
     <PackageReference Condition="'$(IncludeLinuxSkia)' == 'true'" Include="SkiaSharp.NativeAssets.Linux" Version="2.80.2" />
   </ItemGroup>
 </Project>

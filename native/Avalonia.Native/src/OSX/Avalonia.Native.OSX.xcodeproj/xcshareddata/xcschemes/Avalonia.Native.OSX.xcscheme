@@ -56,7 +56,7 @@
       </MacroExpansion>
       <CommandLineArguments>
          <CommandLineArgument
-            argument = "bin/Debug/netcoreapp3.1/ControlCatalog.NetCore.dll"
+            argument = "bin/Debug/net5.0/ControlCatalog.NetCore.dll"
             isEnabled = "YES">
          </CommandLineArgument>
       </CommandLineArguments>

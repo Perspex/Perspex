@@ -5,9 +5,8 @@
     <ProjectReference Include="tests/**/*.*proj" />
     <ProjectReference Include="packages/**/*.*proj" />
     <ProjectReference Remove="**/*.shproj" />
-    <ProjectReference Remove="src/Markup/Avalonia.Markup.Xaml/PortableXaml/**/*.*proj" />
     <ProjectReference Remove="src/Markup/Avalonia.Markup.Xaml.Loader/xamlil.github/**/*.*proj" />
-    <ProjectReference Remove="tests/Avalonia.ReactiveUI.Events.UnitTests/Avalonia.ReactiveUI.Events.UnitTests.csproj" />
+    <ProjectReference Remove="tests/Avalonia.Benchmarks/Avalonia.Benchmarks.csproj" />
   </ItemGroup>
   <!--<ItemGroup Condition="!Exists('$(MSBuildExtensionsPath)\Xamarin\Android')">-->
   <ItemGroup>

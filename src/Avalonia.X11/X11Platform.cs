@@ -21,7 +21,7 @@ namespace Avalonia.X11
 {
     class AvaloniaX11Platform : IWindowingPlatform
     {
-        private Lazy<KeyboardDevice> _keyboardDevice = new Lazy<KeyboardDevice>(() => new KeyboardDevice());
+        private Lazy<KeyboardDevice> _keyboardDevice = new Lazy<KeyboardDevice>(() => new AvaloniaX11KeyboardDevice());
         public KeyboardDevice KeyboardDevice => _keyboardDevice.Value;
         public Dictionary<IntPtr, X11PlatformThreading.EventHandler> Windows =
             new Dictionary<IntPtr, X11PlatformThreading.EventHandler>();

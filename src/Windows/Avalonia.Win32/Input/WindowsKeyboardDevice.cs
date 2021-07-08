@@ -15,7 +15,7 @@ namespace Avalonia.Win32.Input
         {
             get
             {
-                UpdateKeyStates();
+                UpdateKeyStatesCache();
                 RawInputModifiers result = 0;
 
                 if (IsDown(Key.LeftAlt) || IsDown(Key.RightAlt))
@@ -60,17 +60,60 @@ namespace Avalonia.Win32.Input
             return result.ToString();
         }
 
-        private void UpdateKeyStates()
+        public override KeyStates NumLock 
+        {
+          get 
+          {
+            return GetKeyStatesFromApi(Key.NumLock);
+          }
+        }
+
+        public override KeyStates CapsLock
+        {
+          get
+          {
+            return GetKeyStatesFromApi(Key.CapsLock);
+          }
+        }
+
+        public override KeyStates ScrollLock
+        {
+          get
+          {
+            return GetKeyStatesFromApi(Key.Scroll);
+          }
+        }
+
+        private void UpdateKeyStatesCache()
         {
             UnmanagedMethods.GetKeyboardState(_keyStates);
         }
 
         private bool IsDown(Key key)
         {
-            return (GetKeyStates(key) & KeyStates.Down) != 0;
+            return (GetKeyStatesFromCache(key) & KeyStates.Down) != 0;
         }
 
-        private KeyStates GetKeyStates(Key key)
+        private KeyStates GetKeyStatesFromApi(Key key)
+        {
+            int vk = KeyInterop.VirtualKeyFromKey(key);
+            short state = UnmanagedMethods.GetKeyState(vk);
+            KeyStates result = 0;
+
+            if ((state & 0x8000) != 0)
+            {
+                result |= KeyStates.Down;
+            }
+
+            if ((state & 0x01) != 0)
+            {
+                result |= KeyStates.Toggled;
+            }
+
+            return result;
+        }
+
+        private KeyStates GetKeyStatesFromCache(Key key)
         {
             int vk = KeyInterop.VirtualKeyFromKey(key);
             byte state = _keyStates[vk];

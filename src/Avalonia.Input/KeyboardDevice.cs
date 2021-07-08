@@ -144,6 +144,30 @@ namespace Avalonia.Input
             }
         }
 
+        public virtual KeyStates NumLock 
+        {
+          get 
+          {
+            return KeyStates.None;
+          }
+        }
+
+        public virtual KeyStates CapsLock
+        {
+          get
+          {
+            return KeyStates.None;
+          }
+        }
+
+        public virtual KeyStates ScrollLock
+        {
+          get
+          {
+            return KeyStates.None;
+          }
+        }
+
         public void SetFocusedElement(
             IInputElement? element, 
             NavigationMethod method,

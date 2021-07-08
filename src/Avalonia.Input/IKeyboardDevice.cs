@@ -64,5 +64,9 @@ namespace Avalonia.Input
             IInputElement? element, 
             NavigationMethod method,
             KeyModifiers modifiers);
+
+        KeyStates NumLock { get; }
+        KeyStates CapsLock { get; }
+        KeyStates ScrollLock { get; }
     }
 }

@@ -357,5 +357,87 @@ namespace Avalonia.Base.UnitTests.Collections
 
             Assert.Equal(target, result);
         }
+
+        [Fact]
+        public void RemoveAll_Should_Remove_Items()
+        {
+            int[] bar = Enumerable.Range(-7, 15).ToArray();
+            var itemsLst = new List<int[]>()
+            {
+                Array.Empty<int>(),
+                bar,
+                bar.Concat(bar).ToArray(),
+                bar.Concat(bar).Concat(bar).ToArray(),
+                bar.Concat(bar).OrderBy(x => x).ToArray(),
+                bar.Concat(bar).Concat(bar).OrderBy(x => x).ToArray()
+            };
+
+            itemsLst.AddRange(itemsLst.Select(x => x.Reverse().ToArray()).ToArray());
+
+            var testCases = new List<(int[] src, int[] excludes)>(2048);
+            foreach (int[] items in itemsLst)
+            {
+                var missed_seq = new[] { -100, 100 };
+                var to_remove_lst = new List<int[]>()
+                {
+                    items,
+                    missed_seq,
+                    items.Concat(missed_seq).ToArray(),
+                    items.Concat(items).ToArray(),
+                    missed_seq.Concat(missed_seq).ToArray(),
+                    items.Concat(items).Concat(Enumerable.Repeat(512, 11)).ToArray(),
+                    missed_seq.Concat(items).Concat(missed_seq).ToArray()
+                };
+
+                // extra remove test
+                to_remove_lst.InsertRange(0, new[] { items.Take(2).ToArray() });
+                to_remove_lst.InsertRange(0, new[] { items.Take(7).ToArray() });
+                to_remove_lst.InsertRange(0, new[] { items.Take(3).Reverse().ToArray() });
+                to_remove_lst.InsertRange(0, items.Select(x => new int[] { x, x }));
+                to_remove_lst.InsertRange(0, items.Select(x => new int[] { x }));
+
+                to_remove_lst.ForEach(rl => testCases.Add((items, rl)));
+            }
+
+            foreach (var tCase in testCases)
+            {
+                var target = new AvaloniaList<int>(tCase.src);
+
+                bool raised = false;
+                var innerItems = tCase.src.ToList();
+
+                target.CollectionChanged += (s, e) =>
+                {
+                    Assert.Equal(target, s);
+                    Assert.Equal(NotifyCollectionChangedAction.Remove, e.Action);
+
+                    // simulate next remove notification
+                    int expected_end = innerItems.FindLastIndex(x => tCase.excludes.Contains(x)) + 1;
+                    int[] expected_items = innerItems.Take(expected_end).Reverse().TakeWhile(x => tCase.excludes.Contains(x)).Reverse().ToArray();
+                    int expected_start = expected_end - expected_items.Length;
+                    // handle simulated notification
+                    innerItems.RemoveRange(expected_start, expected_items.Length);
+
+                    Assert.Equal(expected_items, e.OldItems.Cast<int>());
+                    Assert.Equal(expected_start, e.OldStartingIndex);
+                    Assert.Equal(target.ToArray(), innerItems);
+
+                    raised = true;
+                };
+
+                target.RemoveAll(tCase.excludes);
+
+                if (tCase.src.Intersect(tCase.excludes).Count() != 0)
+                {
+                    Assert.True(raised);
+                    Assert.Equal(tCase.src.Where(x => !tCase.excludes.Contains(x)), innerItems);
+                }
+                else
+                {
+                    Assert.False(raised);
+                    Assert.Equal(target.Intersect(tCase.excludes).Count(), 0);
+                }
+            }
+        }
     }
 }

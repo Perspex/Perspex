@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Avalonia.Platform;
+using Avalonia.Utilities;
 
 namespace Avalonia.Media.Fonts
 {
@@ -12,18 +13,10 @@ namespace Avalonia.Media.Fonts
         /// </summary>
         /// <param name="fontFamilyKey"></param>
         /// <returns></returns>
-        public static IEnumerable<Uri> LoadFontAssets(FontFamilyKey fontFamilyKey)
-        {
-            var sourceWithoutArguments = fontFamilyKey.Source.OriginalString.Split('?').First();
-
-            if (sourceWithoutArguments.EndsWith(".ttf")
-                || sourceWithoutArguments.EndsWith(".otf"))
-            {
-                return GetFontAssetsByExpression(fontFamilyKey);
-            }
-
-            return GetFontAssetsBySource(fontFamilyKey);
-        }
+        public static IEnumerable<Uri> LoadFontAssets(FontFamilyKey fontFamilyKey) =>
+            IsFontTtfOrOtf(fontFamilyKey.Source)
+                ? GetFontAssetsByExpression(fontFamilyKey)
+                : GetFontAssetsBySource(fontFamilyKey);
 
         /// <summary>
         /// Searches for font assets at a given location and returns a quantity of found assets
@@ -33,13 +26,8 @@ namespace Avalonia.Media.Fonts
         private static IEnumerable<Uri> GetFontAssetsBySource(FontFamilyKey fontFamilyKey)
         {
             var assetLoader = AvaloniaLocator.Current.GetService<IAssetLoader>();
-
             var availableAssets = assetLoader.GetAssets(fontFamilyKey.Source, fontFamilyKey.BaseUri);
-
-            var matchingAssets =
-                availableAssets.Where(x => x.AbsolutePath.EndsWith(".ttf") || x.AbsolutePath.EndsWith(".otf"));
-
-            return matchingAssets;
+            return availableAssets.Where(IsFontTtfOrOtf);
         }
 
         /// <summary>
@@ -50,71 +38,124 @@ namespace Avalonia.Media.Fonts
         /// <returns></returns>
         private static IEnumerable<Uri> GetFontAssetsByExpression(FontFamilyKey fontFamilyKey)
         {
+            var (fileNameWithoutExtension, extension) = GetFileName(fontFamilyKey, out var location);
+            var filePattern = CreateFilePattern(fontFamilyKey, location, fileNameWithoutExtension);
+
             var assetLoader = AvaloniaLocator.Current.GetService<IAssetLoader>();
-
-            var fileName = GetFileName(fontFamilyKey, out var fileExtension, out var location);
-
             var availableResources = assetLoader.GetAssets(location, fontFamilyKey.BaseUri);
-
-            string compareTo;
-
-            if (fontFamilyKey.Source.IsAbsoluteUri)
-            {
-                if (fontFamilyKey.Source.Scheme == "resm")
-                {
-                    compareTo = location.AbsolutePath + "." + fileName.Split('*').First();
-                }
-                else
-                {
-                    compareTo = location.AbsolutePath + fileName.Split('*').First();
-                }
-            }
-            else
-            {
-                compareTo = location.AbsolutePath + fileName.Split('*').First();
-            }
-
-            var matchingResources = availableResources.Where(
-                x => x.AbsolutePath.Contains(compareTo)
-                     && x.AbsolutePath.EndsWith(fileExtension));
-
-            return matchingResources;
+            return availableResources.Where(x => IsContainsFile(x, filePattern, extension));
         }
 
-        private static string GetFileName(FontFamilyKey fontFamilyKey, out string fileExtension, out Uri location)
+        private static (string fileNameWithoutExtension, string extension) GetFileName(
+            FontFamilyKey fontFamilyKey, out Uri location)
         {
-            if (fontFamilyKey.Source.IsAbsoluteUri && fontFamilyKey.Source.Scheme == "resm")
+            if (fontFamilyKey.Source.IsAbsoluteResm())
             {
-                fileExtension = "." + fontFamilyKey.Source.AbsolutePath.Split('.').LastOrDefault();
+                var fileName = GetFileNameAndExtension(fontFamilyKey.Source.GetUnescapeAbsolutePath(), '.');
 
-                var fileName = fontFamilyKey.Source.LocalPath.Replace(fileExtension, string.Empty).Split('.').LastOrDefault();
-
-                location = new Uri(fontFamilyKey.Source.AbsoluteUri.Replace("." + fileName + fileExtension, string.Empty), UriKind.RelativeOrAbsolute);
+                var uriLocation = fontFamilyKey.Source.GetUnescapeAbsoluteUri()
+                    .Replace("." + fileName.fileNameWithoutExtension + fileName.extension, string.Empty);
+                location = new Uri(uriLocation, UriKind.RelativeOrAbsolute);
 
                 return fileName;
             }
 
-            var pathSegments = fontFamilyKey.Source.OriginalString.Split('/');
-
-            var fileNameWithExtension = pathSegments.Last();
-
-            var fileNameSegments = fileNameWithExtension.Split('.');
-
-            fileExtension = "." + fileNameSegments.Last();
+            var filename = GetFileNameAndExtension(fontFamilyKey.Source.OriginalString);
+            var fullFilename = filename.fileNameWithoutExtension + filename.extension;
 
             if (fontFamilyKey.BaseUri != null)
             {
                 var relativePath = fontFamilyKey.Source.OriginalString
-                    .Replace(fileNameWithExtension, string.Empty);
+                    .Replace(fullFilename, string.Empty);
 
                 location = new Uri(fontFamilyKey.BaseUri, relativePath);
             }
             else
             {
-                location = new Uri(fontFamilyKey.Source.AbsolutePath.Replace(fileNameWithExtension, string.Empty));
+                var uriString = fontFamilyKey.Source
+                    .GetUnescapeAbsoluteUri()
+                    .Replace(fullFilename, string.Empty);
+                location = new Uri(uriString);
             }
 
-            return fileNameSegments.First();
+            return filename;
+        }
+
+        private static bool IsFontTtfOrOtf(Uri uri)
+        {
+            var sourceWithoutArguments = GetSubString(uri.OriginalString, '?');
+            return sourceWithoutArguments.EndsWith(".ttf", StringComparison.Ordinal)
+                   || sourceWithoutArguments.EndsWith(".otf", StringComparison.Ordinal);
+        }
+
+        private static string CreateFilePattern(
+            FontFamilyKey fontFamilyKey, Uri location, string fileNameWithoutExtension)
+        {
+            var path = location.GetUnescapeAbsolutePath();
+            var file = GetSubString(fileNameWithoutExtension, '*');
+            return fontFamilyKey.Source.IsAbsoluteResm()
+                ? path + "." + file
+                : path + file;
+        }
+
+        private static bool IsContainsFile(Uri x, string filePattern, string fileExtension)
+        {
+            var path = x.GetUnescapeAbsolutePath();
+            return path.IndexOf(filePattern, StringComparison.Ordinal) >= 0
+                   && path.EndsWith(fileExtension, StringComparison.Ordinal);
+        }
+
+        private static (string fileNameWithoutExtension, string extension) GetFileNameAndExtension(
+            string path, char directorySeparator = '/')
+        {
+            var pathAsSpan = path.AsSpan();
+            pathAsSpan = IsPathRooted(pathAsSpan, directorySeparator)
+                ? pathAsSpan.Slice(1, path.Length - 1)
+                : pathAsSpan;
+            
+            var extension = GetFileExtension(pathAsSpan);
+            if (extension.Length == pathAsSpan.Length)
+                return (extension.ToString(), string.Empty);
+
+            var fileName = GetFileName(pathAsSpan, directorySeparator, extension.Length);
+            return (fileName.ToString(), extension.ToString());
+        }
+
+        private static ReadOnlySpan<char> GetFileExtension(ReadOnlySpan<char> path)
+        {
+            for (var i = path.Length - 1; i > 0; --i)
+            {
+                if (path[i] == '.')
+                    return path.Slice(i, path.Length - i);
+            }
+ 
+            return path;
+        }
+
+        private static ReadOnlySpan<char> GetFileName(
+            ReadOnlySpan<char> path, char directorySeparator, int extensionLength)
+        {
+            for (var i = path.Length - extensionLength - 1; i >= 0; --i)
+            {
+                if (path[i] == directorySeparator)
+                    return path.Slice(i + 1, path.Length - i - extensionLength - 1);
+            }
+ 
+            return path.Slice(0, path.Length - extensionLength);
+        }
+
+        private static bool IsPathRooted(ReadOnlySpan<char> path, char directorySeparator) =>
+            path.Length > 0 && path[0] == directorySeparator;
+
+        private static string GetSubString(string path, char separator)
+        {
+            for (var i = 0; i < path.Length; i++)
+            {
+                if (path[i] == separator)
+                    return path.Substring(0, i);
+            }
+
+            return path;
         }
     }
 }

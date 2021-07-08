@@ -338,6 +338,44 @@ namespace Avalonia
         }
 
         /// <summary>
+        /// Binds a property on an <see cref="IAvaloniaObject"/> to an <see cref="IBinding{T}"/>.
+        /// </summary>
+        /// <param name="target">The object.</param>
+        /// <param name="property">The property to bind.</param>
+        /// <param name="binding">The binding.</param>
+        /// <returns>An <see cref="IDisposable"/> which can be used to cancel the binding.</returns>
+        public static IDisposable Bind<T>(
+            this IAvaloniaObject target,
+            StyledPropertyBase<T> property,
+            IBinding<T> binding)
+        {
+            target = target ?? throw new ArgumentNullException(nameof(target));
+            property = property ?? throw new ArgumentNullException(nameof(property));
+            binding = binding ?? throw new ArgumentNullException(nameof(binding));
+
+            return binding.Bind(target, property);
+        }
+
+        /// <summary>
+        /// Binds a property on an <see cref="IAvaloniaObject"/> to an <see cref="IBinding{T}"/>.
+        /// </summary>
+        /// <param name="target">The object.</param>
+        /// <param name="property">The property to bind.</param>
+        /// <param name="binding">The binding.</param>
+        /// <returns>An <see cref="IDisposable"/> which can be used to cancel the binding.</returns>
+        public static IDisposable Bind<T>(
+            this IAvaloniaObject target,
+            DirectPropertyBase<T> property,
+            IBinding<T> binding)
+        {
+            target = target ?? throw new ArgumentNullException(nameof(target));
+            property = property ?? throw new ArgumentNullException(nameof(property));
+            binding = binding ?? throw new ArgumentNullException(nameof(binding));
+
+            return binding.Bind(target, property);
+        }
+
+        /// <summary>
         /// Binds a property on an <see cref="IAvaloniaObject"/> to an <see cref="IBinding"/>.
         /// </summary>
         /// <param name="target">The object.</param>

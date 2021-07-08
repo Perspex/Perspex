@@ -9,6 +9,9 @@
     <None Remove="Markup\Parsers\Nodes\ExpressionGrammer" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\..\Avalonia.Base\Metadata\NullableAttributes.cs" Link="NullableAttributes.cs" />
+  </ItemGroup>
+  <ItemGroup>
     <None Include="Markup\Parsers\BindingExpressionGrammar.cs" />
   </ItemGroup>
   <ItemGroup>

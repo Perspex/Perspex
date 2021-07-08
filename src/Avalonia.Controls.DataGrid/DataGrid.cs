@@ -3347,6 +3347,18 @@ namespace Avalonia.Controls
                     AddNewCellPrivate(dataGridRow, ColumnsItemsInternal[columnIndex]);
                 }
             }
+            else
+            {
+                foreach (var column in Columns.Where(columns => columns is DataGridTemplateColumn))
+                {
+
+                    PopulateCellContent(
+                        isCellEdited: false,
+                        dataGridColumn: column,
+                        dataGridRow: dataGridRow,
+                        dataGridCell: dataGridRow.Cells[column.Index]);
+                }
+            }
         }
 
         private void ComputeScrollBarsLayout()

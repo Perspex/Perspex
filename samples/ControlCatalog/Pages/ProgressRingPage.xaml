@@ -1,0 +1,32 @@
+<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" x:Class="ControlCatalog.Pages.ProgressRingPage">
+  <DockPanel>
+    <StackPanel Orientation="Vertical" Spacing="4" DockPanel.Dock="Top">
+      <TextBlock Classes="h1">ProgressRing</TextBlock>
+      <TextBlock Classes="h2">A progress bar-like control which is actually a doughnut shaped like a bagel</TextBlock>
+    </StackPanel>
+    <StackPanel Orientation="Horizontal" Spacing="10" Margin="10,16" DockPanel.Dock="Top">
+      <CheckBox x:Name="isIndeterminate" Content="Toggle Indeterminate" />
+      <CheckBox x:Name="preserveAspect" Content="Toggle Preserve Aspect Ratio" IsChecked="True"/>
+    </StackPanel>
+    <Grid RowDefinitions="*,2*">
+      <DockPanel Grid.Row="0">
+        <Slider Name="height" Maximum="768" Minimum="200" Value="220" DockPanel.Dock="Bottom" Margin="0,20,0,0"/>
+        <Slider Name="progress" Maximum="100" Value="40" DockPanel.Dock="Top"/>
+        <ProgressRing Margin="20" PreserveAspect="{Binding #preserveAspect.IsChecked}" IsIndeterminate="{Binding #isIndeterminate.IsChecked}" Value="{Binding #progress.Value}" Minimum="{Binding #progress.Minimum}" Maximum="{Binding #progress.Maximum}"/>
+      </DockPanel>
+      <UniformGrid Grid.Row="1" Rows="2" Margin="10,0" Height="{Binding #height.Value}">
+        <ProgressRing IsIndeterminate="True" Margin="10"/>
+        <ProgressRing IsIndeterminate="True" PreserveAspect="False" Margin="10"/>
+        <ProgressRing Margin="10" Value="50" Minimum="0" Maximum="75"/>
+        <ProgressRing PreserveAspect="False" Margin="10" Value="50" Minimum="0" Maximum="75"/>
+      </UniformGrid>
+    </Grid>
+  </DockPanel>
+  <!--StackPanel Orientation="Vertical">
+    <Arc StrokeThickness="9" Stroke="Red" Width="{Binding #width.Value}" Height="{Binding #height.Value}" StartAngle="{Binding #start.Value}" EndAngle="{Binding #end.Value}"/>
+    <Slider x:Name="width" Minimum="0" Maximum="100" Value="40" Margin="0,10,0,0"/>
+    <Slider x:Name="height" Minimum="0" Maximum="100" Value="40" Margin="0,0,0,10"/>
+    <Slider x:Name="start" Minimum="0" Maximum="360" Value="0"/>
+    <Slider x:Name="end" Minimum="0" Maximum="360" Value="0"/>
+  </StackPanel-->
+</UserControl>

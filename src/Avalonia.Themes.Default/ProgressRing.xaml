@@ -1,0 +1,90 @@
+<Styles xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:converters="using:Avalonia.Controls.Converters">
+  <Styles.Resources>
+    <converters:FitSquarelyWithinAspectRatioConverter x:Key="FitSquarelyWithinAspectRatioConverter"/>
+  </Styles.Resources>
+  <Style Selector="ProgressRing">
+    <Setter Property="Background" Value="{DynamicResource ThemeAccentBrush4}"/>
+    <Setter Property="Foreground" Value="{DynamicResource ThemeAccentBrush}"/>
+    <Setter Property="BorderThickness" Value="9" />
+    <Setter Property="MinHeight" Value="16" />
+    <Setter Property="MinWidth" Value="16" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Panel x:Name="FluentRingRoot">
+          <Ellipse x:Name="Track" Stroke="{TemplateBinding Background}" StrokeThickness="{Binding BorderThickness.Left, RelativeSource={RelativeSource Mode=TemplatedParent}}"/>
+          <Arc x:Name="Fill" Stroke="{TemplateBinding Foreground}" StrokeThickness="{Binding BorderThickness.Left, RelativeSource={RelativeSource Mode=TemplatedParent}}"/>
+          <Arc x:Name="Fill2" Stroke="{TemplateBinding Foreground}" StrokeThickness="{Binding BorderThickness.Left, RelativeSource={RelativeSource Mode=TemplatedParent}}" IsVisible="{TemplateBinding IsIndeterminate}"/>
+        </Panel>
+      </ControlTemplate>
+    </Setter>
+  </Style>
+
+  <Style Selector="ProgressRing:not(:indeterminate) /template/ Arc#Fill">
+    <Setter Property="EndAngle" Value="-90"/>
+    <Setter Property="StartAngle" Value="{Binding ValueAngle, RelativeSource={RelativeSource Mode=TemplatedParent}}"/>
+  </Style>
+  
+
+  <Style Selector="ProgressRing:preserveaspect">
+    <Setter Property="MinWidth" Value="32" />
+    <Setter Property="MinHeight" Value="32" />
+  </Style>
+
+  <Style Selector="ProgressRing:preserveaspect /template/ Panel#FluentRingRoot">
+    <Setter Property="Width" Value="{TemplateBinding Bounds, Converter={StaticResource FitSquarelyWithinAspectRatioConverter}}"/>
+    <Setter Property="Height" Value="{Binding Width, RelativeSource={RelativeSource Mode=Self}}"/>
+  </Style>
+
+  
+  <Style Selector="ProgressRing[IsEnabled=True]:indeterminate /template/ Arc#Fill">
+    <Style.Animations>
+      <Animation Duration="0:0:1.5" IterationCount="INFINITE" FillMode="Both">
+        <KeyFrame Cue="0%">
+          <Setter Property="StartAngle" Value="-90"/>
+          <Setter Property="EndAngle" Value="-90"/>
+        </KeyFrame>
+        <KeyFrame Cue="50%">
+          <Setter Property="StartAngle" Value="90"/>
+          <Setter Property="EndAngle" Value="-90"/>
+        </KeyFrame>
+        <KeyFrame Cue="100%">
+          <Setter Property="StartAngle" Value="90"/>
+          <Setter Property="EndAngle" Value="90"/>
+        </KeyFrame>
+      </Animation>
+    </Style.Animations>
+  </Style>
+  <Style Selector="ProgressRing[IsEnabled=True]:indeterminate /template/ Arc#Fill2">
+    <Style.Animations>
+      <Animation Duration="0:0:1.5" IterationCount="INFINITE" FillMode="Both">
+        <KeyFrame Cue="0%">
+          <Setter Property="StartAngle" Value="90"/>
+          <Setter Property="EndAngle" Value="90"/>
+        </KeyFrame>
+        <KeyFrame Cue="50%">
+          <Setter Property="StartAngle" Value="270"/>
+          <Setter Property="EndAngle" Value="90"/>
+        </KeyFrame>
+        <KeyFrame Cue="100%">
+          <Setter Property="StartAngle" Value="270"/>
+          <Setter Property="EndAngle" Value="270"/>
+        </KeyFrame>
+      </Animation>
+    </Style.Animations>
+  </Style>
+
+  
+  <!--Hack to prevent some really awful-looking visual artifacts, will open issue ASAP-->
+  <Style Selector="ProgressRing[IsEnabled=True] /template/ Ellipse#Track">
+    <Style.Animations>
+      <Animation Duration="0:0:1" IterationCount="INFINITE">
+        <KeyFrame Cue="0%">
+          <Setter Property="Opacity" Value="0.99"/>
+        </KeyFrame>
+        <KeyFrame Cue="100%">
+          <Setter Property="Opacity" Value="1"/>
+        </KeyFrame>
+      </Animation>
+    </Style.Animations>
+  </Style>
+</Styles>

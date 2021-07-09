@@ -24,6 +24,7 @@
   <StyleInclude Source="avares://Avalonia.Themes.Fluent/Controls/PathIcon.xaml" />
   <StyleInclude Source="avares://Avalonia.Themes.Fluent/Controls/PopupRoot.xaml"/>
   <StyleInclude Source="avares://Avalonia.Themes.Fluent/Controls/ProgressBar.xaml"/>
+  <StyleInclude Source="avares://Avalonia.Themes.Fluent/Controls/ProgressRing.xaml"/>
   <StyleInclude Source="avares://Avalonia.Themes.Fluent/Controls/RadioButton.xaml"/>
   <StyleInclude Source="avares://Avalonia.Themes.Fluent/Controls/RepeatButton.xaml" />
   <StyleInclude Source="avares://Avalonia.Themes.Fluent/Controls/Separator.xaml"/>

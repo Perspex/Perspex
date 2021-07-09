@@ -66,6 +66,7 @@
       <TabItem Header="OpenGL"><pages:OpenGlPage/></TabItem>
       <TabItem Header="Pointers (Touch)"><pages:PointersPage/></TabItem>
       <TabItem Header="ProgressBar"><pages:ProgressBarPage/></TabItem>
+      <TabItem Header="ProgressRing"><pages:ProgressRingPage/></TabItem>
       <TabItem Header="RadioButton"><pages:RadioButtonPage/></TabItem>
       <TabItem Header="RelativePanel"><pages:RelativePanelPage/></TabItem>
       <TabItem Header="ScrollViewer"><pages:ScrollViewerPage/></TabItem>

@@ -25,6 +25,7 @@
   <StyleInclude Source="resm:Avalonia.Themes.Default.PathIcon.xaml?assembly=Avalonia.Themes.Default" />
   <StyleInclude Source="resm:Avalonia.Themes.Default.PopupRoot.xaml?assembly=Avalonia.Themes.Default"/>
   <StyleInclude Source="resm:Avalonia.Themes.Default.ProgressBar.xaml?assembly=Avalonia.Themes.Default"/>
+  <StyleInclude Source="resm:Avalonia.Themes.Default.ProgressRing.xaml?assembly=Avalonia.Themes.Default"/>
   <StyleInclude Source="resm:Avalonia.Themes.Default.RadioButton.xaml?assembly=Avalonia.Themes.Default"/>
   <StyleInclude Source="resm:Avalonia.Themes.Default.RepeatButton.xaml?assembly=Avalonia.Themes.Default" />
   <StyleInclude Source="resm:Avalonia.Themes.Default.Separator.xaml?assembly=Avalonia.Themes.Default"/>

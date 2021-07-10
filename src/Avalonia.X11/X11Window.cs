@@ -1072,6 +1072,8 @@ namespace Avalonia.X11
             _disabled = !enable;
         }
 
+        public bool IsEnabled => !_disabled;
+
         public void SetExtendClientAreaToDecorationsHint(bool extendIntoClientAreaHint)
         {
         }

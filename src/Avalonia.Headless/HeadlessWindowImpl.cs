@@ -245,6 +245,8 @@ namespace Avalonia.Headless
 
         public Thickness OffScreenMargin => new Thickness();
 
+        public bool IsEnabled => true;
+
         public Action LostFocus { get; set; }
 
         public AcrylicPlatformCompensationLevels AcrylicCompensationLevels => new AcrylicPlatformCompensationLevels(1, 1, 1);

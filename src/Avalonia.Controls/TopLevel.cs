@@ -285,6 +285,9 @@ namespace Avalonia.Controls
         /// <inheritdoc/>
         IMouseDevice IInputRoot.MouseDevice => PlatformImpl?.MouseDevice;
 
+        /// <inheritdoc/>
+        bool? IInputRoot.IsPlatformEnabled => PlatformImpl is IWindowImpl windowImpl? windowImpl.IsEnabled : (bool?)null;
+
         void IWeakSubscriber<ResourcesChangedEventArgs>.OnEvent(object sender, ResourcesChangedEventArgs e)
         {
             ((ILogical)this).NotifyResourcesChanged(e);

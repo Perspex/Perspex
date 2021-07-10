@@ -3,6 +3,8 @@ MembersMustExist : Member 'public Avalonia.Platform.IPlatformHandle Avalonia.Inp
 MembersMustExist : Member 'public Avalonia.Interactivity.RoutedEvent<Avalonia.Interactivity.RoutedEventArgs> Avalonia.Interactivity.RoutedEvent<Avalonia.Interactivity.RoutedEventArgs> Avalonia.Input.Gestures.DoubleTappedEvent' does not exist in the implementation but it does exist in the contract.
 MembersMustExist : Member 'public Avalonia.Interactivity.RoutedEvent<Avalonia.Interactivity.RoutedEventArgs> Avalonia.Interactivity.RoutedEvent<Avalonia.Interactivity.RoutedEventArgs> Avalonia.Input.Gestures.RightTappedEvent' does not exist in the implementation but it does exist in the contract.
 MembersMustExist : Member 'public Avalonia.Interactivity.RoutedEvent<Avalonia.Interactivity.RoutedEventArgs> Avalonia.Interactivity.RoutedEvent<Avalonia.Interactivity.RoutedEventArgs> Avalonia.Input.Gestures.TappedEvent' does not exist in the implementation but it does exist in the contract.
+InterfacesShouldHaveSameMembers : Interface member 'public System.Nullable<System.Boolean> Avalonia.Input.IInputRoot.IsPlatformEnabled' is present in the implementation but not in the contract.
+InterfacesShouldHaveSameMembers : Interface member 'public System.Nullable<System.Boolean> Avalonia.Input.IInputRoot.IsPlatformEnabled.get()' is present in the implementation but not in the contract.
 MembersMustExist : Member 'public Avalonia.Interactivity.RoutedEvent<Avalonia.Interactivity.RoutedEventArgs> Avalonia.Interactivity.RoutedEvent<Avalonia.Interactivity.RoutedEventArgs> Avalonia.Input.InputElement.DoubleTappedEvent' does not exist in the implementation but it does exist in the contract.
 MembersMustExist : Member 'public Avalonia.Interactivity.RoutedEvent<Avalonia.Interactivity.RoutedEventArgs> Avalonia.Interactivity.RoutedEvent<Avalonia.Interactivity.RoutedEventArgs> Avalonia.Input.InputElement.TappedEvent' does not exist in the implementation but it does exist in the contract.
 MembersMustExist : Member 'public void Avalonia.Input.InputElement.add_DoubleTapped(System.EventHandler<Avalonia.Interactivity.RoutedEventArgs>)' does not exist in the implementation but it does exist in the contract.
@@ -10,4 +12,4 @@ MembersMustExist : Member 'public void Avalonia.Input.InputElement.add_Tapped(Sy
 MembersMustExist : Member 'public void Avalonia.Input.InputElement.remove_DoubleTapped(System.EventHandler<Avalonia.Interactivity.RoutedEventArgs>)' does not exist in the implementation but it does exist in the contract.
 MembersMustExist : Member 'public void Avalonia.Input.InputElement.remove_Tapped(System.EventHandler<Avalonia.Interactivity.RoutedEventArgs>)' does not exist in the implementation but it does exist in the contract.
 TypesMustExist : Type 'Avalonia.Platform.IStandardCursorFactory' does not exist in the implementation but it does exist in the contract.
-Total Issues: 11
+Total Issues: 13

@@ -91,7 +91,7 @@ namespace Avalonia.Input
 
         public void ProcessRawEvent(RawInputEventArgs e)
         {
-            if (!e.Handled && e is RawDragEvent margs)
+            if (!e.Handled && e is RawDragEvent margs && e.Root?.IsPlatformEnabled != false)
                 ProcessRawEvent(margs);
         }
 

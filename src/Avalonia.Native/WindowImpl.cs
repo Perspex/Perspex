@@ -220,5 +220,8 @@ namespace Avalonia.Native
         {
             _native.SetEnabled(enable.AsComBool());
         }
+        
+        // TODO: Implement
+        public bool IsEnabled => throw new NotImplementedException();
     }
 }

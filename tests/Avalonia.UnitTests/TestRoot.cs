@@ -62,6 +62,8 @@ namespace Avalonia.UnitTests
 
         public bool ShowAccessKeys { get; set; }
 
+        public bool? IsPlatformEnabled { get; }
+
         public IStyleHost StylingParent { get; set; }
 
         IStyleHost IStyleHost.StylingParent => StylingParent;

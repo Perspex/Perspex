@@ -38,6 +38,11 @@ namespace Avalonia.Platform
         void SetEnabled(bool enable);
 
         /// <summary>
+        /// Gets a value to indicate if the window is currently enabled.
+        /// </summary>
+        bool IsEnabled { get; }
+
+        /// <summary>
         /// Called when a disabled window received input. Can be used to activate child windows.
         /// </summary>
         Action GotInputWhenDisabled { get; set; }        

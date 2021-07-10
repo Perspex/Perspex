@@ -91,6 +91,8 @@ namespace Avalonia.DesignerSupport.Remote
 
         public bool NeedsManagedDecorations => false;
 
+        public bool IsEnabled => true;
+
         public void Activate()
         {
         }

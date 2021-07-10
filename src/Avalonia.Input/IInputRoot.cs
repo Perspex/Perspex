@@ -32,5 +32,10 @@ namespace Avalonia.Input
         /// </summary>
         [CanBeNull]
         IMouseDevice? MouseDevice { get; }
+
+        /// <summary>
+        /// If supported, gets a value indicating whether the element is enabled on the platform.
+        /// </summary>
+        bool? IsPlatformEnabled { get; }
     }
 }

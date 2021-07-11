@@ -78,6 +78,7 @@
       <TabItem Header="ToggleSwitch"><pages:ToggleSwitchPage/></TabItem>
       <TabItem Header="ToolTip"><pages:ToolTipPage/></TabItem>
       <TabItem Header="TreeView"><pages:TreeViewPage/></TabItem>
+      <TabItem Header="UniformGrid"><pages:UniformGridPage/></TabItem>
       <TabItem Header="Viewbox"><pages:ViewboxPage/></TabItem>
       <TabItem Header="Window Customizations"><pages:WindowCustomizationsPage/></TabItem>
       <TabControl.Tag>

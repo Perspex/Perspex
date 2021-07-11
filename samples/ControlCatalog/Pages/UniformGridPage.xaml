@@ -1,0 +1,117 @@
+﻿<UserControl x:Class="ControlCatalog.Pages.UniformGridPage"
+             xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             d:DesignHeight="450"
+             d:DesignWidth="800"
+             mc:Ignorable="d"
+             x:DataType="UserControl"
+             x:CompileBindings="True">
+
+  <DockPanel>
+    <UniformGrid Columns="2" DockPanel.Dock="Top">
+
+      <StackPanel>
+        <Label Target="ColumnsSlider">Columns</Label>
+        <Slider x:Name="ColumnsSlider"
+                Width="200"
+                HorizontalAlignment="Left"
+                Maximum="5"
+                Value="{Binding #UniformGridControl.Columns, Mode=TwoWay}" />
+      </StackPanel>
+
+      <StackPanel>
+        <Label Target="RowsSlider">Rows</Label>
+        <Slider x:Name="RowsSlider"
+                Width="200"
+                HorizontalAlignment="Left"
+                Maximum="5"
+                Value="{Binding #UniformGridControl.Rows, Mode=TwoWay}" />
+      </StackPanel>
+
+      <StackPanel>
+        <Label Target="OrientationComboBox">Orientation</Label>
+        <ComboBox x:Name="OrientationComboBox"
+                  Width="200"
+                  HorizontalAlignment="Left"
+                  SelectedItem="{Binding #UniformGridControl.Orientation, Mode=OneWayToSource}">
+          <ComboBox.Items>
+            <Orientation>Horizontal</Orientation>
+            <Orientation>Vertical</Orientation>
+          </ComboBox.Items>
+        </ComboBox>
+      </StackPanel>
+
+      <StackPanel>
+        <Label Target="FirstColumnSlider">FirstColumn</Label>
+        <Slider x:Name="FirstColumnSlider"
+                Width="200"
+                HorizontalAlignment="Left"
+                Maximum="3"
+                Value="{Binding #UniformGridControl.FirstColumn, Mode=OneWayToSource}" />
+      </StackPanel>
+
+      <StackPanel>
+        <Label Target="Item1RowSpanSlider">Item 1 RowSpan</Label>
+        <Slider x:Name="Item1RowSpanSlider"
+                Width="200"
+                HorizontalAlignment="Left"
+                Maximum="3"
+                Minimum="1"
+                Value="{Binding #FirstItemBorder.(Grid.RowSpan), Mode=OneWayToSource}" />
+      </StackPanel>
+
+      <StackPanel>
+        <Label Target="Item1ColumnSpanSlider">Item 1 ColumnSpan</Label>
+        <Slider x:Name="Item1ColumnSpanSlider"
+                Width="200"
+                HorizontalAlignment="Left"
+                Maximum="3"
+                Minimum="1"
+                Value="{Binding #FirstItemBorder.(Grid.ColumnSpan), Mode=OneWayToSource}" />
+      </StackPanel>
+    </UniformGrid>
+
+    <UniformGrid x:Name="UniformGridControl" Rows="0" Columns="0" FirstColumn="1" Orientation="Horizontal">
+      <Border x:Name="FirstItemBorder"
+              Grid.Row="1"
+              Grid.RowSpan="2"
+              Grid.Column="1"
+              Grid.ColumnSpan="2"
+              Background="AliceBlue">
+        <TextBlock Text="1" />
+      </Border>
+      <Border Background="Cornsilk">
+        <TextBlock Text="2" />
+      </Border>
+      <Border Background="DarkSalmon">
+        <TextBlock Text="3" />
+      </Border>
+      <Border Background="Gainsboro">
+        <TextBlock Text="4" />
+      </Border>
+      <Border Background="LightBlue">
+        <TextBlock Text="5" />
+      </Border>
+      <Border Background="MediumAquamarine">
+        <TextBlock Text="6" />
+      </Border>
+      <Border Background="MistyRose">
+        <TextBlock Text="7" />
+      </Border>
+      <Border Background="LightCyan">
+        <TextBlock Text="8" />
+      </Border>
+      <Border Background="Salmon">
+        <TextBlock Text="9" />
+      </Border>
+      <Border Background="Goldenrod">
+        <TextBlock Text="10" />
+      </Border>
+      <Border Background="Pink">
+        <TextBlock Text="11" />
+      </Border>
+    </UniformGrid>
+  </DockPanel>
+</UserControl>

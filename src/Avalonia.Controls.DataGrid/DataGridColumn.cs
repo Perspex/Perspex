@@ -579,10 +579,17 @@ namespace Avalonia.Controls
             object content = null;
             if (binding != null)
             {
-                OwningGrid.ClipboardContentControl.DataContext = item;
-                var sub = OwningGrid.ClipboardContentControl.Bind(ContentControl.ContentProperty, binding);
-                content = OwningGrid.ClipboardContentControl.GetValue(ContentControl.ContentProperty);
-                sub.Dispose();
+                var contentControl = OwningGrid.ClipboardContentControl;
+                contentControl.DataContext = item;
+
+                // Don't use binding directly, so we can ignore BindingMode value.
+                var instancedBinding = binding.Initiate(contentControl, ContentControl.ContentProperty);
+                if (instancedBinding != null)
+                {
+                    var sub = contentControl.Bind(ContentControl.ContentProperty, instancedBinding.Subject ?? instancedBinding.Observable);
+                    content = contentControl.GetValue(ContentControl.ContentProperty);
+                    sub.Dispose();
+                }
             }
             return content;
         }

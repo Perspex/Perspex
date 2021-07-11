@@ -125,13 +125,21 @@ namespace Avalonia.Controls.Primitives
         }
 
         double IManagedPopupPositionerPopup.Scaling => 1;
-       
+
         public static IPopupHost CreatePopupHost(IVisual target, IAvaloniaDependencyResolver dependencyResolver)
         {
-            var platform = (target.GetVisualRoot() as TopLevel)?.PlatformImpl?.CreatePopup();
-            if (platform != null)
-                return new PopupRoot((TopLevel)target.GetVisualRoot(), platform, dependencyResolver);
-            
+            return CreatePopupHost(target, dependencyResolver, true);
+        }
+
+        public static IPopupHost CreatePopupHost(IVisual target, IAvaloniaDependencyResolver dependencyResolver, bool shouldConstrainToRootBounds)
+        {
+            if (!shouldConstrainToRootBounds)
+            {
+                var platform = (target.GetVisualRoot() as TopLevel)?.PlatformImpl?.CreatePopup();
+                if (platform != null)
+                    return new PopupRoot((TopLevel)target.GetVisualRoot(), platform, dependencyResolver);
+            }
+
             var overlayLayer = OverlayLayer.GetOverlayLayer(target);
             if (overlayLayer == null)
                 throw new InvalidOperationException(

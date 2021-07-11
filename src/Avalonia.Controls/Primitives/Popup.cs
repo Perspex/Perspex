@@ -128,9 +128,22 @@ namespace Avalonia.Controls.Primitives
         public static readonly StyledProperty<bool> TopmostProperty =
             AvaloniaProperty.Register<Popup, bool>(nameof(Topmost));
 
+        /// <summary>
+        /// Defines the <see cref="ShouldConstrainToRootBounds"/> property.
+        /// </summary>
+        public static readonly StyledProperty<bool> ShouldConstrainToRootBoundsProperty =
+            AvaloniaProperty.Register<Popup, bool>(nameof(ShouldConstrainToRootBounds), false);
+
+        /// <summary>
+        /// Defines the <see cref="IsConstrainedToRootBounds"/> property.
+        /// </summary>
+        public static readonly DirectProperty<Popup, bool> IsConstrainedToRootBoundsProperty =
+            AvaloniaProperty.RegisterDirect<Popup, bool>(nameof(IsConstrainedToRootBounds), o => o.IsConstrainedToRootBounds);
+
         private bool _isOpenRequested = false;
         private bool _isOpen;
         private bool _ignoreIsOpenChanged;
+        private bool _isConstrainedToRootBounds;
         private PopupOpenState? _openState;
         private IInputElement _overlayInputPassThroughElement;
 
@@ -141,7 +154,7 @@ namespace Avalonia.Controls.Primitives
         {
             IsHitTestVisibleProperty.OverrideDefaultValue<Popup>(false);
             ChildProperty.Changed.AddClassHandler<Popup>((x, e) => x.ChildChanged(e));
-            IsOpenProperty.Changed.AddClassHandler<Popup>((x, e) => x.IsOpenChanged((AvaloniaPropertyChangedEventArgs<bool>)e));            
+            IsOpenProperty.Changed.AddClassHandler<Popup>((x, e) => x.IsOpenChanged((AvaloniaPropertyChangedEventArgs<bool>)e));
         }
 
         /// <summary>
@@ -344,6 +357,24 @@ namespace Avalonia.Controls.Primitives
         }
 
         /// <summary>
+        /// Gets or sets a value that indicates whether the popup should be shown within the bounds of the XAML root.
+        /// </summary>
+        public bool ShouldConstrainToRootBounds
+        {
+            get => GetValue(ShouldConstrainToRootBoundsProperty);
+            set => SetValue(ShouldConstrainToRootBoundsProperty, value);
+        }
+
+        /// <summary>
+        /// Gets a value that indicates whether the popup is shown within the bounds of the XAML root.
+        /// </summary>
+        public bool IsConstrainedToRootBounds
+        {
+            get => _isConstrainedToRootBounds;
+            private set => SetAndRaise(IsConstrainedToRootBoundsProperty, ref _isConstrainedToRootBounds, value);
+        }
+
+        /// <summary>
         /// Gets the root of the popup window.
         /// </summary>
         IVisual? IVisualTreeHost.Root => _openState?.PopupHost.HostedVisualTreeRoot;
@@ -376,7 +407,7 @@ namespace Avalonia.Controls.Primitives
             }
 
             _isOpenRequested = false;
-            var popupHost = OverlayPopupHost.CreatePopupHost(placementTarget, DependencyResolver);
+            var popupHost = OverlayPopupHost.CreatePopupHost(placementTarget, DependencyResolver, ShouldConstrainToRootBounds);
 
             var handlerCleanup = new CompositeDisposable(5);
 
@@ -472,6 +503,7 @@ namespace Avalonia.Controls.Primitives
             WindowManagerAddShadowHintChanged(popupHost, WindowManagerAddShadowHint);
 
             popupHost.Show();
+            IsConstrainedToRootBounds = popupHost is OverlayPopupHost;
 
             using (BeginIgnoringIsOpen())
             {

@@ -564,6 +564,41 @@ namespace Avalonia.Controls.UnitTests.Primitives
             }
         }
 
+        [Fact]
+        public void Popup_Open_With_Correct_IsConstrainedToRootBounds_And_Disabled_ConstrainToRootBounds()
+        {
+            using (CreateServices())
+            {
+                var target = new Popup();
+                target.IsOpen = true;
+                target.ShouldConstrainToRootBounds = false;
+
+                var window = PreparedWindow(target);
+                window.Show();
+
+                // If user asked for ShouldConstrainToRootBounds to be false, PopupHost should be used if available,
+                // and Overlay popups should be used only as a fallback.
+                Assert.Equal(UsePopupHost, target.IsConstrainedToRootBounds);
+            }
+        }
+
+        [Fact]
+        public void Popup_Open_With_Correct_IsConstrainedToRootBounds_And_Enabled_ConstrainToRootBounds()
+        {
+            using (CreateServices())
+            {
+                var target = new Popup();
+                target.IsOpen = true;
+                target.ShouldConstrainToRootBounds = true;
+
+                var window = PreparedWindow(target);
+                window.Show();
+
+                // If user asked for ShouldConstrainToRootBounds, PopupHost should be ignored and Overlay popups should be always used.
+                Assert.Equal(true, target.IsConstrainedToRootBounds);
+            }
+        }
+
         private IDisposable CreateServices()
         {
             return UnitTestApplication.Start(TestServices.StyledWindow.With(windowingPlatform:

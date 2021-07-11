@@ -2,7 +2,13 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              x:Class="ControlCatalog.Pages.MenuPage">
   <StackPanel Orientation="Vertical" Spacing="4">
+    <StackPanel.Styles>
+      <Style Selector="Popup">
+        <Setter Property="ShouldConstrainToRootBounds" Value="{Binding ShouldConstrainToRootBounds, Mode=OneWay}" />
+      </Style>
+    </StackPanel.Styles>
     <TextBlock Classes="h1">Menu</TextBlock>
+    <ToggleSwitch IsChecked="{Binding ShouldConstrainToRootBounds, Mode=TwoWay}" Content="ShouldConstrainToRootBounds enabled on this page" />
     <TextBlock Classes="h2">Exported menu fallback</TextBlock>
     <TextBlock>(Should be only visible on platforms without desktop-global menu bar)</TextBlock>
     <NativeMenuBar/>

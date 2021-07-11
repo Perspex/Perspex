@@ -8,8 +8,10 @@ using MiniMvvm;
 
 namespace ControlCatalog.ViewModels
 {
-    public class MenuPageViewModel
+    public class MenuPageViewModel : ViewModelBase
     {
+        private bool _shouldConstrainToRootBounds = false;
+
         public Control View { get; set; }
         public MenuPageViewModel()
         {
@@ -61,6 +63,12 @@ namespace ControlCatalog.ViewModels
                     }
                 }
             };
+        }
+
+        public bool ShouldConstrainToRootBounds
+        {
+            get => _shouldConstrainToRootBounds;
+            set => RaiseAndSetIfChanged(ref _shouldConstrainToRootBounds, value);
         }
 
         public IReadOnlyList<MenuItemViewModel> MenuItems { get; set; }

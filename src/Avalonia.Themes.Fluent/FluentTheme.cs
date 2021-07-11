@@ -17,7 +17,7 @@ namespace Avalonia.Themes.Fluent
     /// <summary>
     /// Includes the fluent theme in an application.
     /// </summary>
-    public class FluentTheme : IStyle, IResourceProvider
+    public class FluentTheme : IStyleExtra, IResourceProvider
     {
         private readonly Uri _baseUri;
         private IStyle[]? _loaded;
@@ -89,7 +89,11 @@ namespace Avalonia.Themes.Fluent
             }
         }
 
-        public SelectorMatchResult TryAttach(IStyleable target, IStyleHost? host) => Loaded.TryAttach(target, host);
+        public SelectorMatchResult TryAttach(IStyleable target, IStyleHost? host) =>
+            TryAttach(target, host, null);
+
+        public SelectorMatchResult TryAttach(IStyleable target, IStyleHost? host, IEnumerable<Style>? cancelStylesFromBelow) =>
+           (Loaded as IStyleExtra)?.TryAttach(target, host, cancelStylesFromBelow) ?? SelectorMatchResult.NeverThisType;
 
         public bool TryGetResource(object key, out object? value)
         {

@@ -50,7 +50,7 @@ namespace ControlCatalog
                         Application.Current.Styles[0] = App.DefaultDark;
                         break;
                 }
-            };            
+            };
 
             var decorations = this.Find<ComboBox>("Decorations");
             decorations.SelectionChanged += (sender, e) =>

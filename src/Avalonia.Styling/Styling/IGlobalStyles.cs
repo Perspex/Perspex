@@ -8,7 +8,7 @@ namespace Avalonia.Styling
     /// <summary>
     /// Defines the style host that provides styles global to the application.
     /// </summary>
-    public interface IGlobalStyles : IStyleHost
+    public interface IGlobalStyles : IStyleHostExtra
     {
         /// <summary>
         /// Raised when styles are added to <see cref="Styles"/> or a nested styles collection.

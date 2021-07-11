@@ -14,7 +14,7 @@ namespace Avalonia.Styling
     /// </summary>
     public class Styles : AvaloniaObject,
         IAvaloniaList<IStyle>,
-        IStyle,
+        IStyleExtra,
         IResourceProvider
     {
         private readonly AvaloniaList<IStyle> _styles = new AvaloniaList<IStyle>();
@@ -109,7 +109,9 @@ namespace Avalonia.Styling
             set => _styles[index] = value;
         }
 
-        public SelectorMatchResult TryAttach(IStyleable target, IStyleHost? host)
+        public SelectorMatchResult TryAttach(IStyleable target, IStyleHost? host) => TryAttach(target, host, null);
+
+        public SelectorMatchResult TryAttach(IStyleable target, IStyleHost? host, IEnumerable<Style>? cancelStylesFromBelow)
         {
             _cache ??= new Dictionary<Type, List<IStyle>?>();
 
@@ -119,7 +121,7 @@ namespace Avalonia.Styling
                 {
                     foreach (var style in cached)
                     {
-                        style.TryAttach(target, host);
+                        (style as IStyleExtra)?.TryAttach(target, host, cancelStylesFromBelow);
                     }
 
                     return SelectorMatchResult.AlwaysThisType;
@@ -135,14 +137,17 @@ namespace Avalonia.Styling
 
                 foreach (var child in this)
                 {
-                    if (child.TryAttach(target, host) != SelectorMatchResult.NeverThisType)
+                    if ((child as IStyleExtra)?.TryAttach(target, host, cancelStylesFromBelow) != SelectorMatchResult.NeverThisType)
                     {
                         matches ??= new List<IStyle>();
                         matches.Add(child);
                     }
                 }
 
-                _cache.Add(target.StyleKey, matches);
+                if (matches != null)
+                {
+                    _cache.Add(target.StyleKey, matches);
+                }
                 
                 return matches is null ?
                     SelectorMatchResult.NeverThisType :

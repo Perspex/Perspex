@@ -31,7 +31,7 @@ namespace Avalonia.Controls
         ILayoutRoot,
         IRenderRoot,
         ICloseable,
-        IStyleHost,
+        IStyleHostExtra,
         ILogicalRoot,
         ITextInputMethodRoot,
         IWeakSubscriber<ResourcesChangedEventArgs>

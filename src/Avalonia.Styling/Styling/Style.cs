@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Avalonia.Animation;
 using Avalonia.Controls;
 using Avalonia.Metadata;
@@ -11,7 +12,7 @@ namespace Avalonia.Styling
     /// <summary>
     /// Defines a style.
     /// </summary>
-    public class Style : AvaloniaObject, IStyle, IResourceProvider
+    public class Style : AvaloniaObject, IStyleExtra, IResourceProvider
     {
         private IResourceHost? _owner;
         private IResourceDictionary? _resources;
@@ -78,6 +79,8 @@ namespace Avalonia.Styling
         /// </summary>
         public Selector? Selector { get; set; }
 
+        public bool IsCancel { get; set; } = false;
+
         /// <summary>
         /// Gets the style's setters.
         /// </summary>
@@ -94,9 +97,21 @@ namespace Avalonia.Styling
 
         public event EventHandler? OwnerChanged;
 
-        public SelectorMatchResult TryAttach(IStyleable target, IStyleHost? host)
+        public SelectorMatchResult TryAttach(IStyleable target, IStyleHost? host) => TryAttach(target, host, null);
+
+        public SelectorMatchResult TryAttach(IStyleable target, IStyleHost? host, IEnumerable<Style>? cancelStylesFromBelow)
         {
+            if (IsCancel)
+            {
+                return SelectorMatchResult.NeverThisInstance;
+            }
+
             target = target ?? throw new ArgumentNullException(nameof(target));
+
+            if (cancelStylesFromBelow?.Any(styleToCancel => styleToCancel.Selector?.Match(target).IsMatch == true) == true)
+            {
+                return SelectorMatchResult.NeverThisInstance;
+            }
 
             var match = Selector is object ? Selector.Match(target) :
                 target == host ? SelectorMatch.AlwaysThisInstance : SelectorMatch.NeverThisInstance;

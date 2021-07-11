@@ -10,7 +10,7 @@ namespace Avalonia
 {
     public interface IStyledElement :
         IStyleable,
-        IStyleHost,
+        IStyleHostExtra,
         ILogical,
         IResourceHost,
         IDataContextProvider,

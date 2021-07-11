@@ -63,6 +63,7 @@ namespace Avalonia
         private IAvaloniaList<ILogical>? _logicalChildren;
         private IResourceDictionary? _resources;
         private Styles? _styles;
+        private List<Style> _canceledStyles;
         private bool _styled;
         private List<IStyleInstance>? _appliedStyles;
         private ITemplatedControl? _templatedParent;
@@ -205,6 +206,17 @@ namespace Avalonia
         /// itself and its children.
         /// </remarks>
         public Styles Styles => _styles ??= new Styles(this);
+
+
+        /// <summary>
+        /// Gets the styles to cancel from above for the styled element.
+        /// </summary>
+        /// <remarks>
+        /// Styles for the entire application are added to the Application.Styles collection, but
+        /// each styled element may in addition define its own styles which are applied to the styled element
+        /// itself and its children.
+        /// </remarks>
+        public List<Style> CanceledStyles => _canceledStyles ??= new List<Style>();
 
         /// <summary>
         /// Gets or sets the styled element's resource dictionary.

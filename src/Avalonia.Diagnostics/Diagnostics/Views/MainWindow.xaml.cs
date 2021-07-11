@@ -12,7 +12,7 @@ using Avalonia.VisualTree;
 
 namespace Avalonia.Diagnostics.Views
 {
-    internal class MainWindow : Window, IStyleHost
+    internal class MainWindow : Window, IStyleHostExtra
     {
         private readonly IDisposable _keySubscription;
         private TopLevel? _root;

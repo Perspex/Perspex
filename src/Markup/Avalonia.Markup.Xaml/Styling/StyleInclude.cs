@@ -10,7 +10,7 @@ namespace Avalonia.Markup.Xaml.Styling
     /// <summary>
     /// Includes a style from a URL.
     /// </summary>
-    public class StyleInclude : IStyle, IResourceProvider
+    public class StyleInclude : IStyleExtra, IResourceProvider
     {
         private readonly Uri _baseUri;
         private IStyle[]? _loaded;
@@ -82,7 +82,10 @@ namespace Avalonia.Markup.Xaml.Styling
             }
         }
 
-        public SelectorMatchResult TryAttach(IStyleable target, IStyleHost? host) => Loaded.TryAttach(target, host);
+        public SelectorMatchResult TryAttach(IStyleable target, IStyleHost? host) => TryAttach(target, host, null);
+
+        public SelectorMatchResult TryAttach(IStyleable target, IStyleHost? host, IEnumerable<Style>? cancelStylesFromBelow) => 
+            (Loaded as IStyleExtra)?.TryAttach(target, host, cancelStylesFromBelow) ?? SelectorMatchResult.NeverThisInstance;
 
         public bool TryGetResource(object key, out object? value)
         {

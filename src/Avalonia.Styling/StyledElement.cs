@@ -332,6 +332,11 @@ namespace Avalonia
         /// </returns>
         protected bool ApplyStyling()
         {
+            return ApplyStylingOverride();
+        }
+
+        internal protected virtual bool ApplyStylingOverride()
+        {
             if (_initCount == 0 && !_styled)
             {
                 try
@@ -729,8 +734,8 @@ namespace Avalonia
 
             for (var i = 0; i < count; i++)
             {
-                var logical = (ILogical) children[i];
-                
+                var logical = (ILogical)children[i];
+
                 if (logical.LogicalParent is null)
                 {
                     ((ISetLogicalParent)logical).SetParent(this);
@@ -744,8 +749,8 @@ namespace Avalonia
 
             for (var i = 0; i < count; i++)
             {
-                var logical = (ILogical) children[i];
-                
+                var logical = (ILogical)children[i];
+
                 if (logical.LogicalParent == this)
                 {
                     ((ISetLogicalParent)logical).SetParent(null);
@@ -754,6 +759,12 @@ namespace Avalonia
         }
 
         private void DetachStyles()
+        {
+            DetachStylesOverride();
+            _styled = false;
+        }
+
+        internal protected virtual void DetachStylesOverride()
         {
             if (_appliedStyles is object)
             {
@@ -773,34 +784,45 @@ namespace Avalonia
                     EndBatchUpdate();
                 }
             }
-
-            _styled = false;
         }
 
         private void DetachStyles(IReadOnlyList<IStyle> styles)
         {
-            styles = styles ?? throw new ArgumentNullException(nameof(styles));
 
+            DetachStylesOverride(styles);
+        }
+
+        internal protected virtual void DetachStylesOverride(IReadOnlyList<IStyle> styles)
+        {
+            styles = styles ?? throw new ArgumentNullException(nameof(styles));
             if (_appliedStyles is null)
             {
                 return;
             }
-
-            var count = styles.Count;
-
-            for (var i = 0; i < count; ++i)
+            BeginBatchUpdate();
+            try
             {
-                for (var j = _appliedStyles.Count - 1; j >= 0; --j)
-                {
-                    var applied = _appliedStyles[j];
+                var count = styles.Count;
 
-                    if (applied.Source == styles[i])
+                for (var i = 0; i < count; ++i)
+                {
+                    for (var j = _appliedStyles.Count - 1; j >= 0; --j)
                     {
-                        applied.Dispose();
-                        _appliedStyles.RemoveAt(j);
+                        var applied = _appliedStyles[j];
+
+                        if (applied.Source == styles[i])
+                        {
+                            applied.Dispose();
+                            _appliedStyles.RemoveAt(j);
+                        }
                     }
                 }
             }
+            finally
+            {
+                EndBatchUpdate();
+            }
+            _styled = _appliedStyles.Count > 0;
         }
 
         private void InvalidateStylesOnThisAndDescendents()
@@ -884,5 +906,7 @@ namespace Avalonia
                 RecurseStyles(style.Children, result);
             }
         }
+
+        internal protected bool IsAppliedStyling { get => _styled; }
     }
 }

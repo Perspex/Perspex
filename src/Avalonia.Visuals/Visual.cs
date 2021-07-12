@@ -647,5 +647,25 @@ namespace Avalonia
                 visual.SetVisualParent(parent);
             }
         }
+
+        protected override bool ApplyStylingOverride()
+        {
+            // ApplyStyling only when is not already applied and Visual is visble.
+            if (IsAppliedStyling == false && IsEffectivelyVisible == true)
+            {
+                return base.ApplyStylingOverride();
+            }
+            return true;
+        }
+
+        protected override void OnPropertyChanged<T>(AvaloniaPropertyChangedEventArgs<T> change)
+        {
+            base.OnPropertyChanged(change);
+            if (change.Property == IsVisibleProperty)
+            {
+                // When visibulity changed try apply Styling.
+                ApplyStyling();
+            }
+        }
     }
 }

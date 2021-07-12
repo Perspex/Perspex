@@ -17,6 +17,7 @@
   <StyleInclude Source="avares://Avalonia.Themes.Fluent/Controls/ItemsControl.xaml"/>
   <StyleInclude Source="avares://Avalonia.Themes.Fluent/Controls/ListBox.xaml"/>
   <StyleInclude Source="avares://Avalonia.Themes.Fluent/Controls/ListBoxItem.xaml"/>
+  <StyleInclude Source="avares://Avalonia.Themes.Fluent/Controls/ManagedPointer.axaml"/>
   <StyleInclude Source="avares://Avalonia.Themes.Fluent/Controls/Menu.xaml"/>
   <StyleInclude Source="avares://Avalonia.Themes.Fluent/Controls/ContextMenu.xaml"/>
   <StyleInclude Source="avares://Avalonia.Themes.Fluent/Controls/MenuItem.xaml"/>

@@ -18,6 +18,7 @@
   <StyleInclude Source="resm:Avalonia.Themes.Default.ItemsControl.xaml?assembly=Avalonia.Themes.Default"/>
   <StyleInclude Source="resm:Avalonia.Themes.Default.ListBox.xaml?assembly=Avalonia.Themes.Default"/>
   <StyleInclude Source="resm:Avalonia.Themes.Default.ListBoxItem.xaml?assembly=Avalonia.Themes.Default"/>
+  <StyleInclude Source="resm:Avalonia.Themes.Default.ManagedPointer.xaml?assembly=Avalonia.Themes.Default"/>
   <StyleInclude Source="resm:Avalonia.Themes.Default.Menu.xaml?assembly=Avalonia.Themes.Default"/>
   <StyleInclude Source="resm:Avalonia.Themes.Default.ContextMenu.xaml?assembly=Avalonia.Themes.Default"/>
   <StyleInclude Source="resm:Avalonia.Themes.Default.MenuItem.xaml?assembly=Avalonia.Themes.Default"/>

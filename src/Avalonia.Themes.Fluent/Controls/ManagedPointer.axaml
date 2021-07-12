@@ -1,0 +1,26 @@
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:controls="using:Avalonia.Controls">
+    <Design.PreviewWith>
+        <controls:ManagedPointer />
+    </Design.PreviewWith>
+
+    <Style Selector="controls|ManagedPointer">
+        <!-- Set Defaults -->
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Viewbox Height="16" Width="10" HorizontalAlignment="Left" Stretch="Uniform">
+                    <Path x:Name="PART_CursorPath" Fill="{DynamicResource TextControlForeground}" />
+                </Viewbox>
+            </ControlTemplate>
+        </Setter>
+    </Style>
+    
+    <Style Selector="controls|ManagedPointer/template/ Path#PART_CursorPath">
+        <Setter Property="Data" Value="m 0 0 v 16.4402 l 3.792 -3.6182 l 2.193 4.195 c 0.5196 1.1714 3.2209 0.2295 2.4528 -1.3369 l -2.0992 -4.4968 l 4.6846 -0 z" />
+    </Style>
+    
+    <Style Selector="controls|ManagedPointer[PointerCursor=Hand] /template/ Path#PART_CursorPath">
+        <Setter Property="Data" Value="{x:Null}" />
+    </Style>
+</Styles>

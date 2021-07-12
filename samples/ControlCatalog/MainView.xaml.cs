@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Controls.Primitives;
 using Avalonia.Markup.Xaml;
 using Avalonia.Markup.Xaml.MarkupExtensions;
 using Avalonia.Markup.Xaml.Styling;
@@ -58,6 +59,13 @@ namespace ControlCatalog
                 if (VisualRoot is Window window)
                     window.SystemDecorations = (SystemDecorations)decorations.SelectedIndex;
             };
+        }
+
+        protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
+        {
+            base.OnApplyTemplate(e);
+
+            new ManagedPointer(VisualRoot as TopLevel);
         }
 
         protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)

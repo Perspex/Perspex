@@ -16,7 +16,7 @@ namespace Avalonia.LinuxFramebuffer.Input.LibInput
         private readonly Queue<Action> _inputThreadActions = new Queue<Action>();
         private TouchDevice _touch = new TouchDevice();
         private MouseDevice _mouse = new MouseDevice();
-        private Point _mousePosition;
+        private Point _mousePosition = new Point();
         
         private readonly Queue<RawInputEventArgs> _inputQueue = new Queue<RawInputEventArgs>();
         private Action<RawInputEventArgs> _onInput;
@@ -47,7 +47,6 @@ namespace Avalonia.LinuxFramebuffer.Input.LibInput
                 libinput_dispatch(ctx);
                 while ((ev = libinput_get_event(ctx)) != IntPtr.Zero)
                 {
-                    
                     var type = libinput_event_get_type(ev);
                     if (type >= LibInputEventType.LIBINPUT_EVENT_TOUCH_DOWN &&
                         type <= LibInputEventType.LIBINPUT_EVENT_TOUCH_CANCEL)
@@ -75,16 +74,35 @@ namespace Avalonia.LinuxFramebuffer.Input.LibInput
                 {
                     Dispatcher.UIThread.Post(() =>
                     {
+                        Dispatcher.UIThread.RunJobs(DispatcherPriority.Input + 1);
+
                         while (true)
                         {
-                            Dispatcher.UIThread.RunJobs(DispatcherPriority.Input + 1);
                             RawInputEventArgs dequeuedEvent = null;
-                            lock(_inputQueue)
+
+                            lock (_inputQueue)
+                            {
                                 if (_inputQueue.Count != 0)
+                                {
                                     dequeuedEvent = _inputQueue.Dequeue();
-                            if (dequeuedEvent == null)
-                                return;
-                            _onInput?.Invoke(dequeuedEvent);
+                                }
+                            }
+                            
+                            switch (dequeuedEvent)
+                            {
+                                case RawPointerEventArgs pointerEventArgs when (pointerEventArgs.Type == RawPointerEventType.Move ||
+                                                                    pointerEventArgs.Type == RawPointerEventType.TouchUpdate) && 
+                                                                   _inputQueue.Count != 0 && _inputQueue.Peek() is RawPointerEventArgs next &&
+                                                                   next.Type == pointerEventArgs.Type:
+                                    continue;
+                                
+                                case null:
+                                    return;
+                                
+                                default:
+                                    _onInput?.Invoke(dequeuedEvent);
+                                    break;
+                            }
                         }
                     }, DispatcherPriority.Input);
                 }
@@ -129,6 +147,8 @@ namespace Avalonia.LinuxFramebuffer.Input.LibInput
             }
         }
 
+        DateTimeOffset _offset = DateTimeOffset.Now;
+        
         private void HandlePointer(IntPtr ev, LibInputEventType type)
         {
             //TODO: support input modifiers
@@ -140,6 +160,34 @@ namespace Avalonia.LinuxFramebuffer.Input.LibInput
                 _mousePosition = new Point(libinput_event_pointer_get_absolute_x_transformed(pev, (int)info.Width),
                     libinput_event_pointer_get_absolute_y_transformed(pev, (int)info.Height));
                 ScheduleInput(new RawPointerEventArgs(_mouse, ts, _inputRoot, RawPointerEventType.Move, _mousePosition,
+                    RawInputModifiers.None));
+            }
+            else if (type == LibInputEventType.LIBINPUT_EVENT_POINTER_MOTION)
+            {
+                _mousePosition += new Point(libinput_event_pointer_get_dx(pev), libinput_event_pointer_get_dy(pev));
+
+                if (_mousePosition.X < 0)
+                {
+                    _mousePosition = _mousePosition.WithX(0);
+                }
+
+                if (_mousePosition.Y < 0)
+                {
+                    _mousePosition = _mousePosition.WithY(0);
+                }
+
+                if (_mousePosition.X > info.Width)
+                {
+                    _mousePosition = _mousePosition.WithX(info.Width);
+                }
+
+                if (_mousePosition.Y > info.Height)
+                {
+                    _mousePosition = _mousePosition.WithY(info.Height);
+                }
+
+                ScheduleInput(new RawPointerEventArgs(_mouse, ts, _inputRoot, RawPointerEventType.Move,
+                    _mousePosition,
                     RawInputModifiers.None));
             }
             else if (type == LibInputEventType.LIBINPUT_EVENT_POINTER_BUTTON)
@@ -166,12 +214,11 @@ namespace Avalonia.LinuxFramebuffer.Input.LibInput
             }
             
         }
-            
-        
 
         public void Initialize(IScreenInfoProvider screen, Action<RawInputEventArgs> onInput)
         {
             _screen = screen;
+            _mousePosition = new Point(_screen.ScaledSize.Width / 2, _screen.ScaledSize.Height / 2);
             _onInput = onInput;
         }
 

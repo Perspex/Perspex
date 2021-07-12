@@ -4,8 +4,8 @@
         <TargetFramework>net461</TargetFramework>
     </PropertyGroup>
     <ItemGroup>
-        <PackageReference Include="SharpDX.Mathematics" Version="4.0.1" />
-        <PackageReference Include="SharpDX.D3DCompiler" Version="4.0.1" />
+        <PackageReference Include="SharpDX.Mathematics" Version="4.2.0" />
+        <PackageReference Include="SharpDX.D3DCompiler" Version="4.2.0" />
         <Compile Update="**\*.paml.cs">
             <DependentUpon>%(Filename)</DependentUpon>
         </Compile>

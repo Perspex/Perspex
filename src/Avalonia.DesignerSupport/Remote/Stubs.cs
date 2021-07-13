@@ -178,6 +178,7 @@ namespace Avalonia.DesignerSupport.Remote
         public bool NeedsManagedDecorations => false;
         
         public AcrylicPlatformCompensationLevels AcrylicCompensationLevels { get; } = new AcrylicPlatformCompensationLevels(1, 1, 1);
+        public Action InputMethodUpdated { get; set; }
     }
 
     class ClipboardStub : IClipboard

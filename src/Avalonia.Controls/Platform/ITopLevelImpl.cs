@@ -137,5 +137,11 @@ namespace Avalonia.Platform
         /// Gets the <see cref="AcrylicPlatformCompensationLevels"/> for the platform.        
         /// </summary>
         AcrylicPlatformCompensationLevels AcrylicCompensationLevels { get; }
+
+
+        /// <summary>
+        /// Called when the input method is changed for the current top level object.
+        /// </summary>
+        Action InputMethodUpdated { get; set; }
     }
 }

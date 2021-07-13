@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
+using System.Text;
+
 using Avalonia.Controls;
 using Avalonia.Controls.Platform;
 using Avalonia.Input;
@@ -453,6 +455,41 @@ namespace Avalonia.Win32
                 case WindowsMessage.WM_KILLFOCUS:
                     LostFocus?.Invoke();
                     break;
+
+                case WindowsMessage.WM_INPUTLANGCHANGE:
+                    {
+                        UpdateInputMethod(lParam);
+                        // call DefWindowProc to pass to all children
+                        break;
+                    }
+                case WindowsMessage.WM_IME_SETCONTEXT:
+                    {
+                        // TODO if we implement preedit, disable the composition window:
+                        // lParam = new IntPtr((int)(((uint)lParam.ToInt64()) & ~ISC_SHOWUICOMPOSITIONWINDOW));
+                        UpdateInputMethod(GetKeyboardLayout(0));
+                        break;
+                    }
+                case WindowsMessage.WM_IME_CHAR:
+                case WindowsMessage.WM_IME_COMPOSITION:
+                case WindowsMessage.WM_IME_COMPOSITIONFULL:
+                case WindowsMessage.WM_IME_CONTROL:
+                case WindowsMessage.WM_IME_KEYDOWN:
+                case WindowsMessage.WM_IME_KEYUP:
+                case WindowsMessage.WM_IME_NOTIFY:
+                case WindowsMessage.WM_IME_SELECT:
+                    break;
+                case WindowsMessage.WM_IME_STARTCOMPOSITION:
+                    if (_ime != null)
+                    {
+                        _ime.IsComposing = true;
+                    }
+                    break;
+                case WindowsMessage.WM_IME_ENDCOMPOSITION:
+                    if (_ime != null)
+                    {
+                        _ime.IsComposing = false;
+                    }
+                    break;
             }
 
 #if USE_MANAGED_DRAG
@@ -478,6 +515,23 @@ namespace Avalonia.Win32
             using (_rendererLock.Lock())
             {
                 return DefWindowProc(hWnd, msg, wParam, lParam);
+            }
+        }
+
+        private void UpdateInputMethod(IntPtr hkl)
+        {
+            // note: for non-ime language, also create it so that emoji panel tracks cursor
+            var langid = LGID(hkl);
+            if (langid == _langid)
+            {
+                return;
+            } 
+            _langid = langid;
+            _ime?.Dispose();
+            _ime = new Imm32InputMethod(this, Hwnd, hkl);
+            if (InputMethodUpdated != null)
+            {
+                InputMethodUpdated();
             }
         }
 

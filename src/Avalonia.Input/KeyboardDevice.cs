@@ -265,5 +265,10 @@ namespace Avalonia.Input
                 e.Handled = ev.Handled;
             }
         }
+
+        public void NotifyInputMethodUpdated(ITextInputMethodRoot? root)
+        {
+            _textInputManager.NotifyInputMethodUpdated(root);
+        }
     }
 }

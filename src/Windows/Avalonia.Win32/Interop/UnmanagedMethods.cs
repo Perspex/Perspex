@@ -1496,6 +1496,86 @@ namespace Avalonia.Win32.Interop
         [DllImport("user32.dll")]
         internal static extern int SetWindowCompositionAttribute(IntPtr hwnd, ref WindowCompositionAttributeData data);
 
+        [DllImport("imm32.dll", SetLastError = true)]
+        public static extern IntPtr ImmGetContext(IntPtr hWnd);
+        [DllImport("imm32.dll")]
+        public static extern bool ImmReleaseContext(IntPtr hWnd, IntPtr hIMC);
+        [DllImport("imm32.dll")]
+        public static extern bool ImmSetOpenStatus(IntPtr hIMC, bool flag);
+        [DllImport("imm32.dll")]
+        public static extern bool ImmSetActiveContext(IntPtr hIMC, bool flag);
+        [DllImport("imm32.dll")]
+        public static extern bool ImmSetStatusWindowPos(IntPtr hIMC, ref POINT lpptPos);
+        [DllImport("imm32.dll")]
+        public static extern bool ImmIsIME(IntPtr HKL);
+        [DllImport("imm32.dll")]
+        public static extern bool ImmSetCandidateWindow(IntPtr hIMC, ref CANDIDATEFORM lpCandidate);
+        [DllImport("imm32.dll")]
+        public static extern bool ImmSetCompositionWindow(IntPtr hIMC, ref COMPOSITIONFORM lpComp);
+        [DllImport("imm32.dll")]
+        public static extern bool ImmNotifyIME(IntPtr hIMC, int dwAction, int dwIndex, int dwValue);
+        [DllImport("user32.dll")]
+        public static extern bool CreateCaret(IntPtr hwnd, IntPtr hBitmap, int nWidth, int nHeight);
+        [DllImport("user32.dll")]
+        public static extern bool SetCaretPos(int X, int Y);
+        [DllImport("user32.dll")]
+        public static extern bool DestroyCaret();
+        [DllImport("user32.dll")]
+        public static extern IntPtr GetKeyboardLayout(int idThread);
+        [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
+        public static extern int LCIDToLocaleName(uint Locale, StringBuilder lpName, int cchName, int dwFlags);
+
+        public static uint MAKELCID(uint lgid, uint srtid)
+        {
+            return (((uint)(ushort)srtid) << 16) |
+                   ((ushort)lgid);
+        }
+
+        public static ushort PRIMARYLANGID(uint lgid)
+        {
+            return (ushort)(lgid & 0x3ff);
+        }
+
+        public static uint LGID(IntPtr HKL)
+        {
+            return (uint)(HKL.ToInt32() & 0xffff);
+        }
+
+        public const int SORT_DEFAULT = 0;
+        public const int LANG_ZH = 0x0004;
+        public const int LANG_JA = 0x0011;
+        public const int LANG_KO = 0x0012;
+
+        public const int CFS_CANDIDATEPOS = 0x0040;
+        public const int CFS_EXCLUDE = 0x0080;
+        public const int CFS_POINT = 0x0002;
+        public const int CFS_RECT = 0x0001;
+        public const uint ISC_SHOWUICOMPOSITIONWINDOW = 0x80000000;
+
+        public const int NI_COMPOSITIONSTR = 21;
+        public const int CPS_COMPLETE = 1;
+        public const int CPS_CONVERT = 2;
+        public const int CPS_REVERT = 3;
+        public const int CPS_CANCEL = 4;
+
+        [StructLayout(LayoutKind.Sequential)]
+        internal struct CANDIDATEFORM
+        {
+            public int dwIndex;
+            public int dwStyle;
+            public POINT ptCurrentPos;
+            public RECT rcArea;
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        internal struct COMPOSITIONFORM
+        {
+            public int dwStyle;
+            public POINT ptCurrentPos;
+            public RECT rcArea;
+        }
+
+
         [StructLayout(LayoutKind.Sequential)]
         internal struct WindowCompositionAttributeData
         {

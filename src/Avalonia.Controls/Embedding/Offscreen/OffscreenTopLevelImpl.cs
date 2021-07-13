@@ -74,6 +74,7 @@ namespace Avalonia.Controls.Embedding.Offscreen
         public void SetTransparencyLevelHint(WindowTransparencyLevel transparencyLevel) { }
 
         public WindowTransparencyLevel TransparencyLevel { get; private set; }
+        public Action InputMethodUpdated { get; set; }
 
         public IPopupImpl CreatePopup() => null;
     }

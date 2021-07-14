@@ -139,7 +139,7 @@ namespace Avalonia.Controls.UnitTests
 
                 // The user has resized the window, so we can no longer auto-size.
                 var target = new TestTopLevel(impl.Object);
-                impl.Object.Resized(new Size(100, 200));
+                impl.Object.Resized(new Size(100, 200), PlatformResizeReason.Unspecified);
 
                 Assert.Equal(100, target.Width);
                 Assert.Equal(200, target.Height);

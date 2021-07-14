@@ -58,7 +58,7 @@ namespace Avalonia.DesignerSupport.Remote
             base.OnMessage(transport, obj);
         }
         
-        public void Resize(Size clientSize)
+        public void Resize(Size clientSize, PlatformResizeReason reason)
         {
             _transport.Send(new RequestViewportResizeMessage
             {

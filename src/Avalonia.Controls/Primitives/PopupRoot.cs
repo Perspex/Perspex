@@ -161,12 +161,9 @@ namespace Avalonia.Controls.Primitives
 
         protected override sealed Size ArrangeSetBounds(Size size)
         {
-            using (BeginAutoSizing())
-            {
-                _positionerParameters.Size = size;
-                UpdatePosition();
-                return ClientSize;
-            }
+            _positionerParameters.Size = size;
+            UpdatePosition();
+            return ClientSize;
         }
     }
 }

@@ -110,7 +110,9 @@ namespace Avalonia.Platform
         /// <summary>
         /// Sets the client size of the top level.
         /// </summary>
-        void Resize(Size clientSize);
+        /// <param name="clientSize">The new client size.</param>
+        /// <param name="reason">The reason for the resize.</param>
+        void Resize(Size clientSize, PlatformResizeReason reason = PlatformResizeReason.Application);
 
         /// <summary>
         /// Sets the client size of the top level.

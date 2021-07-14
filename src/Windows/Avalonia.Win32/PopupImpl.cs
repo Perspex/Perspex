@@ -135,7 +135,7 @@ namespace Avalonia.Win32
         private void MoveResize(PixelPoint position, Size size, double scaling)
         {
             Move(position);
-            Resize(size);
+            Resize(size, PlatformResizeReason.Layout);
             //TODO: We ignore the scaling override for now
         }
 

@@ -2,9 +2,10 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using Avalonia.Controls;
-using Avalonia.Controls.Platform;
+using Avalonia.Controls.Remote;
 using Avalonia.Input;
 using Avalonia.Input.Raw;
+using Avalonia.Platform;
 using Avalonia.Win32.Input;
 using static Avalonia.Win32.Interop.UnmanagedMethods;
 
@@ -18,7 +19,6 @@ namespace Avalonia.Win32
         {
             const double wheelDelta = 120.0;
             uint timestamp = unchecked((uint)GetMessageTime());
-
             RawInputEventArgs e = null;
             var shouldTakeFocus = false;
 
@@ -94,14 +94,19 @@ namespace Avalonia.Win32
                         var newDisplayRect = Marshal.PtrToStructure<RECT>(lParam);
                         _scaling = dpi / 96.0;
                         ScalingChanged?.Invoke(_scaling);
-                        SetWindowPos(hWnd,
-                            IntPtr.Zero,
-                            newDisplayRect.left,
-                            newDisplayRect.top,
-                            newDisplayRect.right - newDisplayRect.left,
-                            newDisplayRect.bottom - newDisplayRect.top,
-                            SetWindowPosFlags.SWP_NOZORDER |
-                            SetWindowPosFlags.SWP_NOACTIVATE);
+                        
+                        using (SetResizeReason(PlatformResizeReason.DpiChange))
+                        { 
+                            SetWindowPos(hWnd,
+                                IntPtr.Zero,
+                                newDisplayRect.left,
+                                newDisplayRect.top,
+                                newDisplayRect.right - newDisplayRect.left,
+                                newDisplayRect.bottom - newDisplayRect.top,
+                                SetWindowPosFlags.SWP_NOZORDER |
+                                SetWindowPosFlags.SWP_NOACTIVATE);
+                        }
+
                         return IntPtr.Zero;
                     }
 
@@ -364,6 +369,11 @@ namespace Avalonia.Win32
                     return IntPtr.Zero;
                 }
 
+
+                case WindowsMessage.WM_ENTERSIZEMOVE:
+                    _resizeReason = PlatformResizeReason.User;
+                    break;
+
                 case WindowsMessage.WM_SIZE:
                     {
                         using(NonPumpingSyncContext.Use())
@@ -379,7 +389,7 @@ namespace Avalonia.Win32
                              size == SizeCommand.Maximized))
                         {
                             var clientSize = new Size(ToInt32(lParam) & 0xffff, ToInt32(lParam) >> 16);
-                            Resized(clientSize / RenderScaling);
+                            Resized(clientSize / RenderScaling, _resizeReason);
                         }
 
                         var windowState = size == SizeCommand.Maximized ?
@@ -402,6 +412,10 @@ namespace Avalonia.Win32
 
                         return IntPtr.Zero;
                     }
+
+                case WindowsMessage.WM_EXITSIZEMOVE:
+                    _resizeReason = PlatformResizeReason.Unspecified;
+                    break;
 
                 case WindowsMessage.WM_MOVE:
                     {

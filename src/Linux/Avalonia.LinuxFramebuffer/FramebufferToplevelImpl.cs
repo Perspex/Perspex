@@ -69,7 +69,7 @@ namespace Avalonia.LinuxFramebuffer
         public IEnumerable<object> Surfaces { get; }
         public Action<RawInputEventArgs> Input { get; set; }
         public Action<Rect> Paint { get; set; }
-        public Action<Size> Resized { get; set; }
+        public Action<Size, PlatformResizeReason> Resized { get; set; }
         public Action<double> ScalingChanged { get; set; }
 
         public Action<WindowTransparencyLevel> TransparencyLevelChanged { get; set; }

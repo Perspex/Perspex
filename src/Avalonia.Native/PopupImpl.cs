@@ -32,7 +32,7 @@ namespace Avalonia.Native
         private void MoveResize(PixelPoint position, Size size, double scaling)
         {
             Position = position;
-            Resize(size);
+            Resize(size, PlatformResizeReason.Layout);
             //TODO: We ignore the scaling override for now
         }
 

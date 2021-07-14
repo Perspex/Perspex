@@ -275,9 +275,10 @@ public:
         }
     }
     
-    virtual HRESULT Resize(double x, double y) override
+    virtual HRESULT Resize(double x, double y, AvnPlatformResizeReason reason) override
     {
         START_COM_CALL;
+        auto resizeBlock = ResizeScope(View, reason);
         
         @autoreleasepool
         {
@@ -306,7 +307,7 @@ public:
             
             if(!_shown)
             {
-                BaseEvents->Resized(AvnSize{x,y});
+                BaseEvents->Resized(AvnSize{x,y}, reason);
             }
             
             [StandardContainer setFrameSize:NSSize{x,y}];
@@ -1357,6 +1358,7 @@ NSArray* AllLoopModes = [NSArray arrayWithObjects: NSDefaultRunLoopMode, NSEvent
     bool _lastKeyHandled;
     AvnPixelSize _lastPixelSize;
     NSObject<IRenderTarget>* _renderTarget;
+    AvnPlatformResizeReason _resizeReason;
 }
 
 - (void)onClosed
@@ -1468,7 +1470,8 @@ NSArray* AllLoopModes = [NSArray arrayWithObjects: NSDefaultRunLoopMode, NSEvent
         _lastPixelSize.Height = (int)fsize.height;
         [self updateRenderTarget];
     
-        _parent->BaseEvents->Resized(AvnSize{newSize.width, newSize.height});
+        auto reason = [self inLiveResize] ? ResizeUser : _resizeReason;
+        _parent->BaseEvents->Resized(AvnSize{newSize.width, newSize.height}, reason);
     }
 }
 
@@ -1967,6 +1970,16 @@ NSArray* AllLoopModes = [NSArray arrayWithObjects: NSDefaultRunLoopMode, NSEvent
     
 }
 
+- (AvnPlatformResizeReason)getResizeReason
+{
+    return _resizeReason;
+}
+
+- (void)setResizeReason:(AvnPlatformResizeReason)reason
+{
+    _resizeReason = reason;
+}
+
 @end
 
 
@@ -2373,7 +2386,7 @@ protected:
         return NSWindowStyleMaskBorderless;
     }
     
-    virtual HRESULT Resize(double x, double y) override
+    virtual HRESULT Resize(double x, double y, AvnPlatformResizeReason reason) override
     {
         @autoreleasepool
         {

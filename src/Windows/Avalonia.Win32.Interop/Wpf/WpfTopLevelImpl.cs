@@ -44,7 +44,7 @@ namespace Avalonia.Win32.Interop.Wpf
                 ((FrameworkElement)PlatformImpl)?.InvalidateMeasure();
             }
 
-            protected override void HandleResized(Size clientSize)
+            protected override void HandleResized(Size clientSize, PlatformResizeReason reason)
             {
                 ClientSize = clientSize;
                 LayoutManager.ExecuteLayoutPass();
@@ -114,7 +114,7 @@ namespace Avalonia.Win32.Interop.Wpf
             if (_finalSize == _previousSize)
                 return finalSize;
             _previousSize = _finalSize;
-            _ttl.Resized?.Invoke(finalSize.ToAvaloniaSize());
+            _ttl.Resized?.Invoke(finalSize.ToAvaloniaSize(), PlatformResizeReason.Unspecified);
             return base.ArrangeOverride(finalSize);
         }
 
@@ -236,7 +236,7 @@ namespace Avalonia.Win32.Interop.Wpf
 
         Action<RawInputEventArgs> ITopLevelImpl.Input { get; set; } //TODO
         Action<Rect> ITopLevelImpl.Paint { get; set; }
-        Action<Size> ITopLevelImpl.Resized { get; set; }
+        Action<Size, PlatformResizeReason> ITopLevelImpl.Resized { get; set; }
         Action<double> ITopLevelImpl.ScalingChanged { get; set; }
 
         Action<WindowTransparencyLevel> ITopLevelImpl.TransparencyLevelChanged { get; set; }

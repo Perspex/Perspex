@@ -27,7 +27,7 @@ namespace Avalonia.DesignerSupport.Remote
         public IEnumerable<object> Surfaces { get; }
         public Action<RawInputEventArgs> Input { get; set; }
         public Action<Rect> Paint { get; set; }
-        public Action<Size> Resized { get; set; }
+        public Action<Size, PlatformResizeReason> Resized { get; set; }
         public Action<double> ScalingChanged { get; set; }
         public Func<bool> Closing { get; set; }
         public Action Closed { get; set; }
@@ -54,7 +54,7 @@ namespace Avalonia.DesignerSupport.Remote
                 PopupPositioner = new ManagedPopupPositioner(new ManagedPopupPositionerPopupImplHelper(parent,
                     (_, size, __) =>
                     {
-                        Resize(size);
+                        Resize(size, PlatformResizeReason.Unspecified);
                     }));
         }
 
@@ -98,7 +98,7 @@ namespace Avalonia.DesignerSupport.Remote
         {
         }
 
-        public void Resize(Size clientSize)
+        public void Resize(Size clientSize, PlatformResizeReason reason)
         {
         }
 

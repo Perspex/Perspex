@@ -415,7 +415,7 @@ namespace Avalonia.Rendering
                     {
                         var operation = drawOperations[i];
                         _currentDraw = operation;
-                        operation.Item.Render(context);
+                        operation.Item?.Render(context);
                         _currentDraw = null;
                     }
 

@@ -1,4 +1,5 @@
-﻿using Avalonia.Input;
+﻿using System;
+using Avalonia.Input;
 
 namespace Avalonia.Diagnostics
 {
@@ -27,5 +28,17 @@ namespace Avalonia.Diagnostics
         /// Get or set the startup screen index where the DevTools window will be displayed.
         /// </summary>
         public int? StartupScreenIndex { get; set; }
+
+        /// <summary>
+        /// Get or sets the root folder where screeshots well be stored.
+        /// The default root folder is [Environment.SpecialFolder.MyPictures]/Screenshots.
+        /// </summary>
+        public string? ScreenshotsRoot { get; set; }
+           
+        /// <summary>
+        /// Get or sets conventin for screenshot fileName.
+        /// For known default screen shot file name convection see <see href="https://github.com/AvaloniaUI/Avalonia/issues/4743">GH-4743</see>.
+        /// </summary>
+        public Func<Avalonia.Controls.IControl, string, string>? ScreenshotFileNameConvention { get; set; }
     }
 }

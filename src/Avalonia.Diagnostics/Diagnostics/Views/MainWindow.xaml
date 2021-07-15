@@ -18,6 +18,8 @@
     <StyleInclude Source="avares://Avalonia.Diagnostics/Diagnostics/Controls/ThicknessEditor.axaml" />
     <StyleInclude Source="avares://Avalonia.Diagnostics/Diagnostics/Controls/FilterTextBox.axaml" />
   </Window.Styles>
-  
+  <Window.KeyBindings>
+    <KeyBinding Gesture="F8" Command="{Binding Shot}"/>
+  </Window.KeyBindings>
   <views:MainView/>
 </Window>

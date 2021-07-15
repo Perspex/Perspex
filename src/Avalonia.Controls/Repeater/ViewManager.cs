@@ -627,6 +627,9 @@ namespace Avalonia.Controls
 
             var element = GetElement();
 
+            // recycled element may have IsMeasureValid true; make sure the gets re-measured with the new DataContext
+            element.InvalidateMeasure();
+
             var virtInfo = ItemsRepeater.TryGetVirtualizationInfo(element);
             if (virtInfo == null)
             {

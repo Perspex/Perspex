@@ -28,7 +28,7 @@ namespace Avalonia.Layout
 
             if (_estimationBuffer.Count == 0)
             {
-                _estimationBuffer.AddRange(Enumerable.Repeat(0.0, BufferSize));
+                _estimationBuffer.AddRange(Enumerable.Repeat(double.NaN, BufferSize));
             }
 
             context.LayoutState = this;
@@ -42,14 +42,17 @@ namespace Avalonia.Layout
         internal void OnElementMeasured(int elementIndex, double majorSize, double minorSize)
         {
             int estimationBufferIndex = elementIndex % _estimationBuffer.Count;
-            bool alreadyMeasured = _estimationBuffer[estimationBufferIndex] != 0;
+            bool alreadyMeasured = !double.IsNaN(_estimationBuffer[estimationBufferIndex]);
 
-            if (!alreadyMeasured)
+            if (alreadyMeasured)
+            {
+                TotalElementSize -= _estimationBuffer[estimationBufferIndex];
+            }
+            else
             {
                 TotalElementsMeasured++;
             }
 
-            TotalElementSize -= _estimationBuffer[estimationBufferIndex];
             TotalElementSize += majorSize;
             _estimationBuffer[estimationBufferIndex] = majorSize;
 

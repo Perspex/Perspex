@@ -106,7 +106,8 @@ namespace Avalonia.Controls.Presenters
         {
             AffectsRender<ContentPresenter>(BackgroundProperty, BorderBrushProperty, BorderThicknessProperty, CornerRadiusProperty);
             AffectsArrange<ContentPresenter>(HorizontalContentAlignmentProperty, VerticalContentAlignmentProperty);
-            AffectsMeasure<ContentPresenter>(BorderThicknessProperty, PaddingProperty);
+            // for ItemsRepeater invalidate measure on a DataContext change; this is for recycled controls to force the Content control to be re-measured
+            AffectsMeasure<ContentPresenter>(BorderThicknessProperty, PaddingProperty, DataContextProperty);
             ContentProperty.Changed.AddClassHandler<ContentPresenter>((x, e) => x.ContentChanged(e));
             ContentTemplateProperty.Changed.AddClassHandler<ContentPresenter>((x, e) => x.ContentChanged(e));
             TemplatedParentProperty.Changed.AddClassHandler<ContentPresenter>((x, e) => x.TemplatedParentChanged(e));

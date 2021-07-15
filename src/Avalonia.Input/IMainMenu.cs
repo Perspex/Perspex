@@ -27,6 +27,6 @@ namespace Avalonia.Input
         /// <summary>
         /// Occurs when the main menu closes.
         /// </summary>
-        event EventHandler<RoutedEventArgs> MenuClosed;
+        event EventHandler<RoutedEventArgs> Closed;
     }
 }

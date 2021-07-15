@@ -65,14 +65,14 @@ namespace Avalonia.Input
             {
                 if (_mainMenu != null)
                 {
-                    _mainMenu.MenuClosed -= MainMenuClosed;
+                    _mainMenu.Closed -= MainMenuClosed;
                 }
 
                 _mainMenu = value;
 
                 if (_mainMenu != null)
                 {
-                    _mainMenu.MenuClosed += MainMenuClosed;
+                    _mainMenu.Closed += MainMenuClosed;
                 }
             }
         }

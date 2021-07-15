@@ -33,7 +33,7 @@ namespace Avalonia.Controls.UnitTests
 
                 int openedCount = 0;
 
-                sut.MenuOpened += (sender, args) =>
+                sut.Opened += (sender, args) =>
                 {
                     openedCount++;
                 };
@@ -61,7 +61,7 @@ namespace Avalonia.Controls.UnitTests
 
                 bool opened = false;
 
-                sut.MenuOpened += (sender, args) =>
+                sut.Opened += (sender, args) =>
                 {
                     opened = true;
                 };
@@ -112,7 +112,7 @@ namespace Avalonia.Controls.UnitTests
 
                 int closedCount = 0;
 
-                sut.MenuClosed += (sender, args) =>
+                sut.Closed += (sender, args) =>
                 {
                     closedCount++;
                 };
@@ -150,6 +150,39 @@ namespace Avalonia.Controls.UnitTests
                 Assert.False(sut.IsOpen);
                 popupImpl.Verify(x => x.Show(true), Times.Once);
                 popupImpl.Verify(x => x.Hide(), Times.Once);
+            }
+        }
+
+        [Fact]
+        public void Clicking_On_Control_Embeds_Position_Info()
+        {
+            using (Application())
+            {
+                var sut = new ContextMenu();
+                var target = new Panel
+                {
+                    ContextMenu = sut
+                };
+
+                var window = new Window { Content = target };
+                window.ApplyTemplate();
+                window.Presenter.ApplyTemplate();
+
+                Point position = new Point(50, 50);
+
+                sut.Opening += (sender, args) =>
+                {
+                    Assert.True(args.GetPosition(target) == position);
+                };
+
+                sut.Opened += (sender, args) =>
+                {
+                    Assert.True(args.GetPosition(target) == position);
+                };
+
+                _mouse.Click(target, MouseButton.Right, position);
+
+                _mouse.Click(target); // Click off
             }
         }
 
@@ -236,7 +269,7 @@ namespace Avalonia.Controls.UnitTests
                 };
                 new Window { Content = target };
 
-                sut.ContextMenuOpening += (c, e) => { eventCalled = true; e.Cancel = true; };
+                sut.Opening += (c, e) => { eventCalled = true; e.Handled = true; };
 
                 _mouse.Click(target, MouseButton.Right);
 
@@ -338,40 +371,6 @@ namespace Avalonia.Controls.UnitTests
                 Assert.True(menu.IsOpen);
                 mouse.Click(target2, MouseButton.Right);
                 Assert.True(menu.IsOpen);
-            }
-        }
-
-        [Fact(Skip = "The only reason this test was 'passing' before was that the author forgot to call Window.ApplyTemplate()")]
-        public void Cancelling_Closing_Leaves_ContextMenuOpen()
-        {
-            using (Application())
-            {
-                popupImpl.Setup(x => x.Show(true)).Verifiable();
-                popupImpl.Setup(x => x.Hide()).Verifiable();
-
-                bool eventCalled = false;
-                var sut = new ContextMenu();
-                var target = new Panel
-                {
-                    ContextMenu = sut
-                };
-                
-                var window = new Window {Content = target};
-                window.ApplyTemplate();
-
-                sut.ContextMenuClosing += (c, e) => { eventCalled = true; e.Cancel = true; };
-
-                _mouse.Click(target, MouseButton.Right);
-
-                Assert.True(sut.IsOpen);
-
-                _mouse.Click(target, MouseButton.Right);
-
-                Assert.True(eventCalled);
-                Assert.True(sut.IsOpen);
-
-                popupImpl.Verify(x => x.Show(true), Times.Once());
-                popupImpl.Verify(x => x.Hide(), Times.Never);
             }
         }
 

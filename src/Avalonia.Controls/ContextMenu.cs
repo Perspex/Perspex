@@ -10,11 +10,39 @@ using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Layout;
 using Avalonia.Styling;
+using Avalonia.VisualTree;
 
 #nullable enable
 
 namespace Avalonia.Controls
 {
+    /// <summary>
+    /// Provides data for the
+    /// <see cref="E:Avalonia.Controls.ContextMenu.Opened" />
+    /// event.
+    /// </summary>
+    public class ContextMenuEventArgs : RoutedEventArgs
+    {
+        PointerEventArgs Pointer;
+
+        /// <summary>
+        /// Initializes a new instance of the ContextMenuEventArgs
+        /// class.
+        /// </summary>
+        internal ContextMenuEventArgs(PointerEventArgs pointer)
+        {
+            Pointer = pointer;
+        }
+
+        /// <summary>
+        /// Gets the position of the cursor relative to the visual at
+        /// the time the context menu was opening. Returns null if such
+        /// a position isn't available.
+        /// </summary>
+        public Point? GetPosition(IVisual? relativeTo)
+            => Pointer?.GetPosition(relativeTo);
+    }
+
     /// <summary>
     /// A control context menu.
     /// </summary>
@@ -197,18 +225,51 @@ namespace Avalonia.Controls
         }
 
         /// <summary>
-        /// Occurs when the value of the
-        /// <see cref="P:Avalonia.Controls.ContextMenu.IsOpen" />
-        /// property is changing from false to true.
+        /// Defines the <see cref="Opened"/> event.
         /// </summary>
-        public event CancelEventHandler? ContextMenuOpening;
+        public static readonly RoutedEvent<ContextMenuEventArgs> OpenedEvent =
+            RoutedEvent.Register<ContextMenu, ContextMenuEventArgs>(nameof(Opened), RoutingStrategies.Bubble);
+
+        /// <summary>
+        /// Occurs when a <see cref="ContextMenu"/> is opened.
+        /// </summary>
+        public event EventHandler<ContextMenuEventArgs> Opened
+        {
+            add { AddHandler(OpenedEvent, value); }
+            remove { RemoveHandler(OpenedEvent, value); }
+        }
+        
+        /// <summary>
+        /// Defines the <see cref="Closed"/> event.
+        /// </summary>
+        public static readonly RoutedEvent<RoutedEventArgs> ClosedEvent =
+            RoutedEvent.Register<ContextMenu, RoutedEventArgs>(nameof(Closed), RoutingStrategies.Bubble);
+
+        /// <summary>
+        /// Occurs when a <see cref="ContextMenu"/> is closed.
+        /// </summary>
+        public event EventHandler<RoutedEventArgs> Closed
+        {
+            add { AddHandler(ClosedEvent, value); }
+            remove { RemoveHandler(ClosedEvent, value); }
+        }
+
+        /// <summary>
+        /// Defines the <see cref="Opening"/> event.
+        /// </summary>
+        public static readonly RoutedEvent<ContextMenuEventArgs> OpeningEvent =
+            RoutedEvent.Register<ContextMenu, ContextMenuEventArgs>(nameof(Opening), RoutingStrategies.Bubble);
 
         /// <summary>
         /// Occurs when the value of the
         /// <see cref="P:Avalonia.Controls.ContextMenu.IsOpen" />
-        /// property is changing from true to false.
+        /// property is changing from false to true.
         /// </summary>
-        public event CancelEventHandler? ContextMenuClosing;
+        public event EventHandler<ContextMenuEventArgs> Opening
+        {
+            add { AddHandler(OpeningEvent, value); }
+            remove { RemoveHandler(OpeningEvent, value); }
+        }
 
         /// <summary>
         /// Called when the <see cref="Control.ContextMenu"/> property changes on a control.
@@ -304,7 +365,7 @@ namespace Avalonia.Controls
             return new MenuItemContainerGenerator(this);
         }
 
-        private void Open(Control control, Control placementTarget)
+        private void Open(Control control, Control placementTarget, PointerEventArgs pointer = null)
         {
             if (IsOpen)
             {
@@ -342,9 +403,9 @@ namespace Avalonia.Controls
             IsOpen = true;
             _popup.IsOpen = true;
 
-            RaiseEvent(new RoutedEventArgs
+            RaiseEvent(new ContextMenuEventArgs(pointer)
             {
-                RoutedEvent = MenuOpenedEvent,
+                RoutedEvent = OpenedEvent,
                 Source = this,
             });
         }
@@ -378,7 +439,7 @@ namespace Avalonia.Controls
 
             RaiseEvent(new RoutedEventArgs
             {
-                RoutedEvent = MenuClosedEvent,
+                RoutedEvent = ClosedEvent,
                 Source = this,
             });
         }
@@ -388,37 +449,33 @@ namespace Avalonia.Controls
             var control = (Control)sender;
             var contextMenu = control.ContextMenu;
 
-            if (control.ContextMenu.IsOpen)
+            if (contextMenu!.IsOpen)
             {
-                if (contextMenu.CancelClosing())
-                    return;
-
-                control.ContextMenu.Close();
+                contextMenu.Close();
                 e.Handled = true;
             }
 
             if (e.InitialPressMouseButton == MouseButton.Right)
             {
-                if (contextMenu.CancelOpening())
+                if (contextMenu.CancelOpening(e))
                     return;
 
-                contextMenu.Open(control, e.Source as Control ?? control);
+                contextMenu.Open(control, e.Source as Control ?? control, e);
                 e.Handled = true;
             }
         }
 
-        private bool CancelClosing()
+        private bool CancelOpening(PointerEventArgs pointer)
         {
-            var eventArgs = new CancelEventArgs();
-            ContextMenuClosing?.Invoke(this, eventArgs);
-            return eventArgs.Cancel;
-        }
+            var eventArgs = new ContextMenuEventArgs(pointer)
+            {
+                RoutedEvent = OpeningEvent,
+                Source = this,
+            };
 
-        private bool CancelOpening()
-        {
-            var eventArgs = new CancelEventArgs();
-            ContextMenuOpening?.Invoke(this, eventArgs);
-            return eventArgs.Cancel;
+            RaiseEvent(eventArgs);
+
+            return eventArgs.Handled;
         }
     }
 }

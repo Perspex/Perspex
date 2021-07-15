@@ -25,18 +25,6 @@ namespace Avalonia.Controls
                 nameof(IsOpen),
                 o => o.IsOpen);
 
-        /// <summary>
-        /// Defines the <see cref="MenuOpened"/> event.
-        /// </summary>
-        public static readonly RoutedEvent<RoutedEventArgs> MenuOpenedEvent =
-            RoutedEvent.Register<MenuBase, RoutedEventArgs>(nameof(MenuOpened), RoutingStrategies.Bubble);
-
-        /// <summary>
-        /// Defines the <see cref="MenuClosed"/> event.
-        /// </summary>
-        public static readonly RoutedEvent<RoutedEventArgs> MenuClosedEvent =
-            RoutedEvent.Register<MenuBase, RoutedEventArgs>(nameof(MenuClosed), RoutingStrategies.Bubble);
-
         private bool _isOpen;
 
         /// <summary>
@@ -107,24 +95,6 @@ namespace Avalonia.Controls
         /// Gets the interaction handler for the menu.
         /// </summary>
         protected IMenuInteractionHandler InteractionHandler { get; }
-
-        /// <summary>
-        /// Occurs when a <see cref="Menu"/> is opened.
-        /// </summary>
-        public event EventHandler<RoutedEventArgs> MenuOpened
-        {
-            add { AddHandler(MenuOpenedEvent, value); }
-            remove { RemoveHandler(MenuOpenedEvent, value); }
-        }
-
-        /// <summary>
-        /// Occurs when a <see cref="Menu"/> is closed.
-        /// </summary>
-        public event EventHandler<RoutedEventArgs> MenuClosed
-        {
-            add { AddHandler(MenuClosedEvent, value); }
-            remove { RemoveHandler(MenuClosedEvent, value); }
-        }
 
         /// <summary>
         /// Closes the menu.

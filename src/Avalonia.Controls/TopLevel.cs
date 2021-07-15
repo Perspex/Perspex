@@ -90,6 +90,7 @@ namespace Avalonia.Controls
         /// </summary>
         static TopLevel()
         {
+            KeyboardNavigation.TabNavigationProperty.OverrideDefaultValue<TopLevel>(KeyboardNavigationMode.Cycle);
             AffectsMeasure<TopLevel>(ClientSizeProperty);
 
             TransparencyLevelHintProperty.Changed.AddClassHandler<TopLevel>(

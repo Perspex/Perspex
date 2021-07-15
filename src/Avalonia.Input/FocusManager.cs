@@ -92,6 +92,17 @@ namespace Avalonia.Input
             }
         }
 
+        public IInputElement? GetFocusedElement(IInputElement e)
+        {
+            if (e is IFocusScope scope)
+            {
+                _focusScopes.TryGetValue(scope, out var result);
+                return result;
+            }
+
+            return null;
+        }
+
         /// <summary>
         /// Sets the currently focused element in the specified scope.
         /// </summary>
@@ -150,6 +161,8 @@ namespace Avalonia.Input
             Scope = scope;
             Focus(e);
         }
+
+        public static bool GetIsFocusScope(IInputElement e) => e is IFocusScope;
 
         /// <summary>
         /// Checks if the specified element can be focused.

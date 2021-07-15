@@ -21,6 +21,7 @@ namespace Avalonia.UnitTests
             Renderer = Mock.Of<IRenderer>();
             LayoutManager = new LayoutManager(this);
             IsVisible = true;
+            KeyboardNavigation.SetTabNavigation(this, KeyboardNavigationMode.Cycle);
         }
 
         public TestRoot(IControl child)

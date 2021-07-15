@@ -6,6 +6,15 @@ namespace Avalonia.Input
     public static class KeyboardNavigation
     {
         /// <summary>
+        /// Defines the TabIndex attached property.
+        /// </summary>
+        public static readonly AttachedProperty<int> TabIndexProperty =
+            AvaloniaProperty.RegisterAttached<StyledElement, int>(
+                "TabIndex",
+                typeof(KeyboardNavigation),
+                int.MaxValue);
+
+        /// <summary>
         /// Defines the TabNavigation attached property.
         /// </summary>
         /// <remarks>
@@ -41,6 +50,26 @@ namespace Avalonia.Input
                 "IsTabStop",
                 typeof(KeyboardNavigation), 
                 true);
+
+        /// <summary>
+        /// Gets the <see cref="TabIndexProperty"/> for an element.
+        /// </summary>
+        /// <param name="element">The container.</param>
+        /// <returns>The <see cref="KeyboardNavigationMode"/> for the container.</returns>
+        public static int GetTabIndex(IInputElement element)
+        {
+            return ((IAvaloniaObject)element).GetValue(TabIndexProperty);
+        }
+
+        /// <summary>
+        /// Sets the <see cref="TabIndexProperty"/> for an element.
+        /// </summary>
+        /// <param name="element">The element.</param>
+        /// <param name="value">The tab index.</param>
+        public static void SetTabIndex(IInputElement element, int value)
+        {
+            ((IAvaloniaObject)element).SetValue(TabIndexProperty, value);
+        }
 
         /// <summary>
         /// Gets the <see cref="TabNavigationProperty"/> for a container.
@@ -83,7 +112,7 @@ namespace Avalonia.Input
         }
 
         /// <summary>
-        /// Sets the <see cref="IsTabStopProperty"/> for a container.
+        /// Sets the <see cref="IsTabStopProperty"/> for an element.
         /// </summary>
         /// <param name="element">The container.</param>
         /// <param name="value">Value indicating whether the container is a tab stop.</param>
@@ -93,7 +122,7 @@ namespace Avalonia.Input
         }
 
         /// <summary>
-        /// Gets the <see cref="IsTabStopProperty"/> for a container.
+        /// Gets the <see cref="IsTabStopProperty"/> for an element.
         /// </summary>
         /// <param name="element">The container.</param>
         /// <returns>Whether the container is a tab stop.</returns>

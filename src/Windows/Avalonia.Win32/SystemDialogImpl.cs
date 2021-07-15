@@ -19,7 +19,7 @@ namespace Avalonia.Win32
             var hWnd = parent?.PlatformImpl?.Handle?.Handle ?? IntPtr.Zero;
             return Task.Factory.StartNew(() =>
             {
-                var result = Array.Empty<string>();
+                string[] result = default;
 
                 Guid clsid = dialog is OpenFileDialog ? UnmanagedMethods.ShellIds.OpenFileDialog : UnmanagedMethods.ShellIds.SaveFileDialog;
                 Guid iid = UnmanagedMethods.ShellIds.IFileDialog;
@@ -100,7 +100,7 @@ namespace Avalonia.Win32
         {
             return Task.Factory.StartNew(() =>
             {
-                string result = string.Empty;
+                string result = default;
 
                 var hWnd = parent?.PlatformImpl?.Handle?.Handle ?? IntPtr.Zero;
                 Guid clsid = UnmanagedMethods.ShellIds.OpenFileDialog;
@@ -164,7 +164,7 @@ namespace Avalonia.Win32
                     }
                 }
             }
-            return "";
+            return default;
         }
     }
 }

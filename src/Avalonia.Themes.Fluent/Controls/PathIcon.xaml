@@ -19,11 +19,13 @@
           <Viewbox Height="{TemplateBinding Height}"
                    Width="{TemplateBinding Width}">
             <Path Fill="{TemplateBinding Foreground}"
-                  Data="{TemplateBinding Data}"
-                  Stretch="Uniform" />
+                  Data="{TemplateBinding Data}" />
           </Viewbox>
         </Border>
       </ControlTemplate>
     </Setter>
+  </Style>
+  <Style Selector="PathIcon /template/ Path">
+    <Setter Property="Stretch" Value="Uniform" />
   </Style>
 </Styles>

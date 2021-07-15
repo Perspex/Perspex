@@ -30,7 +30,7 @@
                         </MenuItem>
                         <MenuItem Header="Menu Item with _Icon" InputGesture="Ctrl+Shift+B">
                             <MenuItem.Icon>
-                                <Image Source="/Assets/github_icon.png"/>
+                                <ImageIcon Source="avares://ControlCatalog/Assets/test_icon.ico" />
                             </MenuItem.Icon>
                         </MenuItem>
                         <MenuItem Header="Menu Item with _Checkbox">

@@ -1,0 +1,33 @@
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <Design.PreviewWith>
+    <StackPanel Spacing="10" Margin="10">
+      <FontIcon Glyph="★" />
+      <FontIcon Glyph="" FontFamily="Segoe MDL2 Assets" />
+    </StackPanel>
+  </Design.PreviewWith>
+  <Style Selector="FontIcon">
+    <Setter Property="Foreground" Value="{DynamicResource TextControlForeground}" />
+    <Setter Property="FontSize" Value="15" />
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="Height" Value="{DynamicResource IconElementThemeHeight}" />
+    <Setter Property="Width" Value="{DynamicResource IconElementThemeWidth}" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Border Background="{TemplateBinding Background}">
+          <TextBlock Height="{TemplateBinding Height}"
+                     VerticalAlignment="Center"
+                     HorizontalAlignment="Center"
+                     TextAlignment="Center"
+                     Width="{TemplateBinding Width}"
+                     Text="{TemplateBinding Glyph}"
+                     Foreground="{TemplateBinding Foreground}"
+                     FontSize="{TemplateBinding FontSize}"
+                     FontFamily="{TemplateBinding FontFamily}"
+                     FontStyle="{TemplateBinding FontStyle}"
+                     FontWeight="{TemplateBinding FontWeight}" />
+        </Border>
+      </ControlTemplate>
+    </Setter>
+  </Style>
+</Styles>

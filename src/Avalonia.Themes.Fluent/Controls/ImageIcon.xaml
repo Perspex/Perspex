@@ -1,0 +1,24 @@
+<Styles xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <Design.PreviewWith>
+    <StackPanel>
+      <ImageIcon Source="avares://ControlCatalog/Assets/test_icon.ico" />
+    </StackPanel>
+  </Design.PreviewWith>
+
+  <Style Selector="ImageIcon">
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="Height" Value="{DynamicResource IconElementThemeHeight}" />
+    <Setter Property="Width" Value="{DynamicResource IconElementThemeWidth}" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Border Background="{TemplateBinding Background}">
+          <Image Width="{TemplateBinding Width}"
+                 Height="{TemplateBinding Height}"
+                 HorizontalAlignment="Center"
+                 VerticalAlignment="Center"
+                 Source="{TemplateBinding Source}" />
+        </Border>
+      </ControlTemplate>
+    </Setter>
+  </Style>
+</Styles>

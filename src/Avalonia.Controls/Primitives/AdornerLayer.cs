@@ -183,7 +183,7 @@ namespace Avalonia.Controls.Primitives
                 info.Subscription = adorned.GetObservable(TransformedBoundsProperty).Subscribe(x =>
                 {
                     info.Bounds = x;
-                    InvalidateArrange();
+                    InvalidateMeasure();
                 });
             }
         }

@@ -1754,7 +1754,12 @@ NSArray* AllLoopModes = [NSArray arrayWithObjects: NSDefaultRunLoopMode, NSEvent
      
     if(_parent != nullptr)
     {
-        _lastKeyHandled = _parent->BaseEvents->RawKeyEvent(type, timestamp, modifiers, key);
+        auto handled = _parent->BaseEvents->RawKeyEvent(type, timestamp, modifiers, key);
+        if (key != LeftCtrl && key != RightCtrl) {
+          _lastKeyHandled = handled;
+        } else {
+          _lastKeyHandled = false;
+        }
     }
 }
 

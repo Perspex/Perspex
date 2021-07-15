@@ -167,11 +167,78 @@
       <Style Selector="Border.Rect11:pointerover">
         <Setter Property="Background" >
           <LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,100%">
-            <LinearGradientBrush.GradientStops>
-              <GradientStop Offset="0" Color="Red"/>
-              <GradientStop Offset="1" Color="Blue"/>
-            </LinearGradientBrush.GradientStops>
+            <GradientStop Offset="0" Color="Red"/>
+            <GradientStop Offset="1" Color="Blue"/>
           </LinearGradientBrush>
+        </Setter>
+      </Style>
+
+      <Style Selector="Border.Rect12">
+        <Setter Property="Transitions">
+          <Transitions>
+            <BrushTransition Property="Background" Duration="0:0:0.5" />
+          </Transitions>
+        </Setter>
+        <Setter Property="Background" >
+          <LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,100%">
+            <GradientStop Offset="0" Color="Red"/>
+            <GradientStop Offset="1" Color="Blue"/>
+          </LinearGradientBrush>
+        </Setter>
+      </Style>
+
+      <Style Selector="Border.Rect12:pointerover">
+        <Setter Property="Background" >
+          <LinearGradientBrush StartPoint="100%,0%" EndPoint="0%,100%">
+            <GradientStop Offset="0" Color="Green"/>
+            <GradientStop Offset="1" Color="Yellow"/>
+          </LinearGradientBrush>
+        </Setter>
+      </Style>
+
+      <Style Selector="Border.Rect13">
+        <Setter Property="Transitions">
+          <Transitions>
+            <BrushTransition Property="Background" Duration="0:0:0.5" />
+          </Transitions>
+        </Setter>
+        <Setter Property="Background" >
+          <ConicGradientBrush Center="50%,50%" Angle="0">
+            <GradientStop Offset="0" Color="Red"/>
+            <GradientStop Offset="1" Color="Blue"/>
+          </ConicGradientBrush>
+        </Setter>
+      </Style>
+
+      <Style Selector="Border.Rect13:pointerover">
+        <Setter Property="Background" >
+          <ConicGradientBrush Center="70%,70%" Angle="90">
+            <GradientStop Offset="0" Color="Green"/>
+            <GradientStop Offset="1" Color="Yellow"/>
+          </ConicGradientBrush>
+        </Setter>
+      </Style>
+
+      <Style Selector="Border.Rect14">
+        <Setter Property="Transitions">
+          <Transitions>
+            <BrushTransition Property="Background" Duration="0:0:0.5" />
+          </Transitions>
+        </Setter>
+        <Setter Property="Background" >
+          <RadialGradientBrush Center="50%,50%" Radius="0.5">
+            <GradientStop Offset="0" Color="Red"/>
+            <GradientStop Offset="1" Color="Blue"/>
+          </RadialGradientBrush>
+        </Setter>
+      </Style>
+
+      <Style Selector="Border.Rect14:pointerover">
+        <Setter Property="Background" >
+          <RadialGradientBrush Center="30%,30%" Radius="0.2">
+            <GradientStop Offset="0" Color="Green"/>
+            <GradientStop Offset="1" Color="Yellow"/>
+          </RadialGradientBrush>
         </Setter>
       </Style>
     </Styles>
@@ -202,6 +269,15 @@
 
         <Border Classes="Test Rect10" />
         <Border Classes="Test Rect11" />
+
+        <Border Classes="Test Rect12" Child="{x:Null}"/>
+        <Border Classes="Test Rect13" Child="{x:Null}"/>
+        <Border Classes="Test Rect14" Child="{x:Null}"/>
+        
+        <Border Classes="Test Rect14" />
+        <Border Classes="Test Rect14" />
+        <Border Classes="Test Rect14" />
+        <Border Classes="Test Rect14" />
       </WrapPanel>
     </StackPanel>
   </Grid>

@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
+
+using Avalonia.Animation.Animators;
 using Avalonia.Collections;
 using Avalonia.Metadata;
 

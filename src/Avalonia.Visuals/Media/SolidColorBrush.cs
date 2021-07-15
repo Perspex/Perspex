@@ -16,7 +16,6 @@ namespace Avalonia.Media
 
         static SolidColorBrush()
         {
-            BaseBrushAnimator.RegisterBrushAnimator<ISolidColorBrushAnimator>(match => typeof(ISolidColorBrush).IsAssignableFrom(match));
             AffectsRender<SolidColorBrush>(ColorProperty);
         }
 

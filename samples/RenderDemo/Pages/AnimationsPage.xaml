@@ -161,6 +161,151 @@
           </Animation>
         </Style.Animations>
       </Style>
+
+      <Style Selector="Border.Rect7">
+        <Style.Animations>
+          <Animation Duration="0:0:3"
+                     IterationCount="Infinite"
+                     PlaybackDirection="Alternate">
+            <KeyFrame Cue="0%">
+              <Setter Property="Background" Value="Red" />
+            </KeyFrame>
+            <KeyFrame Cue="30%">
+              <Setter Property="Background">
+                <LinearGradientBrush StartPoint="0%,0%" EndPoint="0%,100%">
+                  <GradientStop Offset="0" Color="Red"/>
+                  <GradientStop Offset="1" Color="Blue"/>
+                </LinearGradientBrush>
+              </Setter>
+            </KeyFrame>
+            <KeyFrame Cue="60%">
+              <Setter Property="Background" Value="Blue" />
+            </KeyFrame>
+            <KeyFrame Cue="100%">
+              <Setter Property="Background">
+                <LinearGradientBrush StartPoint="0%,0%" EndPoint="0%,100%">
+                  <GradientStop Offset="0" Color="Green"/>
+                  <GradientStop Offset="1" Color="Yellow"/>
+                </LinearGradientBrush>
+              </Setter>
+            </KeyFrame>
+          </Animation>
+        </Style.Animations>
+      </Style>
+
+      <Style Selector="Border.Rect8">
+        <Style.Animations>
+          <Animation Duration="0:0:3"
+                     IterationCount="Infinite"
+                     PlaybackDirection="Alternate">
+            <KeyFrame Cue="0%">
+              <Setter Property="Background">
+                <LinearGradientBrush StartPoint="0%,0%" EndPoint="0%,100%">
+                  <GradientStop Offset="0" Color="Red"/>
+                  <GradientStop Offset="1" Color="Blue"/>
+                </LinearGradientBrush>
+              </Setter>
+            </KeyFrame>
+            <KeyFrame Cue="50%">
+              <Setter Property="Background">
+                <LinearGradientBrush StartPoint="100%,0%" EndPoint="0%,100%">
+                  <GradientStop Offset="0" Color="Red"/>
+                  <GradientStop Offset="0.25" Color="Blue"/>
+                  <GradientStop Offset="0.5" Color="Blue"/>
+                  <GradientStop Offset="0.75" Color="Green"/>
+                  <GradientStop Offset="1" Color="Yellow"/>
+                </LinearGradientBrush>
+              </Setter>
+            </KeyFrame>
+            <KeyFrame Cue="100%">
+              <Setter Property="Background">
+                <LinearGradientBrush StartPoint="0%,0%" EndPoint="0%,100%">
+                  <GradientStop Offset="0" Color="Red"/>
+                  <GradientStop Offset="1" Color="Blue"/>
+                </LinearGradientBrush>
+              </Setter>
+            </KeyFrame>
+          </Animation>
+        </Style.Animations>
+      </Style>
+
+      <Style Selector="Border.Rect9">
+        <Style.Animations>
+          <Animation Duration="0:0:3"
+                     IterationCount="Infinite"
+                     PlaybackDirection="Alternate">
+            <KeyFrame Cue="0%">
+              <Setter Property="Background">
+                <ConicGradientBrush Center="50%,50%" Angle="0">
+                  <GradientStop Offset="0" Color="Blue"/>
+                  <GradientStop Offset="0.5" Color="Red"/>
+                  <GradientStop Offset="1" Color="Blue"/>
+                </ConicGradientBrush>
+              </Setter>
+            </KeyFrame>
+            <KeyFrame Cue="100%">
+              <Setter Property="Background">
+                <ConicGradientBrush Center="50%,70%" Angle="90">
+                  <GradientStop Offset="0" Color="Green"/>
+                  <GradientStop Offset="0.25" Color="Yellow"/>
+                  <GradientStop Offset="0.5" Color="Red"/>
+                  <GradientStop Offset="0.75" Color="Blue"/>
+                  <GradientStop Offset="1" Color="Green"/>
+                </ConicGradientBrush>
+              </Setter>
+            </KeyFrame>
+          </Animation>
+        </Style.Animations>
+      </Style>
+
+      <Style Selector="Border.Rect10">
+        <Style.Animations>
+          <Animation Duration="0:0:3"
+                     IterationCount="Infinite"
+                     PlaybackDirection="Normal">
+            <KeyFrame Cue="0%">
+              <Setter Property="Background">
+                <RadialGradientBrush Center="0%,100%" Radius="0.8">
+                  <GradientStop Offset="0" Color="Red"/>
+                  <GradientStop Offset="1" Color="Blue"/>
+                </RadialGradientBrush>
+              </Setter>
+            </KeyFrame>
+            <KeyFrame Cue="25%">
+              <Setter Property="Background">
+                <RadialGradientBrush Center="0%,0%" Radius="1">
+                  <GradientStop Offset="0" Color="Red"/>
+                  <GradientStop Offset="1" Color="Blue"/>
+                </RadialGradientBrush>
+              </Setter>
+            </KeyFrame>
+            <KeyFrame Cue="50%">
+              <Setter Property="Background">
+                <RadialGradientBrush Center="100%,0%" Radius="0.8">
+                  <GradientStop Offset="0" Color="Red"/>
+                  <GradientStop Offset="1" Color="Blue"/>
+                </RadialGradientBrush>
+              </Setter>
+            </KeyFrame>
+            <KeyFrame Cue="75%">
+              <Setter Property="Background">
+                <RadialGradientBrush Center="100%,100%" Radius="1">
+                  <GradientStop Offset="0" Color="Red"/>
+                  <GradientStop Offset="1" Color="Blue"/>
+                </RadialGradientBrush>
+              </Setter>
+            </KeyFrame>
+            <KeyFrame Cue="100%">
+              <Setter Property="Background">
+                <RadialGradientBrush Center="0%,100%" Radius="0.8">
+                  <GradientStop Offset="0" Color="Red"/>
+                  <GradientStop Offset="1" Color="Blue"/>
+                </RadialGradientBrush>
+              </Setter>
+            </KeyFrame>
+          </Animation>
+        </Style.Animations>
+      </Style>
     </Styles>
   </UserControl.Styles>
   <Grid>
@@ -181,6 +326,10 @@
         <Border Classes="Test Rect6" Background="Red"/>
         <Border Classes="Test Shadow" CornerRadius="10" Child="{x:Null}" />
         <Border Classes="Test Shadow" CornerRadius="0 30 60 0" Child="{x:Null}" />
+        <Border Classes="Test Rect7" Child="{x:Null}" />
+        <Border Classes="Test Rect8" Child="{x:Null}" />
+        <Border Classes="Test Rect9" Child="{x:Null}" />
+        <Border Classes="Test Rect10" Child="{x:Null}" />
       </WrapPanel>
     </StackPanel>
   </Grid>

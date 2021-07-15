@@ -1,8 +1,11 @@
 using System;
 using System.Collections.Generic;
-using System.Reactive.Disposables;
+using System.Diagnostics.CodeAnalysis;
+
 using Avalonia.Logging;
 using Avalonia.Media;
+
+#nullable enable
 
 namespace Avalonia.Animation.Animators
 {
@@ -12,10 +15,8 @@ namespace Avalonia.Animation.Animators
     /// redirect them to the properly registered
     /// animators in this class.
     /// </summary>
-    public class BaseBrushAnimator : Animator<IBrush>
+    public class BaseBrushAnimator : Animator<IBrush?>
     {
-        private IAnimator _targetAnimator;
-
         private static readonly List<(Func<Type, bool> Match, Type AnimatorType)> _brushAnimators =
             new List<(Func<Type, bool> Match, Type AnimatorType)>();
 
@@ -31,7 +32,7 @@ namespace Avalonia.Animation.Animators
         /// The type of the animator to instantiate.
         /// </typeparam>
         public static void RegisterBrushAnimator<TAnimator>(Func<Type, bool> condition)
-            where TAnimator : IAnimator
+            where TAnimator : IAnimator, new()
         {
             _brushAnimators.Insert(0, (condition, typeof(TAnimator)));
         }
@@ -40,30 +41,127 @@ namespace Avalonia.Animation.Animators
         public override IDisposable Apply(Animation animation, Animatable control, IClock clock,
             IObservable<bool> match, Action onComplete)
         {
-            foreach (var valueType in _brushAnimators)
+            if (TryCreateCustomRegisteredAnimator(out var animator)
+                || TryCreateGradientAnimator(out animator)
+                || TryCreateSolidColorBrushAnimator(out animator))
             {
-                if (!valueType.Match(this[0].Value.GetType())) continue;
-
-                _targetAnimator = (IAnimator)Activator.CreateInstance(valueType.AnimatorType);
-
-                foreach (var keyframe in this)
-                {
-                    _targetAnimator.Add(keyframe);
-                }
-
-                _targetAnimator.Property = this.Property;
-                
-               return _targetAnimator.Apply(animation, control, clock, match, onComplete);
+                return animator.Apply(animation, control, clock, match, onComplete);
             }
 
             Logger.TryGet(LogEventLevel.Error, LogArea.Animations)?.Log(
                 this,
-                "The animation's keyframe values didn't match any brush animators registered in BaseBrushAnimator.");
-            
-            return Disposable.Empty;
+                "The animation's keyframe value types set is not supported.");
+
+            return base.Apply(animation, control, clock, match, onComplete);
         }
 
-        /// <inheritdoc/>
-        public override IBrush Interpolate(double progress, IBrush oldValue, IBrush newValue) => null;
+        /// <summary>
+        /// Fallback implementation of <see cref="IBrush"/> animation.
+        /// </summary>
+        public override IBrush? Interpolate(double progress, IBrush? oldValue, IBrush? newValue) => progress >= 0.5 ? newValue : oldValue;
+
+        private bool TryCreateGradientAnimator([NotNullWhen(true)] out IAnimator? animator)
+        {
+            IGradientBrush? firstGradient = null;
+            foreach (var keyframe in this)
+            {
+                if (keyframe.Value is IGradientBrush gradientBrush)
+                {
+                    firstGradient = gradientBrush;
+                    break;
+                }
+            }
+
+            if (firstGradient is null)
+            {
+                animator = null;
+                return false;
+            }
+
+            var gradientAnimator = new GradientBrushAnimator();
+            gradientAnimator.Property = Property;
+
+            foreach (var keyframe in this)
+            {
+                if (keyframe.Value is ISolidColorBrush solidColorBrush)
+                {
+                    gradientAnimator.Add(new AnimatorKeyFrame(typeof(GradientBrushAnimator), keyframe.Cue, keyframe.KeySpline)
+                    {
+                        Value = GradientBrushAnimator.ConvertSolidColorBrushToGradient(firstGradient, solidColorBrush)
+                    });
+                }
+                else if (keyframe.Value is IGradientBrush)
+                {
+                    gradientAnimator.Add(new AnimatorKeyFrame(typeof(GradientBrushAnimator), keyframe.Cue, keyframe.KeySpline)
+                    {
+                        Value = keyframe.Value
+                    });
+                }
+                else
+                {
+                    animator = null;
+                    return false;
+                }
+            }
+
+            animator = gradientAnimator;
+            return true;
+        }
+
+        private bool TryCreateSolidColorBrushAnimator([NotNullWhen(true)] out IAnimator? animator)
+        {
+            var solidColorBrushAnimator = new ISolidColorBrushAnimator();
+            solidColorBrushAnimator.Property = Property;
+
+            foreach (var keyframe in this)
+            {
+                if (keyframe.Value is ISolidColorBrush)
+                {
+                    solidColorBrushAnimator.Add(new AnimatorKeyFrame(typeof(ISolidColorBrushAnimator), keyframe.Cue, keyframe.KeySpline)
+                    {
+                        Value = keyframe.Value
+                    });
+                }
+                else
+                {
+                    animator = null;
+                    return false;
+                }
+            }
+
+            animator = solidColorBrushAnimator;
+            return true;
+        }
+
+        private bool TryCreateCustomRegisteredAnimator([NotNullWhen(true)] out IAnimator? animator)
+        {
+            if (_brushAnimators.Count > 0)
+            {
+                var firstKeyType = this[0].Value.GetType();
+                foreach (var (match, animatorType) in _brushAnimators)
+                {
+                    if (!match(firstKeyType))
+                        continue;
+
+                    animator = (IAnimator)Activator.CreateInstance(animatorType);
+                    if (animator != null)
+                    {
+                        animator.Property = Property;
+                        foreach (var keyframe in this)
+                        {
+                            animator.Add(new AnimatorKeyFrame(animatorType, keyframe.Cue, keyframe.KeySpline)
+                            {
+                                Value = keyframe.Value
+                            });
+                        }
+
+                        return true;
+                    }
+                }
+            }
+
+            animator = null;
+            return false;
+        }
     }
 }

@@ -47,7 +47,7 @@ namespace Avalonia.Media.TextFormatting
         /// <inheritdoc/>
         public override void Draw(DrawingContext drawingContext, Point origin)
         {
-            using (drawingContext.PushPostTransform(Matrix.CreateTranslation(origin)))
+            using (drawingContext.PushPreTransform(Matrix.CreateTranslation(origin)))
             {
                 if (GlyphRun.GlyphIndices.Length == 0)
                 {

@@ -23,6 +23,107 @@ namespace Avalonia.Input.UnitTests
                 Assert.Same(target, FocusManager.Instance.Current);
             }
         }
+        
+        [Fact]
+        public void Non_Visible_Controls_Should_Not_Get_KeyboardFocus()
+        {
+            Button target;
+
+            using (UnitTestApplication.Start(TestServices.RealFocus))
+            {
+                var root = new TestRoot
+                {
+                    Child = target = new Button() { IsVisible = false}
+                };
+                
+                Assert.Null(FocusManager.Instance.Current);
+
+                target.Focus();
+                
+                Assert.True(target.IsFocused);
+                Assert.False(target.IsKeyboardFocusWithin);
+
+                Assert.Null(FocusManager.Instance.Current);
+            }
+        }
+        
+        [Fact]
+        public void Non_EffectivelyVisible_Controls_Should_Not_Get_KeyboardFocus()
+        {
+            var target = new Button();
+            Panel container;
+
+            using (UnitTestApplication.Start(TestServices.RealFocus))
+            {
+                var root = new TestRoot
+                {
+                    Child = container = new Panel
+                    {
+                        IsVisible = false,
+                        Children = { target }
+                    }
+                };
+                
+                Assert.Null(FocusManager.Instance.Current);
+
+                target.Focus();
+                
+                Assert.True(target.IsFocused);
+                Assert.False(target.IsKeyboardFocusWithin);
+
+                Assert.Null(FocusManager.Instance.Current);
+            }
+        }
+        
+        [Fact]
+        public void Visible_Controls_Should_Get_KeyboardFocus()
+        {
+            Button target;
+
+            using (UnitTestApplication.Start(TestServices.RealFocus))
+            {
+                var root = new TestRoot
+                {
+                    Child = target = new Button()
+                };
+                
+                Assert.Null(FocusManager.Instance.Current);
+
+                target.Focus();
+                
+                Assert.True(target.IsFocused);
+                Assert.True(target.IsKeyboardFocusWithin);
+
+                Assert.Same(target, FocusManager.Instance.Current);
+            }
+        }
+        
+        [Fact]
+        public void EffectivelyVisible_Controls_Should_Get_KeyboardFocus()
+        {
+            var target = new Button();
+            Panel container;
+
+            using (UnitTestApplication.Start(TestServices.RealFocus))
+            {
+                var root = new TestRoot
+                {
+                    Child = container = new Panel
+                    {
+                        Children = { target }
+                    }
+                };
+                
+                Assert.Null(FocusManager.Instance.Current);
+
+                target.Focus();
+                
+                Assert.True(target.IsFocused);
+                Assert.True(target.IsKeyboardFocusWithin);
+
+                Assert.Same(target, FocusManager.Instance.Current);
+            }
+        }
 
         [Fact]
         public void Focus_Should_Be_Cleared_When_Control_Is_Removed_From_VisualTree()

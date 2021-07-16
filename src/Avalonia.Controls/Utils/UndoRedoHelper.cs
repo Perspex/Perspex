@@ -7,7 +7,7 @@ using Avalonia.Utilities;
 
 namespace Avalonia.Controls.Utils
 {
-    class UndoRedoHelper<TState> : WeakTimer.IWeakTimerSubscriber where TState : struct, IEquatable<TState>
+    class UndoRedoHelper<TState>
     {
         private readonly IUndoRedoHost _host;
 
@@ -31,7 +31,6 @@ namespace Avalonia.Controls.Utils
         public UndoRedoHelper(IUndoRedoHost host)
         {
             _host = host;
-            WeakTimer.StartWeakTimer(this, TimeSpan.FromSeconds(1));
         }
 
         public void Undo()
@@ -61,7 +60,7 @@ namespace Avalonia.Controls.Utils
             if (_states.Last != null)
             {
                 _states.Last.Value = state;
-            } 
+            }
         }
 
         public void UpdateLastState()
@@ -102,12 +101,6 @@ namespace Avalonia.Controls.Utils
         {
             _states.Clear();
             _currentNode = null;
-        }
-
-        bool WeakTimer.IWeakTimerSubscriber.Tick()
-        {
-            Snapshot();
-            return true;
         }
     }
 }

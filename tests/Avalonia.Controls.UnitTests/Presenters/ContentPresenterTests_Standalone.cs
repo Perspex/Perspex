@@ -264,5 +264,91 @@ namespace Avalonia.Controls.UnitTests.Presenters
             // InheritanceParent is exposed via StylingParent.
             Assert.Same(logicalParent, ((IStyledElement)child).StylingParent);
         }
+
+        [Fact]
+        public void Should_Create_Child_Even_With_Null_Content_When_ContentTemplate_Is_Set()
+        {
+            var target = new ContentPresenter
+            {
+                ContentTemplate = new FuncDataTemplate<object>(_ => true, (_, __) => new TextBlock
+                {
+                    Text = "Hello World"
+                }),
+                Content = null
+            };
+
+            target.UpdateChild();
+
+            var textBlock = Assert.IsType<TextBlock>(target.Child);
+            Assert.Equal("Hello World", textBlock.Text);
+        }
+
+        [Fact]
+        public void Should_Not_Create_Child_Even_With_Null_Content_And_DataTemplates_InsteadOf_ContentTemplate()
+        {
+            var target = new ContentPresenter
+            {
+                DataTemplates =
+                {
+                    new FuncDataTemplate<object>(_ => true, (_, __) => new TextBlock
+                    {
+                        Text = "Hello World"
+                    })
+                },
+                Content = null
+            };
+
+            target.UpdateChild();
+
+            Assert.Null(target.Child);
+        }
+
+        [Fact]
+        public void Should_Not_Create_Child_When_Content_And_Template_Are_Null()
+        {
+            var target = new ContentPresenter
+            {
+                ContentTemplate = null,
+                Content = null
+            };
+
+            target.UpdateChild();
+
+            Assert.Null(target.Child);
+        }
+
+        [Fact]
+        public void Should_Not_Create_When_Child_Content_Is_Null_But_Expected_ValueType_With_FuncDataTemplate()
+        {
+            var target = new ContentPresenter
+            {
+                ContentTemplate = new FuncDataTemplate<int>(_ => true, (_, __) => new TextBlock
+                {
+                    Text = "Hello World"
+                }),
+                Content = null
+            };
+
+            target.UpdateChild();
+
+            Assert.Null(target.Child);
+        }
+
+        [Fact]
+        public void Should_Create_Child_When_Content_Is_Null_And_Expected_NullableValueType_With_FuncDataTemplate()
+        {
+            var target = new ContentPresenter
+            {
+                ContentTemplate = new FuncDataTemplate<int?>(_ => true, (_, __) => new TextBlock
+                {
+                    Text = "Hello World"
+                }),
+                Content = null
+            };
+
+            target.UpdateChild();
+
+            Assert.NotNull(target.Child);
+        }
     }
 }

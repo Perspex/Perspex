@@ -94,12 +94,24 @@ namespace Avalonia.Utilities
         }
 
         /// <summary>
+        /// Returns a value indicating whether value can be casted to the specified type.
+        /// If value is null, checks if instances of that type can be null.
+        /// </summary>
+        /// <typeparam name="T">The type to cast to</typeparam>
+        /// <param name="value">The value to check if cast possible</param>
+        /// <returns>True if the cast is possible, otherwise false.</returns>
+        public static bool CanCast<T>(object value)
+        {
+            return value is T || (value is null && AcceptsNull(typeof(T)));
+        }
+
+        /// <summary>
         /// Try to convert a value to a type by any means possible.
         /// </summary>
-        /// <param name="to">The type to cast to.</param>
-        /// <param name="value">The value to cast.</param>
+        /// <param name="to">The type to convert to.</param>
+        /// <param name="value">The value to convert.</param>
         /// <param name="culture">The culture to use.</param>
-        /// <param name="result">If successful, contains the cast value.</param>
+        /// <param name="result">If successful, contains the convert value.</param>
         /// <returns>True if the cast was successful, otherwise false.</returns>
         public static bool TryConvert(Type to, object value, CultureInfo culture, out object result)
         {
@@ -216,10 +228,10 @@ namespace Avalonia.Utilities
         /// Try to convert a value to a type using the implicit conversions allowed by the C#
         /// language.
         /// </summary>
-        /// <param name="to">The type to cast to.</param>
-        /// <param name="value">The value to cast.</param>
-        /// <param name="result">If successful, contains the cast value.</param>
-        /// <returns>True if the cast was successful, otherwise false.</returns>
+        /// <param name="to">The type to convert to.</param>
+        /// <param name="value">The value to convert.</param>
+        /// <param name="result">If successful, contains the converted value.</param>
+        /// <returns>True if the convert was successful, otherwise false.</returns>
         public static bool TryConvertImplicit(Type to, object value, out object result)
         {
             if (value == null)
@@ -278,8 +290,8 @@ namespace Avalonia.Utilities
         /// Convert a value to a type by any means possible, returning the default for that type
         /// if the value could not be converted.
         /// </summary>
-        /// <param name="value">The value to cast.</param>
-        /// <param name="type">The type to cast to..</param>
+        /// <param name="value">The value to convert.</param>
+        /// <param name="type">The type to convert to..</param>
         /// <param name="culture">The culture to use.</param>
         /// <returns>A value of <paramref name="type"/>.</returns>
         public static object ConvertOrDefault(object value, Type type, CultureInfo culture)
@@ -291,8 +303,8 @@ namespace Avalonia.Utilities
         /// Convert a value to a type using the implicit conversions allowed by the C# language or
         /// return the default for the type if the value could not be converted.
         /// </summary>
-        /// <param name="value">The value to cast.</param>
-        /// <param name="type">The type to cast to..</param>
+        /// <param name="value">The value to convert.</param>
+        /// <param name="type">The type to convert to.</param>
         /// <returns>A value of <paramref name="type"/>.</returns>
         public static object ConvertImplicitOrDefault(object value, Type type)
         {

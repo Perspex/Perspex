@@ -1,5 +1,7 @@
 using System;
 
+using Avalonia.Utilities;
+
 namespace Avalonia.Controls.Templates
 {
     /// <summary>
@@ -16,7 +18,7 @@ namespace Avalonia.Controls.Templates
         /// </param>
         /// <param name="supportsRecycling">Whether the control can be recycled.</param>
         public FuncDataTemplate(Func<T, INameScope, IControl> build, bool supportsRecycling = false)
-            : base(typeof(T), CastBuild(build), supportsRecycling)
+            : base(o => TypeUtilities.CanCast<T>(o), CastBuild(build), supportsRecycling)
         {
         }
 
@@ -63,7 +65,7 @@ namespace Avalonia.Controls.Templates
         /// <returns>The weakly typed function.</returns>
         private static Func<object, bool> CastMatch(Func<T, bool> f)
         {
-            return o => (o is T) && f((T)o);
+            return o => TypeUtilities.CanCast<T>(o) && f((T)o);
         }
 
         /// <summary>

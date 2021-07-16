@@ -1,17 +1,43 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              x:Class="ControlCatalog.Pages.ComboBoxPage"
-             xmlns:sys="clr-namespace:System;assembly=netstandard">
+             xmlns:sys="using:System"
+             xmlns:col="using:System.Collections">
   <StackPanel Orientation="Vertical" Spacing="4">
     <TextBlock Classes="h1">ComboBox</TextBlock>
     <TextBlock Classes="h2">A drop-down list.</TextBlock>
 
-    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0 16 0 0" Spacing="8">
+    <WrapPanel HorizontalAlignment="Center" Margin="0 16 0 0"
+               MaxWidth="750">
+      <WrapPanel.Styles>
+        <Style Selector="ComboBox">
+          <Setter Property="Width" Value="250" />
+          <Setter Property="Margin" Value="10" />
+        </Style>
+      </WrapPanel.Styles>
       <ComboBox PlaceholderText="Pick an Item">
         <ComboBoxItem>Inline Items</ComboBoxItem>
         <ComboBoxItem>Inline Item 2</ComboBoxItem>
         <ComboBoxItem>Inline Item 3</ComboBoxItem>
         <ComboBoxItem>Inline Item 4</ComboBoxItem>
+      </ComboBox>
+
+      <ComboBox>
+        <ComboBox.Items>
+          <col:ArrayList>
+            <x:Null />
+            <sys:String>Hello</sys:String>
+            <sys:String>World</sys:String>
+          </col:ArrayList>
+        </ComboBox.Items>
+        <ComboBox.ItemTemplate>
+          <DataTemplate>
+            <Panel>
+              <TextBlock Text="{Binding}" />
+              <TextBlock Text="Null object" IsVisible="{Binding Converter={x:Static ObjectConverters.IsNull}}" />
+            </Panel>
+          </DataTemplate>
+        </ComboBox.ItemTemplate>
       </ComboBox>
 
       <ComboBox SelectedIndex="0">
@@ -46,7 +72,7 @@
           <sys:Exception /> 
         </DataValidationErrors.Error>
       </ComboBox>
-    </StackPanel>
+    </WrapPanel>
 
   </StackPanel>
 </UserControl>

@@ -327,7 +327,11 @@ namespace Avalonia.Controls.Presenters
             var oldChild = Child;
             var newChild = content as IControl;
 
-            if (content != null && newChild == null)
+            // We want to allow creating Child from the Template, if Content is null.
+            // But it's important to not inherit data template in this case nor use DataTemplates,
+            // otherwise it will blow up every ContentPresenter without Content set.
+            if (newChild == null
+                && (content != null || ContentTemplate != null))
             {
                 var dataTemplate = this.FindDataTemplate(content, ContentTemplate) ?? 
                     (

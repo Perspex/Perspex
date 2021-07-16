@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-
+using Avalonia.Controls.Diagnostics;
 using Avalonia.Controls.Generators;
 using Avalonia.Controls.Platform;
 using Avalonia.Controls.Primitives;
@@ -21,7 +21,7 @@ namespace Avalonia.Controls
     /// <summary>
     /// A control context menu.
     /// </summary>
-    public class ContextMenu : MenuBase, ISetterValue
+    public class ContextMenu : MenuBase, ISetterValue, IPopupHostProvider
     {
         /// <summary>
         /// Defines the <see cref="HorizontalOffset"/> property.
@@ -82,6 +82,7 @@ namespace Avalonia.Controls
         private Popup? _popup;
         private List<Control>? _attachedControls;
         private IInputElement? _previousFocus;
+        private Action<IPopupHost?>? _popupHostChangedHandler;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ContextMenu"/> class.
@@ -304,6 +305,14 @@ namespace Avalonia.Controls
             }
         }
 
+        IPopupHost? IPopupHostProvider.PopupHost => _popup?.Host;
+
+        event Action<IPopupHost?>? IPopupHostProvider.PopupHostChanged 
+        { 
+            add => _popupHostChangedHandler += value; 
+            remove => _popupHostChangedHandler -= value;
+        }
+
         protected override IItemContainerGenerator CreateItemContainerGenerator()
         {
             return new MenuItemContainerGenerator(this);
@@ -364,6 +373,8 @@ namespace Avalonia.Controls
         {
             _previousFocus = FocusManager.Instance?.Current;
             Focus();
+
+            _popupHostChangedHandler?.Invoke(_popup!.Host);
         }
 
         private void PopupClosing(object sender, CancelEventArgs e)
@@ -397,6 +408,8 @@ namespace Avalonia.Controls
                 RoutedEvent = MenuClosedEvent,
                 Source = this,
             });
+            
+            _popupHostChangedHandler?.Invoke(null);
         }
 
         private void PopupKeyUp(object sender, KeyEventArgs e)

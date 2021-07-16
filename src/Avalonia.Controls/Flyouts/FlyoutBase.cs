@@ -1,19 +1,18 @@
 ﻿using System;
 using System.ComponentModel;
+using Avalonia.Controls.Diagnostics;
 using System.Linq;
-
 using Avalonia.Input;
 using Avalonia.Input.Platform;
 using Avalonia.Input.Raw;
 using Avalonia.Layout;
 using Avalonia.Logging;
-using Avalonia.Rendering;
 
 #nullable enable
 
 namespace Avalonia.Controls.Primitives
 {
-    public abstract class FlyoutBase : AvaloniaObject
+    public abstract class FlyoutBase : AvaloniaObject, IPopupHostProvider
     {
         static FlyoutBase()
         {
@@ -59,6 +58,7 @@ namespace Avalonia.Controls.Primitives
         private Rect? _enlargedPopupRect;
         private PixelRect? _enlargePopupRectScreenPixelRect;
         private IDisposable? _transientDisposable;
+        private Action<IPopupHost?>? _popupHostChangedHandler;
 
         public FlyoutBase()
         {
@@ -101,6 +101,14 @@ namespace Avalonia.Controls.Primitives
         {
             get => _target;
             private set => SetAndRaise(TargetProperty, ref _target, value);
+        }
+
+        IPopupHost? IPopupHostProvider.PopupHost => Popup?.Host;
+
+        event Action<IPopupHost?>? IPopupHostProvider.PopupHostChanged 
+        { 
+            add => _popupHostChangedHandler += value; 
+            remove => _popupHostChangedHandler -= value;
         }
 
         public event EventHandler? Closed;
@@ -363,6 +371,8 @@ namespace Avalonia.Controls.Primitives
         private void OnPopupOpened(object sender, EventArgs e)
         {
             IsOpen = true;
+
+            _popupHostChangedHandler?.Invoke(Popup!.Host);
         }
 
         private void OnPopupClosing(object sender, CancelEventArgs e)
@@ -376,6 +386,8 @@ namespace Avalonia.Controls.Primitives
         private void OnPopupClosed(object sender, EventArgs e)
         {
             HideCore(false);
+
+            _popupHostChangedHandler?.Invoke(null);
         }
 
         // This method is handling both popup logical tree and target logical tree.

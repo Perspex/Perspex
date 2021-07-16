@@ -1,6 +1,5 @@
 ﻿using System;
 using System.ComponentModel;
-
 using Avalonia.Controls;
 using Avalonia.Diagnostics.Models;
 using Avalonia.Input;

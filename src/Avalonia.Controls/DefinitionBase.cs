@@ -35,7 +35,7 @@ namespace Avalonia.Controls
             if (_sharedState == null)
             {
                 //  start with getting SharedSizeGroup value. 
-                //  this property is NOT inhereted which should result in better overall perf.
+                //  this property is NOT inherited which should result in better overall perf.
                 string sharedSizeGroupId = SharedSizeGroup;
                 if (sharedSizeGroupId != null)
                 {
@@ -52,7 +52,7 @@ namespace Avalonia.Controls
         }
 
         /// <summary>
-        /// Callback to notify about exitting model tree.
+        /// Callback to notify about exiting model tree.
         /// </summary>
         internal void OnExitParentTree()
         {
@@ -458,7 +458,7 @@ namespace Avalonia.Controls
         private Grid.LayoutTimeSizeType _sizeType;      //  layout-time user size type. it may differ from _userSizeValueCache.UnitType when calculating "to-content"
 
         private double _minSize;                        //  used during measure to accumulate size for "Auto" and "Star" DefinitionBase's
-        private double _measureSize;                    //  size, calculated to be the input contstraint size for Child.Measure
+        private double _measureSize;                    //  size, calculated to be the input constraint size for Child.Measure
         private double _sizeCache;                      //  cache used for various purposes (sorting, caching, etc) during calculations
         private double _offset;                         //  offset of the DefinitionBase from left / top corner (assuming LTR case)
 
@@ -556,7 +556,7 @@ namespace Avalonia.Controls
             }
 
             /// <summary>
-            /// Propogates invalidations for all registered definitions.
+            /// Propagates invalidations for all registered definitions.
             /// Resets its own state.
             /// </summary>
             internal void Invalidate()

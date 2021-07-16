@@ -22,7 +22,7 @@ namespace Avalonia.Input
 
 
         /// <summary>
-        /// Bor the bheavior CanExecuteChanged
+        /// Bor the behavior CanExecuteChanged
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>

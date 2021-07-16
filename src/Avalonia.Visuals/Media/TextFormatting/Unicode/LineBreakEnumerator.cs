@@ -284,7 +284,7 @@ namespace Avalonia.Media.TextFormatting.Unicode
             // - U+0028 (Left Opening Parenthesis)
             // - U+005B (Opening Square Bracket)
             // - U+007B (Left Curly Bracket)
-            // See custom colums|rules in the text pair table.
+            // See custom columns|rules in the text pair table.
             // https://www.unicode.org/Public/13.0.0/ucd/auxiliary/LineBreakTest.html
             _lb30 = _alphaNumericCount > 0
                 && cls == LineBreakClass.OpenPunctuation

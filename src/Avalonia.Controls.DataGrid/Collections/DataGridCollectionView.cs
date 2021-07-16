@@ -877,7 +877,7 @@ namespace Avalonia.Collections
                         if (!CheckFlag(CollectionViewFlags.IsMoveToPageDeferred))
                         {
                             // if the temporaryGroup was not created yet and is out of sync
-                            // then create it so that we can use it as a refernce while paging.
+                            // then create it so that we can use it as a reference while paging.
                             if (IsGrouping && _temporaryGroup.ItemCount != InternalList.Count)
                             {
                                 PrepareTemporaryGroups();
@@ -889,7 +889,7 @@ namespace Avalonia.Collections
                     else if (IsGrouping)
                     {
                         // if the temporaryGroup was not created yet and is out of sync
-                        // then create it so that we can use it as a refernce while paging.
+                        // then create it so that we can use it as a reference while paging.
                         if (_temporaryGroup.ItemCount != InternalList.Count)
                         {
                             // update the groups that get created for the
@@ -1951,7 +1951,7 @@ namespace Avalonia.Collections
             EnsureCollectionInSync();
             VerifyRefreshNotDeferred();
 
-            // for indicies larger than the count
+            // for indices larger than the count
             if (index >= Count || index < 0)
             {
                 throw new ArgumentOutOfRangeException("index");
@@ -3800,7 +3800,7 @@ namespace Avalonia.Collections
         /// </summary>
         /// <remarks>
         /// This method can be called from a constructor - it does not call
-        /// any virtuals.  The 'count' parameter is substitute for the real Count,
+        /// any virtuals. The 'count' parameter is substitute for the real Count,
         /// used only when newItem is null.
         /// In that case, this method sets IsCurrentAfterLast to true if and only
         /// if newPosition >= count.  This distinguishes between a null belonging

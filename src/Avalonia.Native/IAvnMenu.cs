@@ -96,7 +96,7 @@ namespace Avalonia.Native.Interop.Impl
             _menuItems.Remove(item);
             RemoveItem(item);
 
-            item.Deinitialise();
+            item.Deinitialize();
             item.Dispose();
         }
 
@@ -113,7 +113,7 @@ namespace Avalonia.Native.Interop.Impl
         {
             var result = CreateNew(factory, item);
 
-            result.Initialise(item);
+            result.Initialize(item);
 
             _menuItemLookup.Add(result.ManagedMenuItem, result);
             _menuItems.Insert(index, result);
@@ -133,7 +133,7 @@ namespace Avalonia.Native.Interop.Impl
             return nativeItem;
         }
 
-        internal void Initialise(AvaloniaNativeMenuExporter exporter, NativeMenu managedMenu, string title)
+        internal void Initialize(AvaloniaNativeMenuExporter exporter, NativeMenu managedMenu, string title)
         {
             _exporter = exporter;
             ManagedMenu = managedMenu;
@@ -150,7 +150,7 @@ namespace Avalonia.Native.Interop.Impl
 
             foreach (var item in _menuItems)
             {
-                item.Deinitialise();
+                item.Deinitialize();
                 item.Dispose();
             }
         }

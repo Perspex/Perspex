@@ -25,14 +25,14 @@ namespace Avalonia.Media.Transformation
                    Matrix.CreateScale(decomposed.Scale);
         }
 
-        public static Matrix.Decomposed InterpolateDecomposedTransforms(ref Matrix.Decomposed from, ref Matrix.Decomposed to, double progres)
+        public static Matrix.Decomposed InterpolateDecomposedTransforms(ref Matrix.Decomposed from, ref Matrix.Decomposed to, double progress)
         {
             Matrix.Decomposed result = default;
 
-            result.Translate = InterpolateVectors(from.Translate, to.Translate, progres);
-            result.Scale = InterpolateVectors(from.Scale, to.Scale, progres);
-            result.Skew = InterpolateVectors(from.Skew, to.Skew, progres);
-            result.Angle = InterpolateScalars(from.Angle, to.Angle, progres);
+            result.Translate = InterpolateVectors(from.Translate, to.Translate, progress);
+            result.Scale = InterpolateVectors(from.Scale, to.Scale, progress);
+            result.Skew = InterpolateVectors(from.Skew, to.Skew, progress);
+            result.Angle = InterpolateScalars(from.Angle, to.Angle, progress);
 
             return result;
         }

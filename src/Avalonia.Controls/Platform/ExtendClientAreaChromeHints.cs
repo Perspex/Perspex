@@ -25,7 +25,7 @@ namespace Avalonia.Platform
 
         /// <summary>
         /// Use system chrome where possible. OSX system chrome is used, Windows managed chrome is used.
-        /// This is because Windows Chrome can not be shown ontop of user content.
+        /// This is because Windows Chrome can not be shown on top of user content.
         /// </summary>
         PreferSystemChrome = 0x02,
 

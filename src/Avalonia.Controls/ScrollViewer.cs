@@ -653,7 +653,7 @@ namespace Avalonia.Controls
         private void CalculatedPropertiesChanged()
         {
             // Pass old values of 0 here because we don't have the old values at this point,
-            // and it shouldn't matter as only the template uses these properies.
+            // and it shouldn't matter as only the template uses these properties.
             RaisePropertyChanged(HorizontalScrollBarMaximumProperty, 0, HorizontalScrollBarMaximum);
             RaisePropertyChanged(HorizontalScrollBarValueProperty, 0, HorizontalScrollBarValue);
             RaisePropertyChanged(HorizontalScrollBarViewportSizeProperty, 0, HorizontalScrollBarViewportSize);

@@ -78,7 +78,7 @@ namespace Avalonia.Input.GestureRecognizers
         // Arbitrary chosen value, probably need to move that to platform settings or something
         private const double ScrollStartDistance = 30;
         
-        // Pixels per second speed that is considered to be the stop of inertiall scroll
+        // Pixels per second speed that is considered to be the stop of inertial scroll
         private const double InertialScrollSpeedEnd = 5;
         
         public void PointerMoved(PointerEventArgs e)

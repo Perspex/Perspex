@@ -441,9 +441,9 @@ namespace Avalonia.Controls
             base.OnPropertyChanged(change);
         }
 
-        internal IControl GetElementImpl(int index, bool forceCreate, bool supressAutoRecycle)
+        internal IControl GetElementImpl(int index, bool forceCreate, bool suppressAutoRecycle)
         {
-            var element = _viewManager.GetElement(index, forceCreate, supressAutoRecycle);
+            var element = _viewManager.GetElement(index, forceCreate, suppressAutoRecycle);
             return element;
         }
 

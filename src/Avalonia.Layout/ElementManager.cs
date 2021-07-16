@@ -40,7 +40,7 @@ namespace Avalonia.Layout
             {
                 if (IsVirtualizingContext)
                 {
-                    // We proactively clear elements laid out outside of the realizaton
+                    // We proactively clear elements laid out outside of the realization
                     // rect so that they are available for reuse during the current
                     // measure pass.
                     // This is useful during fast panning scenarios in which the realization

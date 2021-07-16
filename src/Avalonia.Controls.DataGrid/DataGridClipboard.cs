@@ -189,7 +189,7 @@ namespace Avalonia.Controls
         }
 
         /// <summary>
-        /// DataGrid row item used for proparing the ClipboardRowContent.
+        /// DataGrid row item used for preparing the ClipboardRowContent.
         /// </summary>
         public object Item
         {

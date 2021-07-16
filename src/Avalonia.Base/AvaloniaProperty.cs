@@ -465,9 +465,9 @@ namespace Avalonia
         /// Uses the visitor pattern to resolve an untyped property to a typed property.
         /// </summary>
         /// <typeparam name="TData">The type of user data passed.</typeparam>
-        /// <param name="vistor">The visitor which will accept the typed property.</param>
+        /// <param name="visitor">The visitor which will accept the typed property.</param>
         /// <param name="data">The user data to pass.</param>
-        public abstract void Accept<TData>(IAvaloniaPropertyVisitor<TData> vistor, ref TData data)
+        public abstract void Accept<TData>(IAvaloniaPropertyVisitor<TData> visitor, ref TData data)
             where TData : struct;
 
         /// <summary>

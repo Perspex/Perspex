@@ -38,7 +38,7 @@ namespace Avalonia
         /// <remarks>
         /// Data validation is validation performed at the target of a binding, for example in a
         /// view model using the INotifyDataErrorInfo interface. Only certain properties on a
-        /// control (such as a TextBox's Text property) will be interested in recieving data
+        /// control (such as a TextBox's Text property) will be interested in receiving data
         /// validation messages so this feature must be explicitly enabled by setting this flag.
         /// </remarks>
         public bool? EnableDataValidation { get; private set; }

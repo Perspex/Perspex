@@ -22,7 +22,7 @@ namespace Avalonia.Layout
         private int _firstRealizedDataIndexInsideRealizationWindow = -1;
         private int _lastRealizedDataIndexInsideRealizationWindow = -1;
 
-        // If the scroll orientation is the same as the folow orientation
+        // If the scroll orientation is the same as the follow orientation
         // we will only have one line since we will never wrap. In that case
         // we do not want to align the line. We could potentially switch the
         // meaning of line alignment in this case, but I'll hold off on that
@@ -429,7 +429,7 @@ namespace Avalonia.Layout
 
                 // If we did not reach the top or bottom of the extent, we realized one 
                 // extra item before we knew we were outside the realization window. Do not
-                // account for that element in the indicies inside the realization window.
+                // account for that element in the indices inside the realization window.
                 if (direction == GenerateDirection.Forward)
                 {
                     int dataCount = _context.ItemCount;

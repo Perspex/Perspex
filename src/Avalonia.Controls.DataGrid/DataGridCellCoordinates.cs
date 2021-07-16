@@ -40,7 +40,7 @@ namespace Avalonia.Controls
             return false;
         }
 
-        // There is build warning if this is missiing
+        // There is build warning if this is missing
         public override int GetHashCode()
         {
             return base.GetHashCode();

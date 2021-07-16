@@ -193,7 +193,7 @@ namespace Avalonia.Controls
 
         /// <summary>
         /// TickBar will use ReservedSpaceProperty for left and right spacing (for horizontal orientation) or
-        /// top and bottom spacing (for vertical orienation).
+        /// top and bottom spacing (for vertical orientation).
         /// The space on both sides of TickBar is half of specified ReservedSpace.
         /// This property has type of <see cref="Rect" />.
         /// </summary>
@@ -210,7 +210,7 @@ namespace Avalonia.Controls
         /// This function also draw selection-tick(s) if IsSelectionRangeEnabled is 'true' and
         /// SelectionStart and SelectionEnd are valid.
         ///
-        /// The primary ticks (for Mininum and Maximum value) height will be 100% of TickBar's render size (use Width or Height
+        /// The primary ticks (for Minimum and Maximum value) height will be 100% of TickBar's render size (use Width or Height
         /// depends on Placement property).
         ///
         /// The secondary ticks (all other ticks, including selection-tics) height will be 75% of TickBar's render size.
@@ -221,7 +221,7 @@ namespace Avalonia.Controls
         {
             var size = new Size(Bounds.Width, Bounds.Height);
             var range = Maximum - Minimum;
-            var tickLen = 0.0d;   // Height for Primary Tick (for Mininum and Maximum value)
+            var tickLen = 0.0d;   // Height for Primary Tick (for Minimum and Maximum value)
             var tickLen2 = 0.0d;  // Height for Secondary Tick
             var logicalToPhysical = 1.0;
             var startPoint = new Point();
@@ -285,7 +285,7 @@ namespace Avalonia.Controls
 
             tickLen2 = tickLen * 0.75;
 
-            // Invert direciton of the ticks
+            // Invert direction of the ticks
             if (IsDirectionReversed)
             {
                 logicalToPhysical *= -1;

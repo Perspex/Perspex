@@ -1193,7 +1193,7 @@ namespace Avalonia.Controls
                 else
                 {
                     groupHeader = element as DataGridRowGroupHeader;
-                    Debug.Assert(groupHeader != null);  // Nothig other and Rows and RowGroups now
+                    Debug.Assert(groupHeader != null);  // Nothing other and Rows and RowGroups now
                     if (groupHeader != null)
                     {
                         groupHeader.TotalIndent = (groupHeader.Level == 0) ? 0 : RowGroupSublevelIndents[groupHeader.Level - 1];
@@ -1636,7 +1636,7 @@ namespace Avalonia.Controls
             if (slot >= DisplayData.FirstScrollingSlot &&
                 slot <= DisplayData.LastScrollingSlot)
             {
-                // Additional row takes the spot of a displayed row - it is necessarilly displayed
+                // Additional row takes the spot of a displayed row - it is necessarily displayed
                 return true;
             }
             else if (DisplayData.FirstScrollingSlot == -1 &&
@@ -1825,7 +1825,7 @@ namespace Avalonia.Controls
                 if (MathUtilities.LessThan(firstRowHeight, NegVerticalOffset))
                 {
                     // We've scrolled off more of the first row than what's possible.  This can happen
-                    // if the first row got shorter (Ex: Collpasing RowDetails) or if the user has a recycling
+                    // if the first row got shorter (Ex: Collapsing RowDetails) or if the user has a recycling
                     // cleanup issue.  In this case, simply try to display the next row as the first row instead
                     if (newFirstScrollingSlot < SlotCount - 1)
                     {
@@ -2014,7 +2014,7 @@ namespace Avalonia.Controls
 
             if (recycleRow)
             {
-                DisplayData.AddRecylableRow(dataGridRow);
+                DisplayData.AddRecyclableRow(dataGridRow);
             }
             else
             {
@@ -2265,7 +2265,7 @@ namespace Avalonia.Controls
                     if (parentGroupInfo.LastSubItemSlot - parentGroupInfo.Slot == 1)
                     {
                         // We just added the first item to a RowGroup so the header should transition from Empty to either Expanded or Collapsed
-                        EnsureAnscestorsExpanderButtonChecked(parentGroupInfo);
+                        EnsureAncestorsExpanderButtonChecked(parentGroupInfo);
                     }
                 }
             }
@@ -2407,7 +2407,7 @@ namespace Avalonia.Controls
             return treeCount;
         }
 
-        private void EnsureAnscestorsExpanderButtonChecked(DataGridRowGroupInfo parentGroupInfo)
+        private void EnsureAncestorsExpanderButtonChecked(DataGridRowGroupInfo parentGroupInfo)
         {
             if (IsSlotVisible(parentGroupInfo.Slot))
             {
@@ -2789,11 +2789,11 @@ namespace Avalonia.Controls
             return null;
         }
 
-        internal void OnRowGroupHeaderToggled(DataGridRowGroupHeader groupHeader, bool newIsVisibile, bool setCurrent)
+        internal void OnRowGroupHeaderToggled(DataGridRowGroupHeader groupHeader, bool newIsVisible, bool setCurrent)
         {
             Debug.Assert(groupHeader.RowGroupInfo.CollectionViewGroup.ItemCount > 0);
 
-            if (WaitForLostFocus(delegate { OnRowGroupHeaderToggled(groupHeader, newIsVisibile, setCurrent); }) || !CommitEdit())
+            if (WaitForLostFocus(delegate { OnRowGroupHeaderToggled(groupHeader, newIsVisible, setCurrent); }) || !CommitEdit())
             {
                 return;
             }
@@ -2804,7 +2804,7 @@ namespace Avalonia.Controls
                 UpdateSelectionAndCurrency(CurrentColumnIndex, groupHeader.RowGroupInfo.Slot, DataGridSelectionAction.SelectCurrent, scrollIntoView: false);
             }
 
-            UpdateRowGroupVisibility(groupHeader.RowGroupInfo, newIsVisibile, isDisplayed: true);
+            UpdateRowGroupVisibility(groupHeader.RowGroupInfo, newIsVisible, isDisplayed: true);
 
             ComputeScrollBarsLayout();
             // We need force arrange since our Scrollings Rows could update without automatically triggering layout

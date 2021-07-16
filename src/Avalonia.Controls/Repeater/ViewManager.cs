@@ -174,7 +174,7 @@ namespace Avalonia.Controls
             }
             else
             {
-                // We could not find a candiate.
+                // We could not find a candidate.
                 _lastFocusedElement = null;
             }
         }

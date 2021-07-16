@@ -264,7 +264,7 @@ namespace Avalonia.Controls
         }
 
         /// <summary>
-        /// Called durung the arrange pass to set the size of the window.
+        /// Called during the arrange pass to set the size of the window.
         /// </summary>
         /// <param name="size">The requested size of the window.</param>
         /// <returns>The actual size of the window.</returns>

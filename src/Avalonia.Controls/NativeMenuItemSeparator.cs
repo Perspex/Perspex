@@ -3,7 +3,7 @@
 namespace Avalonia.Controls
 {
 
-    [Obsolete("This class exists to maintain backwards compatiblity with existing code. Use NativeMenuItemSeparator instead")]
+    [Obsolete("This class exists to maintain backwards compatibility with existing code. Use NativeMenuItemSeparator instead")]
     public class NativeMenuItemSeperator : NativeMenuItemSeparator 
     {
     }

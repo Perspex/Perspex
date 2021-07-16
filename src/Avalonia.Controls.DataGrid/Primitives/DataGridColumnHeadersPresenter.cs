@@ -140,7 +140,7 @@ namespace Avalonia.Controls.Primitives
                 if (dataGridColumn.IsFrozen)
                 {
                     columnHeader.Arrange(new Rect(frozenLeftEdge, 0, dataGridColumn.LayoutRoundedWidth, finalSize.Height));
-                    columnHeader.Clip = null; // The layout system could have clipped this becaues it's not aware of our render transform
+                    columnHeader.Clip = null; // The layout system could have clipped this because it's not aware of our render transform
                     if (DragColumn == dataGridColumn && DragIndicator != null)
                     {
                         dragIndicatorLeftEdge = frozenLeftEdge + DragIndicatorOffset;

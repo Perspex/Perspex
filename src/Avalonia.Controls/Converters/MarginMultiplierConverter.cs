@@ -26,13 +26,13 @@ namespace Avalonia.Controls.Converters
                     Right ? Indent * scalarDepth : 0,
                     Bottom ? Indent * scalarDepth : 0);
             }
-            else if (value is Thickness thinknessDepth)
+            else if (value is Thickness thicknessDepth)
             {
                 return new Thickness(
-                    Left ? Indent * thinknessDepth.Left : 0,
-                    Top ? Indent * thinknessDepth.Top : 0,
-                    Right ? Indent * thinknessDepth.Right : 0,
-                    Bottom ? Indent * thinknessDepth.Bottom : 0);
+                    Left ? Indent * thicknessDepth.Left : 0,
+                    Top ? Indent * thicknessDepth.Top : 0,
+                    Right ? Indent * thicknessDepth.Right : 0,
+                    Bottom ? Indent * thicknessDepth.Bottom : 0);
             }
             return new Thickness(0);
             

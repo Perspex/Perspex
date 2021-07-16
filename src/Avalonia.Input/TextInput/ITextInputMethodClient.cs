@@ -22,11 +22,11 @@ namespace Avalonia.Input.TextInput
         /// </summary>
         event EventHandler TextViewVisualChanged;
         /// <summary>
-        /// Indicates if TextViewVisual is capable of displaying non-commited input on the cursor position
+        /// Indicates if TextViewVisual is capable of displaying non-committed input on the cursor position
         /// </summary>
         bool SupportsPreedit { get; }
         /// <summary>
-        /// Sets the non-commited input string
+        /// Sets the non-committed input string
         /// </summary>
         void SetPreeditText(string text);
         /// <summary>

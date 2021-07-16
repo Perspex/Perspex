@@ -85,7 +85,7 @@ namespace Avalonia.Native.Interop.Impl
             SetAction(action, callback);
         }
 
-        internal void Initialise(NativeMenuItemBase nativeMenuItem)
+        internal void Initialize(NativeMenuItemBase nativeMenuItem)
         {
             ManagedMenuItem = nativeMenuItem;
 
@@ -123,7 +123,7 @@ namespace Avalonia.Native.Interop.Impl
             }
         }
 
-        internal void Deinitialise()
+        internal void Deinitialize()
         {
             if (_subMenu != null)
             {
@@ -150,7 +150,7 @@ namespace Avalonia.Native.Interop.Impl
                 {
                     _subMenu = __MicroComIAvnMenuProxy.Create(factory);
 
-                    _subMenu.Initialise(exporter, item.Menu, item.Header);
+                    _subMenu.Initialize(exporter, item.Menu, item.Header);
 
                     SetSubMenu(_subMenu);
                 }

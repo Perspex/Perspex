@@ -20,7 +20,7 @@ namespace Avalonia.Data.Core.Plugins
         /// </summary>
         /// <param name="reference">A weak reference to the object.</param>
         /// <param name="propertyName">The property name.</param>
-        /// <param name="inner">The inner property accessor used to aceess the property.</param>
+        /// <param name="inner">The inner property accessor used to access the property.</param>
         /// <returns>
         /// An <see cref="IPropertyAccessor"/> interface through which future interactions with the 
         /// property will be made.

@@ -58,8 +58,8 @@ namespace Avalonia
         /// <remarks>
         /// This will usually be true, except in
         /// <see cref="AvaloniaObject.OnPropertyChangedCore{T}(AvaloniaPropertyChangedEventArgs{T})"/>
-        /// which recieves notifications for all changes to property values, whether a value with a higher
-        /// priority is present or not. When this property is false, the change that is being signalled
+        /// which receives notifications for all changes to property values, whether a value with a higher
+        /// priority is present or not. When this property is false, the change that is being signaled
         /// has not resulted in a change to the property value on the object.
         /// </remarks>
         public bool IsEffectiveValueChange { get; private set; }

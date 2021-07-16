@@ -273,7 +273,7 @@ namespace Avalonia.Controls
         }
         
         /// <summary>
-        /// Sets up the platform-speciic services for the <see cref="Application"/>.
+        /// Sets up the platform-specific services for the <see cref="Application"/>.
         /// </summary>
         private void Setup()
         {

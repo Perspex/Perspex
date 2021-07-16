@@ -861,7 +861,7 @@ namespace Avalonia
         }
 
         /// <summary>
-        /// Logs a mesage if the notification represents a binding error.
+        /// Logs a message if the notification represents a binding error.
         /// </summary>
         /// <param name="property">The property being bound.</param>
         /// <param name="value">The binding notification.</param>

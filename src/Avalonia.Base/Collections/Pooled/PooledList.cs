@@ -1271,7 +1271,7 @@ namespace Avalonia.Collections.Pooled
         /// Reverses the elements in a range of this list. Following a call to this
         /// method, an element in the range given by index and count
         /// which was previously located at index i will now be located at
-        /// index index + (index + count - i - 1).
+        /// index + (index + count - i - 1).
         /// </summary>
         public void Reverse(int index, int count)
         {

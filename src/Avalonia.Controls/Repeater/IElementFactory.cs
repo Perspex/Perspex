@@ -46,7 +46,7 @@ namespace Avalonia.Controls
     }
 
     /// <summary>
-    /// A data template that supports creating and recyling elements for an <see cref="ItemsRepeater"/>.
+    /// A data template that supports creating and recycling elements for an <see cref="ItemsRepeater"/>.
     /// </summary>
     public interface IElementFactory : IDataTemplate
     {

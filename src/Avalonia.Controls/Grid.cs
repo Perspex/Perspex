@@ -330,7 +330,7 @@ namespace Avalonia.Controls
                     //  value of Auto column), "cell 2 1" needs to be calculated first,
                     //  as it contributes to the Auto column's calculated value.
                     //  At the same time in order to accurately calculate constraint
-                    //  height for "cell 2 1", "cell 1 2" needs to be calcualted first,
+                    //  height for "cell 2 1", "cell 1 2" needs to be calculated first,
                     //  as it contributes to Auto row height, which is used in the
                     //  computation of Star row resolved height.
                     //
@@ -405,11 +405,11 @@ namespace Avalonia.Controls
                     //
                     //  where:
                     //  *   all [Measure GroupN] - regular children measure process -
-                    //      each cell is measured given contraint size as an input
+                    //      each cell is measured given constraint size as an input
                     //      and each cell's desired size is accumulated on the
                     //      corresponding column / row;
                     //  *   [Measure Group2'] - is when each cell is measured with
-                    //      infinit height as a constraint and a cell's desired
+                    //      infinite height as a constraint and a cell's desired
                     //      height is ignored;
                     //  *   [Measure Groups''] - is when each cell is measured (second
                     //      time during single Grid.MeasureOverride) regularly but its
@@ -780,7 +780,7 @@ namespace Avalonia.Controls
         }
 
         /// <summary>
-        /// Initializes DefinitionsU memeber either to user supplied ColumnDefinitions collection
+        /// Initializes DefinitionsU member either to user supplied ColumnDefinitions collection
         /// or to a default single element collection. DefinitionsU gets trimmed to size.
         /// </summary>
         /// <remarks>
@@ -821,7 +821,7 @@ namespace Avalonia.Controls
         }
 
         /// <summary>
-        /// Initializes DefinitionsV memeber either to user supplied RowDefinitions collection
+        /// Initializes DefinitionsV member either to user supplied RowDefinitions collection
         /// or to a default single element collection. DefinitionsV gets trimmed to size.
         /// </summary>
         /// <remarks>
@@ -2132,7 +2132,7 @@ namespace Avalonia.Controls
                 //
                 // Fortunately, our scenarios tend to have a small number of columns (~10 or fewer)
                 // each being allocated a large number of pixels (~50 or greater), and
-                // people don't even notice the kind of 1-pixel anomolies that are
+                // people don't even notice the kind of 1-pixel anomalies that are
                 // theoretically inevitable, or don't care if they do.  At least they shouldn't
                 // care - no one should be using the results WPF's grid layout to make
                 // quantitative decisions; its job is to produce a reasonable display, not
@@ -2597,7 +2597,7 @@ namespace Avalonia.Controls
             if (scale < 0.0)
             {
                 // if one of the *-weights is Infinity, adjust the weights by mapping
-                // Infinty to 1.0 and everything else to 0.0:  the infinite items share the
+                // Infinity to 1.0 and everything else to 0.0:  the infinite items share the
                 // available space equally, everyone else gets nothing.
                 return (Double.IsPositiveInfinity(def.UserSize.Value)) ? 1.0 : 0.0;
             }
@@ -2655,7 +2655,7 @@ namespace Avalonia.Controls
         private enum Flags
         {
             //
-            //  the foolowing flags let grid tracking dirtiness in more granular manner:
+            //  the following flags let grid tracking dirtiness in more granular manner:
             //  * Valid???Structure flags indicate that elements were added or removed.
             //  * Valid???Layout flags indicate that layout time portion of the information
             //    stored on the objects should be updated.
@@ -2684,7 +2684,7 @@ namespace Avalonia.Controls
 
         /// <summary>
         /// ShowGridLines property. This property is used mostly
-        /// for simplification of visual debuggig. When it is set
+        /// for simplification of visual debugging. When it is set
         /// to <c>true</c> grid lines are drawn to visualize location
         /// of grid lines.
         /// </summary>

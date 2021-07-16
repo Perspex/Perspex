@@ -138,7 +138,7 @@ namespace Avalonia.Native
             {
                 _nativeMenu = (__MicroComIAvnMenuProxy)__MicroComIAvnMenuProxy.Create(_factory);
 
-                _nativeMenu.Initialise(this, appMenuHolder, "");
+                _nativeMenu.Initialize(this, appMenuHolder, "");
 
                 setMenu = true;
             }
@@ -159,7 +159,7 @@ namespace Avalonia.Native
             {
                 _nativeMenu = __MicroComIAvnMenuProxy.Create(_factory);
 
-                _nativeMenu.Initialise(this, menu, "");     
+                _nativeMenu.Initialize(this, menu, "");     
 
                 setMenu = true;           
             }

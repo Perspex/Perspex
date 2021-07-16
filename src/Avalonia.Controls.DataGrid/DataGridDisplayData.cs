@@ -79,7 +79,7 @@ namespace Avalonia.Controls
             set;
         }
 
-        internal void AddRecylableRow(DataGridRow row)
+        internal void AddRecyclableRow(DataGridRow row)
         {
             Debug.Assert(!_recyclableRows.Contains(row));
             row.DetachFromDataGrid(true);
@@ -120,7 +120,7 @@ namespace Avalonia.Controls
                     {
                         if (row.IsRecyclable)
                         {
-                            AddRecylableRow(row);
+                            AddRecyclableRow(row);
                         }
                         else
                         {
@@ -193,7 +193,7 @@ namespace Avalonia.Controls
 
         internal void FullyRecycleElements()
         {
-            // Fully recycle Recycleable rows and transfer them to Recycled rows
+            // Fully recycle Recyclable rows and transfer them to Recycled rows
             while (_recyclableRows.Count > 0)
             {
                 DataGridRow row = _recyclableRows.Pop();
@@ -202,7 +202,7 @@ namespace Avalonia.Controls
                 Debug.Assert(!_fullyRecycledRows.Contains(row));
                 _fullyRecycledRows.Push(row);
             }
-            // Fully recycle Recycleable GroupHeaders and transfer them to Recycled GroupHeaders
+            // Fully recycle Recyclable GroupHeaders and transfer them to Recycled GroupHeaders
             while (_recyclableGroupHeaders.Count > 0)
             {
                 DataGridRowGroupHeader groupHeader = _recyclableGroupHeaders.Pop();

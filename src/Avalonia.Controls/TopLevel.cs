@@ -224,7 +224,7 @@ namespace Avalonia.Controls
         }
 
         /// <summary>
-        /// Gets the acheived <see cref="WindowTransparencyLevel"/> that the platform was able to provide.
+        /// Gets the achieved <see cref="WindowTransparencyLevel"/> that the platform was able to provide.
         /// </summary>
         public WindowTransparencyLevel ActualTransparencyLevel
         {

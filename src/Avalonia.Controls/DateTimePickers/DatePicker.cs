@@ -71,7 +71,7 @@ namespace Avalonia.Controls
                 x => x.MonthVisible, (x, v) => x.MonthVisible = v);
 
         /// <summary>
-        /// Defiens the <see cref="YearFormat"/> Property
+        /// Defines the <see cref="YearFormat"/> Property
         /// </summary>
         public static readonly DirectProperty<DatePicker, string> YearFormatProperty =
             AvaloniaProperty.RegisterDirect<DatePicker, string>(nameof(YearFormat), 

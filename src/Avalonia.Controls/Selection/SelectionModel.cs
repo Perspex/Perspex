@@ -345,7 +345,7 @@ namespace Avalonia.Controls.Selection
         private protected override void OnSelectionChanged(IReadOnlyList<T> deselectedItems)
         {
             // Note: We're *not* putting this in a using scope. A collection update is still in progress
-            // so the operation won't get commited by normal means: we have to commit it manually.
+            // so the operation won't get committed by normal means: we have to commit it manually.
             var update = BatchUpdate();
 
             update.Operation.DeselectedItems = deselectedItems;

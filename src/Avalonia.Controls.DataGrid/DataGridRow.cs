@@ -392,7 +392,7 @@ namespace Avalonia.Controls
             set;
         }
 
-        // Height that the row will eventually end up at after a possible detalis animation has completed
+        // Height that the row will eventually end up at after a possible details animation has completed
         internal double TargetHeight
         {
             get
@@ -517,7 +517,7 @@ namespace Avalonia.Controls
                 return base.MeasureOverride(availableSize);
             }
 
-            //Allow the DataGrid specific componets to adjust themselves based on new values
+            //Allow the DataGrid specific components to adjust themselves based on new values
             if (_headerElement != null)
             {
                 _headerElement.InvalidateMeasure();
@@ -722,7 +722,7 @@ namespace Avalonia.Controls
                 if (_bottomGridLine != null)
                 {
                     // It looks like setting Visibility sometimes has side effects so make sure the value is actually
-                    // diffferent before setting it
+                    // different before setting it
                     bool newVisibility = OwningGrid.GridLinesVisibility == DataGridGridLinesVisibility.Horizontal || OwningGrid.GridLinesVisibility == DataGridGridLinesVisibility.All;
 
                     if (newVisibility != _bottomGridLine.IsVisible)

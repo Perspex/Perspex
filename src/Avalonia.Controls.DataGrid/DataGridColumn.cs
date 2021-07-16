@@ -787,7 +787,7 @@ namespace Avalonia.Controls
         }
 
         /// <summary>
-        /// If the DataGrid is using using layout rounding, the pixel snapping will force all widths to
+        /// If the DataGrid is using layout rounding, the pixel snapping will force all widths to
         /// whole numbers. Since the column widths aren't visual elements, they don't go through the normal
         /// rounding process, so we need to do it ourselves.  If we don't, then we'll end up with some
         /// pixel gaps and/or overlaps between columns.

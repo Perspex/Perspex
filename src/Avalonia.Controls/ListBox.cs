@@ -89,7 +89,7 @@ namespace Avalonia.Controls
         /// </summary>
         /// <remarks>
         /// Note that the selection mode only applies to selections made via user interaction.
-        /// Multiple selections can be made programatically regardless of the value of this property.
+        /// Multiple selections can be made programmatically regardless of the value of this property.
         /// </remarks>
         public new SelectionMode SelectionMode
         {

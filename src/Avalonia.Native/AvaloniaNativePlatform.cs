@@ -111,7 +111,8 @@ namespace Avalonia.Native
                 .Bind<ISystemDialogImpl>().ToConstant(new SystemDialogs(_factory.CreateSystemDialogs()))
                 .Bind<PlatformHotkeyConfiguration>().ToConstant(new PlatformHotkeyConfiguration(KeyModifiers.Meta))
                 .Bind<IMountedVolumeInfoProvider>().ToConstant(new MacOSMountedVolumeInfoProvider())
-                .Bind<IPlatformDragSource>().ToConstant(new AvaloniaNativeDragSource(_factory));
+                .Bind<IPlatformDragSource>().ToConstant(new AvaloniaNativeDragSource(_factory))
+                .Bind<IPlatformLifetimeEventsImpl>().ToConstant(applicationPlatform);
 
             if (_options.UseGpu)
             {

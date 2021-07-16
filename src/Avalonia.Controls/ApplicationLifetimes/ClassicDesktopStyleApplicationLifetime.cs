@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Threading;
 using Avalonia.Controls;
@@ -42,9 +43,13 @@ namespace Avalonia.Controls.ApplicationLifetimes
                     "Can not have multiple active ClassicDesktopStyleApplicationLifetime instances and the previously created one was not disposed");
             _activeLifetime = this;
         }
-        
+
         /// <inheritdoc/>
         public event EventHandler<ControlledApplicationLifetimeStartupEventArgs> Startup;
+
+        /// <inheritdoc/>
+        public event EventHandler<CancelEventArgs> ShutdownRequested;
+
         /// <inheritdoc/>
         public event EventHandler<ControlledApplicationLifetimeExitEventArgs> Exit;
 
@@ -111,6 +116,11 @@ namespace Avalonia.Controls.ApplicationLifetimes
                 ((IApplicationPlatformEvents)Application.Current).RaiseUrlsOpened(args);
             }
 
+            var lifetimeEvents = AvaloniaLocator.Current.GetService<IPlatformLifetimeEventsImpl>(); 
+
+            if (lifetimeEvents != null)
+                lifetimeEvents.ShutdownRequested += OnShutdownRequested;
+
             _cts = new CancellationTokenSource();
             MainWindow?.Show();
             Dispatcher.UIThread.MainLoop(_cts.Token);
@@ -122,6 +132,23 @@ namespace Avalonia.Controls.ApplicationLifetimes
         {
             if (_activeLifetime == this)
                 _activeLifetime = null;
+        }
+        
+        private void OnShutdownRequested(object sender, CancelEventArgs e)
+        {
+            ShutdownRequested?.Invoke(this, e);
+
+            if (e.Cancel)
+                return;
+
+            // When an OS shutdown request is received, try to close all non-owned windows. Windows can cancel
+            // shutdown by setting e.Cancel = true in the Closing event. Owned windows will be shutdown by their
+            // owners.
+            foreach (var w in Windows)
+                if (w.Owner is null)
+                    w.Close();
+            if (Windows.Count > 0)
+                e.Cancel = true;
         }
     }
     

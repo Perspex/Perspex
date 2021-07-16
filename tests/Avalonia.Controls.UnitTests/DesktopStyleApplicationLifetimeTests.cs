@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Platform;
 using Avalonia.Threading;
@@ -209,6 +210,33 @@ namespace Avalonia.Controls.UnitTests
                 Assert.Empty(lifetime.Windows);
             }
         }
+
+        [Fact]
+        public void Should_Allow_Canceling_Shutdown_Via_ShutdownRequested_Event()
+        {
+            using (UnitTestApplication.Start(TestServices.StyledWindow))
+            using (var lifetime = new ClassicDesktopStyleApplicationLifetime())
+            {
+                var lifetimeEvents = new Mock<IPlatformLifetimeEventsImpl>();
+                AvaloniaLocator.CurrentMutable.Bind<IPlatformLifetimeEventsImpl>().ToConstant(lifetimeEvents.Object);
+                lifetime.Start(Array.Empty<string>());
+
+                var window = new Window();
+                var raised = 0;
+
+                window.Show();
+
+                lifetime.ShutdownRequested += (s, e) =>
+                {
+                    e.Cancel = true;
+                    ++raised;
+                };
+
+                lifetimeEvents.Raise(x => x.ShutdownRequested += null, new CancelEventArgs());
+
+                Assert.Equal(1, raised);
+                Assert.Equal(new[] { window }, lifetime.Windows);
+            }
+        }
     }
-    
 }

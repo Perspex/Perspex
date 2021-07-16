@@ -50,6 +50,12 @@ ComPtr<IAvnApplicationEvents> _events;
     
     _events->FilesOpened(array);
 }
+
+- (NSApplicationTerminateReply)applicationShouldTerminate:(NSApplication *)sender
+{
+    return _events->TryShutdown() ? NSTerminateNow : NSTerminateCancel;
+}
+
 @end
 
 @interface AvnApplication : NSApplication

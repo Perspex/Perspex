@@ -1024,15 +1024,22 @@ namespace Avalonia.X11
                 side = NetWmMoveResize._NET_WM_MOVERESIZE_SIZE_BOTTOMLEFT;
             BeginMoveResize(side, e);
         }
-        
+
         public void SetTitle(string title)
         {
-            var data = Encoding.UTF8.GetBytes(title);
-            fixed (void* pdata = data)
+            if (string.IsNullOrEmpty(title))
             {
-                XChangeProperty(_x11.Display, _handle, _x11.Atoms._NET_WM_NAME, _x11.Atoms.UTF8_STRING, 8,
-                    PropertyMode.Replace, pdata, data.Length);
-                XStoreName(_x11.Display, _handle, title);
+                XDeleteProperty(_x11.Display, _handle, _x11.Atoms._NET_WM_NAME);
+            }
+            else
+            {
+                var data = Encoding.UTF8.GetBytes(title);
+                fixed (void* pdata = data)
+                {
+                    XChangeProperty(_x11.Display, _handle, _x11.Atoms._NET_WM_NAME, _x11.Atoms.UTF8_STRING, 8,
+                        PropertyMode.Replace, pdata, data.Length);
+                    XStoreName(_x11.Display, _handle, title);
+                }
             }
         }
 

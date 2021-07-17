@@ -87,7 +87,7 @@ namespace Avalonia.Win32
 
         private Vector GetCurrentDpi()
         {
-            if (UnmanagedMethods.ShCoreAvailable)
+            if (UnmanagedMethods.ShCoreAvailable && Win32Platform.WindowsVersion > PlatformConstants.Windows8)
             {
                 var monitor =
                     UnmanagedMethods.MonitorFromWindow(_hwnd, UnmanagedMethods.MONITOR.MONITOR_DEFAULTTONEAREST);

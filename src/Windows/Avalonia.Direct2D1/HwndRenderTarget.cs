@@ -1,4 +1,5 @@
-﻿using Avalonia.Platform;
+﻿using System;
+using Avalonia.Platform;
 using Avalonia.Win32.Interop;
 using SharpDX;
 using SharpDX.DXGI;
@@ -21,7 +22,7 @@ namespace Avalonia.Direct2D1
 
         protected override Size2F GetWindowDpi()
         {
-            if (UnmanagedMethods.ShCoreAvailable)
+            if (UnmanagedMethods.ShCoreAvailable && Environment.OSVersion.Version > PlatformConstants.Windows8)
             {
                 uint dpix, dpiy;
 
